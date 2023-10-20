@@ -1,4 +1,5 @@
 body {
+    /* Sets colors no redundancy and easy to know colors */
     --color-primary: #009579;
     --color-primary-dark: #007f67;
     --color-secondary: #252c6a;
@@ -12,7 +13,7 @@ body {
     align-items: center;
     justify-content: center;
     font-size: 18px;
-    background: url(./assets/background.png);
+    background: url(./assets/background.png); /* For background incase you want to change the BG png */
     background-size: cover;
 }
 
@@ -32,7 +33,7 @@ body {
     font: 500 1rem 'Quicksand', sans-serif;
 }
 
-.form--hidden {
+.form--hidden { /* To easily hide the forms */
     display: none;
 }
 
@@ -54,11 +55,11 @@ body {
     margin-bottom: 1rem;
 }
 
-.form__message--success {
+.form__message--success { /* To change the colors of message when successful */
     color: var(--color-success);
 }
 
-.form__message--error {
+.form__message--error { /* To change the colors of message when error */
     color: var(--color-error);
 }
 

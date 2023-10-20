@@ -4,22 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login/Signin Screen</title>
+    <!-- CSS Location -->
     <link rel="stylesheet" type="text/css" href="main.css">
+    <!-- For Logo -->
     <link rel="shortcut icon" href="/assets/logo.ico">
 </head>
 <body>
     <div class="container">
+        <!-- Login Screen -->
         <form class="form" id="login">
             <!-- Main Login Form -->
             <h1 class="form__title">Login</h1>
             <div class="form__message form__message--error"></div>
+            <!-- Username or Email Text Field -->
             <div class="form__input-group">
                 <input type="text" class="form__input" autofocus placeholder="Username or Email">
-                <div class="form__input-error-message"></div>
+                <div class="form__input-error-message"></div> <!-- For Error message that JS file replaces in -->
             </div>
+            <!-- Password Field (Autohide) -->
             <div class="form__input-group">
                 <input type="password" class="form__input" autofocus placeholder="Password">
-                <div class="form__input-error-message"></div>
+                <div class="form__input-error-message"></div> <!-- For Error message that JS file replaces in -->
             </div>
             
             <!-- Buttons for login form -->
@@ -27,43 +32,50 @@
 
             <!-- Other links for the froms -->
             <p class="form__text">
-                <a href="#" class="form__link">Forgot your password?</a>
+                <a href="#" class="form__link">Forgot your password?</a> <!-- No feature working yet -->
             </p>
             <p class="form__text">
-                <a class="form__link" href="./" id="linkCreateAccount">Don't have an account? Create account.</a>
+                <a class="form__link" href="./" id="linkCreateAccount">Don't have an account? Create account.</a> <!-- To go to Create Account Page -->
             </p>
         </form>
+
+        <!-- Signup / Create Account Page -->
         <form class="form form--hidden" id="createAccount">
-            <!-- Main Login Form -->
+            <!-- Main Signup Form -->
             <h1 class="form__title">Create Account</h1>
             <div class="form__message form__message--error"></div>
+            <!-- Input Username Field -->
             <div class="form__input-group">
                 <input type="text" id="signupUsername" class="form__input" autofocus placeholder="Username">
                 <div class="form__input-error-message"></div>
             </div>
+            <!-- Input Email Field -->
             <div class="form__input-group">
                 <input type="text" class="form__input" autofocus placeholder="Email">
                 <div class="form__input-error-message"></div>
             </div>
+            <!-- Input Password Field -->
             <div class="form__input-group">
                 <input type="password" class="form__input" autofocus placeholder="Password">
                 <div class="form__input-error-message"></div>
             </div>
+            <!-- Input Confirm Password Field -->
             <div class="form__input-group">
                 <input type="password" class="form__input" autofocus placeholder="Confirm Password">
                 <div class="form__input-error-message"></div>
             </div>
             
-            <!-- Buttons for login form -->
+            <!-- Buttons for Create Account form -->
             <button class="form__button" type="submit">Create Account</button>
 
             <!-- Other links for the froms -->
             <p class="form__text">
-                <a class="form__link" href="./" id="linkLogin">Aldreay have an account? Sign in.</a>
+                <a class="form__link" href="./" id="linkLogin">Aldreay have an account? Sign in.</a> <!-- Switch Back to Login Page -->
             </p>
         </form>
     </div>
 
+    <!-- JS Script Location -->
     <script src="main.js"></script>
 </body>
 </html>
