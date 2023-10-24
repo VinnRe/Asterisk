@@ -34,17 +34,19 @@ export const LoginSignup = () => {
 
     const handleLoginSubmit = async (event) => {
         window.event.preventDefault();
-
         try {
+            const isEmail = validator.isEmail(loginUsername);
+
+            const requestBody = isEmail
+                ? {email: loginUsername, password: loginPassword}
+                : {username: loginUsername, password: loginErrorMessage};
+                
             const response = await fetch('http://localhost:8080/api/auth/signin', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    username: loginUsername,
-                    password: loginPassword,
-                }),
+                body: JSON.stringify(requestBody),
             });
 
             if (response.ok) {
@@ -138,7 +140,7 @@ export const LoginSignup = () => {
                             type="text"
                             className="form__input"
                             autoFocus
-                            placeholder="Username"
+                            placeholder="Username or Email"
                             value={loginUsername}
                             onChange={(e) => {
                                 setLoginUsername(e.target.value);
@@ -162,9 +164,6 @@ export const LoginSignup = () => {
                     </div>
                     <button className="form__button" type="submit">Login</button>
                     <div className="form__input-error-message">{loginErrorMessage}</div>
-                    <p className="form__text">
-                        <a href="#" className="form__link">Forgot your password?</a>
-                    </p>
                     <p className="form__text">
                         <a className="form__link" href="#" onClick={handleToggleForm}>Don't have an account? Create account.</a>
                     </p>
