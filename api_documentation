@@ -1,0 +1,20 @@
+run src\main\java\com\burgis\loginsystem\LoginSystemApplication.java
+api url: http://localhost:8080/api
+GET url: test/all
+       : test/user
+POST url: auth/signin
+        : auth/signup
+        : auth/signout
+
+signup json request:
+{  
+   "user" : ,
+   "email" : ,
+   "password" :
+   }
+
+signin json request:
+{  
+   "user" : ,
+   "password" :
+   }
