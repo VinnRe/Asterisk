@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './LSstyles.css';
+import validator from 'validator';
 
 export const LoginSignup = () => {
     const [isLoginForm, setIsLoginForm] = useState(true);
@@ -9,9 +10,21 @@ export const LoginSignup = () => {
     const [signupEmail, setSignupEmail] = useState('');
     const [signupPassword, setSignupPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [usernameSErrorMessage, setUsernameSErrorMessage] = useState('');
+    const [emailSErrorMessage, setEmailSErrorMessage] = useState('');
+    const [passwordSErrorMessage, setPasswordSErrorMessage] = useState('');
+    const [confPassSErrorMessage, setConfPassSErrorMessage] = useState('');
+    const [loginErrorMessage, setLoginErrorMessage] = useState('');
+
 
     const handleToggleForm = () => {
         setIsLoginForm(!isLoginForm);
+
+        setUsernameSErrorMessage('');
+        setEmailSErrorMessage('');
+        setPasswordSErrorMessage('');
+        setConfPassSErrorMessage('');
+        setLoginErrorMessage('');
 
         const signupForm = document.getElementById('createAccount');
         if (signupForm) {
@@ -36,8 +49,19 @@ export const LoginSignup = () => {
 
             if (response.ok) {
                 // Handle successful login, e.g., redirect user to dashboard
+                console.log("SUCCESS");
             } else {
                 // Handle login failure, show error message
+                const validationErrors = {};
+
+                validationErrors.loginErrorMessage = 'Incorrect Login Credentials.';
+
+                setLoginErrorMessage(validationErrors.loginErrorMessage || '');
+
+                if (Object.keys(validationErrors).length > 0) {
+                    // There are validation errors, return without making the API call
+                    return;
+                }
             }
         } catch (error) {
             console.error('Error during login:', error);
@@ -61,6 +85,38 @@ export const LoginSignup = () => {
                 }),
             });
 
+            // Validation of sign up form
+            const MIN_PASSWORD_LENGTH = 8;
+            const MIN_USERNAME_LENGTH = 4;
+            const validationErrors = {};
+
+            if (signupUsername.length < MIN_USERNAME_LENGTH) {
+                validationErrors.usernameSErrorMessage = 'Username must be at least 4 characters long.';
+            }
+
+            if (signupPassword.length < MIN_PASSWORD_LENGTH) {
+                validationErrors.passwordSErrorMessage = 'Password must be at least 8 characters long.';
+            }
+
+            if (signupPassword !== confirmPassword) {
+                validationErrors.passwordSErrorMessage = 'Passwords do not match.';
+                validationErrors.confPassSErrorMessage = 'Passwords do not match.';
+            }
+
+            if (!validator.isEmail(signupEmail)) {
+                validationErrors.emailSErrorMessage = 'Email is not valid.';
+            }
+
+            setUsernameSErrorMessage(validationErrors.usernameSErrorMessage || '');
+            setPasswordSErrorMessage(validationErrors.passwordSErrorMessage || '');
+            setConfPassSErrorMessage(validationErrors.confPassSErrorMessage || '');
+            setEmailSErrorMessage(validationErrors.emailSErrorMessage || '');
+
+            if (Object.keys(validationErrors).length > 0) {
+                // There are validation errors, return without making the API call
+                return;
+            }
+
             if (response.ok) {
                 // Handle successful signup, e.g., show success message
             } else {
@@ -82,9 +138,12 @@ export const LoginSignup = () => {
                             type="text"
                             className="form__input"
                             autoFocus
-                            placeholder="Username or Email"
+                            placeholder="Username"
                             value={loginUsername}
-                            onChange={(e) => setLoginUsername(e.target.value)}
+                            onChange={(e) => {
+                                setLoginUsername(e.target.value);
+                                setLoginErrorMessage('');
+                            }}
                         />
                         <div className="form__input-error-message"></div>
                     </div>
@@ -94,11 +153,15 @@ export const LoginSignup = () => {
                             className="form__input"
                             placeholder="Password"
                             value={loginPassword}
-                            onChange={(e) => setLoginPassword(e.target.value)}
+                            onChange={(e) => {
+                                setLoginPassword(e.target.value);
+                                setLoginErrorMessage('');
+                            }}
                         />
                         <div className="form__input-error-message"></div>
                     </div>
                     <button className="form__button" type="submit">Login</button>
+                    <div className="form__input-error-message">{loginErrorMessage}</div>
                     <p className="form__text">
                         <a href="#" className="form__link">Forgot your password?</a>
                     </p>
@@ -118,9 +181,12 @@ export const LoginSignup = () => {
                             autoFocus
                             placeholder="Username"
                             value={signupUsername}
-                            onChange={(e) => setSignupUsername(e.target.value)}
+                            onChange={(e) => {
+                                setSignupUsername(e.target.value);
+                                setUsernameSErrorMessage('');
+                            }}
                         />
-                        <div className="form__input-error-message"></div>
+                        <div className="form__input-error-message">{usernameSErrorMessage}</div>
                     </div>
                     <div className="form__input-group">
                         <input
@@ -129,9 +195,12 @@ export const LoginSignup = () => {
                             autoFocus
                             placeholder="Email"
                             value={signupEmail}
-                            onChange={(e) => setSignupEmail(e.target.value)}
+                            onChange={(e) => {
+                                setSignupEmail(e.target.value);
+                                setEmailSErrorMessage('');
+                            }}
                         />
-                        <div className="form__input-error-message"></div>
+                        <div className="form__input-error-message">{emailSErrorMessage}</div>
                     </div>
                     <div className="form__input-group">
                         <input
@@ -140,9 +209,13 @@ export const LoginSignup = () => {
                             autoFocus
                             placeholder="Password"
                             value={signupPassword}
-                            onChange={(e) => setSignupPassword(e.target.value)}
+                            onChange={(e) => {
+                                setSignupPassword(e.target.value);
+                                setPasswordSErrorMessage('');
+                                setConfPassSErrorMessage('');
+                            }}
                         />
-                        <div className="form__input-error-message"></div>
+                        <div className="form__input-error-message">{passwordSErrorMessage}</div>
                     </div>
                     <div className="form__input-group">
                         <input
@@ -151,9 +224,13 @@ export const LoginSignup = () => {
                             autoFocus
                             placeholder="Confirm Password"
                             value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            onChange={(e) => {
+                                setConfirmPassword(e.target.value)
+                                setPasswordSErrorMessage('');
+                                setConfPassSErrorMessage('');
+                            }}
                         />
-                        <div className="form__input-error-message"></div>
+                        <div className="form__input-error-message">{confPassSErrorMessage}</div>
                     </div>
                     <button className="form__button" type="submit">Create Account</button>
                     <p className="form__text">
