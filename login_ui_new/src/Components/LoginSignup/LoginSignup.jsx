@@ -19,14 +19,56 @@ export const LoginSignup = () => {
         }
     };
 
-    const handleLoginSubmit = (event) => {
+    const handleLoginSubmit = async (event) => {
         window.event.preventDefault();
-        // Handle login form submission logic here using loginUsername and loginPassword
+
+        try {
+            const response = await fetch('http://localhost:8080/api/auth/signin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: loginUsername,
+                    password: loginPassword,
+                }),
+            });
+
+            if (response.ok) {
+                // Handle successful login, e.g., redirect user to dashboard
+            } else {
+                // Handle login failure, show error message
+            }
+        } catch (error) {
+            console.error('Error during login:', error);
+        }
     };
 
-    const handleSignupSubmit = (event) => {
+    const handleSignupSubmit = async (event) => {
         window.event.preventDefault();
-        // Handle signup form submission logic here using signupUsername, signupEmail, signupPassword, and confirmPassword
+
+        try {
+            const response = await fetch('http://localhost:8080/api/auth/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: signupUsername,
+                    email: signupEmail,
+                    password: signupPassword,
+
+                }),
+            });
+
+            if (response.ok) {
+                // Handle successful signup, e.g., show success message
+            } else {
+                // Handle signup failure, show error message
+            }
+        } catch (error) {
+            console.error('Error during signup:', error);
+        }
     };
     
     return (
