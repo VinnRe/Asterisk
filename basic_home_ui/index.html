@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asterisk: Join & Create Conference</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1 class="header__name--large">Asterisk</h1>
+  
+        <div class="card--icon-account">
+            <a class="button__anchor--icon-account" href="">
+                <img class="img--icon-account" src="Images/account-icon.svg" alt=" Account Icon">
+                <p>Account Name</p>
+            </a>
+        </div>
+    </header>
+
+    <main>
+        <section class="section section--conference">
+            <div class="button--conference button--conference-join">
+                <a class="button__anchor" href="">
+                    <img class="img--conference" src="Images/join-icon.svg" alt="Join Icon">
+                    <p>Join Conference</p>
+                </a>
+            </div>
+
+            <form class="form form--hidden" action="">
+                <label for="conference-join">Enter Meeting Code</label>
+                <input class="form__input" type="text" name="conference-join" id="join-conference" placeholder="Code" autofocus>
+                <input class="form__submit" type="submit" value="Enter">
+                <button class="form-button--back">Back</button>
+            </form>
+
+            <div class="button--conference button--conference-create">
+                <a class="button__anchor" href="">
+                    <img class="img--conference" src="Images/add-icon.svg" alt="Add Icon">
+                    <p>Create Conference</p>
+                </a>
+            </div>
+
+        </section>
+
+        <section class="section section--features">
+            <button class="button--feature">
+                <p>Feature 1</p>
+            </button>
+            
+            <button class="button--feature">
+                <p>Feature 2</p>
+            </button>
+
+            <button class="button--feature">
+                <p>Feature 3</p>
+            </button>
+        </section>
+    </main>
+</body>
+</html>
