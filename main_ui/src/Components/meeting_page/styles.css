@@ -1,0 +1,23 @@
+.meeting-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.meeting-body {
+    height: 500px;
+    width: 500px;
+    margin: 0 auto;
+}
+
+.meeting-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+input {
+    width: 300px;
+}
