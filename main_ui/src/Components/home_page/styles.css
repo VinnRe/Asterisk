@@ -1,0 +1,115 @@
+* {
+    box-sizing: border-box; 
+    margin: 0;
+}
+
+.header__name--large {
+    font-size: 6rem;
+    margin: 1.5rem 0 0 0;
+}
+
+.header__name--large,
+.button__anchor {
+    text-align: center;
+}
+
+.card--icon-account {
+    position: absolute;
+    top: 1em;
+    right: 2em;
+}
+
+.button__anchor--icon-account, 
+.button__anchor  {
+    text-decoration: none;
+    color: black;
+}
+
+.section {
+    display: flex;
+    justify-content: center;
+    gap: 5rem;
+}
+
+.section--conference {
+    margin: 5rem;
+}
+
+.card--icon-account,
+.img--icon-account, 
+.button--conference, 
+.img--conference {
+    height: 100px;
+    width: 100px;
+}
+
+.card--icon-account:hover, 
+.button--conference:hover {
+    transform: scale(1.1);
+}
+
+.form {
+    padding: 3rem;
+    border: 2.5px solid black;
+    border-radius: 10%;
+    width: 300px;
+}
+
+.form__input {
+    width: 100%;
+    margin: 1rem auto;
+    padding: 0.4rem;
+    border-radius: calc(10% - 3rem);
+}
+
+
+
+.form__submit:hover, 
+.form-button--back:hover {
+    text-decoration: underline;
+}
+
+.form--hidden {
+    display: none;
+}
+
+.form__submit, 
+.form-button--back {
+    background-color: white;
+    border: none;
+}
+
+.section--features {
+    margin: 8rem 0 0 0;
+}
+
+.button--feature {
+    padding: 2rem;
+    border-radius: 10%;
+    background-color: white;
+}
+
+.card--icon-account,
+.button--conference,
+.form__submit,
+.form-button--back,
+.button--feature {
+    transition: 0.2s;
+}
+
+.button--feature:hover {
+    background-color: black;
+    color: white;
+}
+
+.form__submit:hover, 
+.form-button--back:hover,
+.button--feature:hover {
+    cursor: pointer;
+}
+
+.card--icon-account:active, 
+.button--conference:active, 
+.button--feature:active {
+    transform: scale(0.9);
+}
