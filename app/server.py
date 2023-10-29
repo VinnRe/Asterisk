@@ -41,13 +41,13 @@ class VideoTransformTrack(MediaStreamTrack):
 	kind = "video"
 
 	def __init__(self, track, transform):
-	    super().__init__()  # don't forget this!
-	    self.track = track
-	    self.transform = transform
+		super().__init__()  # don't forget this!
+		self.track = track
+		self.transform = transform
 
 	async def recv(self):
-	    frame = await self.track.recv()
-	    return frame
+		frame = await self.track.recv()
+		return frame
 
 
 # voice changer??
@@ -58,13 +58,14 @@ class AudioTransformTrack(MediaStreamTrack):
 	kind = "audio"
 
 	def __init__(self, track, transform):
-	    super().__init__()  # don't forget this!
-	    self.track = track
-	    self.transform = transform
+		super().__init__()  # don't forget this!
+		self.track = track
+		self.transform = transform
 
 	async def recv(self):
-	    frame = await self.track.recv()
-	    return frame
+		frame = await self.track.recv()
+		return frame
+
 
 
 async def on_shutdown(app):
@@ -114,24 +115,24 @@ async def offer(params: schemas.Offer):
 	# check data channel
 	@pc.on("datachannel")
 	def on_datachannel(channel):
-	    @channel.on("message")
-	    def on_message(message):
-	        if isinstance(message, str) and message.startswith("ping"):
-	            channel.send("pong" + message[4:])
+		@channel.on("message")
+		def on_message(message):
+			if isinstance(message, str) and message.startswith("ping"):
+				channel.send("pong" + message[4:])
+
 
 
 	# check the state of ICE connection
 	@pc.on("iceconnectionstatechange")
 	async def on_iceconnectionstatechange():
-	    log_info("ICE connection state is %s", pc.iceConnectionState)
-	    if pc.iceConnectionState == "failed":
-	        await pc.close()
-	        pcs.discard(pc)
-
+		# log_info("ICE connection state is %s", pc.iceConnectionState)
+		if pc.iceConnectionState == "failed":
+			await pc.close()
+			pcs.discard(pc)
 
 	@pc.on("track")
 	def on_track(track):
-		log_info(f"Track {track.kind} received")
+		# log_info(f"Track {track.kind} received")
 
 		if track.kind == "audio":
 			local_audio = AudioTransformTrack(relay.subscribe(track))
@@ -144,6 +145,7 @@ async def offer(params: schemas.Offer):
 		async def on_ended():
 			log_info(f"Track {track.kind} ended")
 			# await recorder.stop()
+
 
 
 	# handle offer
