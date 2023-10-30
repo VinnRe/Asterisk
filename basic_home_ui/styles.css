@@ -62,8 +62,6 @@
     border-radius: calc(10% - 3rem);
 }
 
-
-
 .form__submit:hover, 
 .form-button--back:hover {
     text-decoration: underline;

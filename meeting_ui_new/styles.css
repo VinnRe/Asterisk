@@ -1,0 +1,47 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+main {
+    width: 100%;
+    height: 100vh;
+    background: white;
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    background: rgb(191, 190, 190);
+    width: 120px;
+    padding: 10px 0;
+}
+
+.logo {
+    width: 110px;
+    height: 110px;
+}
+
+nav ul {  
+    margin: 160px auto;
+}
+
+nav ul li {
+    list-style: none;
+}
+
+.icon {
+    width: 30px;
+    height: 30px;
+    margin: 10px auto;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.icon:hover {
+    transform: scale(1.1);
+}
