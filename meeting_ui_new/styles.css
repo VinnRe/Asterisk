@@ -2,20 +2,19 @@
     box-sizing: border-box;
     margin: 0;
     user-select: none;
+    overflow: hidden;
 }
 
 main {
-    width: 100%;
     height: 100vh;
 }
 
 .meeting-screen img {
-    width: 100px;
+    width: 8rem;
 }
 
 .meeting-screen,
 .meeting-controls {
-    width: 100%;
     background-color: #202124;
     display: flex;
     align-items: center;
@@ -32,16 +31,16 @@ main {
 
 .meeting-controls__button {
     margin: 0.8rem;
-    width: 45px;
-    padding: 0.6rem;
+    width: 3rem;
+    padding: 0.7rem;
     border-radius: 50%;
-    background: #535353;;
-    transition: 0.2s; 
+    background: #5F6368;
+    transition: background 0.2s; 
 }
 
 .meeting-controls__button:hover {
     cursor: pointer;
-    background: #f1f3f4;
+    background: #DEE1E6;
 }
 
 .button--hidden {
