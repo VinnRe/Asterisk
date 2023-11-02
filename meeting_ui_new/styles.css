@@ -1,47 +1,49 @@
 * {
     box-sizing: border-box;
     margin: 0;
+    user-select: none;
 }
 
 main {
     width: 100%;
     height: 100vh;
-    background: white;
 }
 
-.sidebar {
+.meeting-screen img {
+    width: 100px;
+}
+
+.meeting-screen,
+.meeting-controls {
+    width: 100%;
+    background-color: #202124;
     display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    background: rgb(191, 190, 190);
-    width: 120px;
-    padding: 10px 0;
+    align-items: center;
+    justify-content: center ;
 }
 
-.logo {
-    width: 110px;
-    height: 110px;
+.meeting-screen {
+    height: 90%;
 }
 
-nav ul {  
-    margin: 160px auto;
+.meeting-controls {
+    height: 10%;
 }
 
-nav ul li {
-    list-style: none;
+.meeting-controls__button {
+    margin: 0.8rem;
+    width: 45px;
+    padding: 0.6rem;
+    border-radius: 50%;
+    background: #535353;;
+    transition: 0.2s; 
 }
 
-.icon {
-    width: 30px;
-    height: 30px;
-    margin: 10px auto;
+.meeting-controls__button:hover {
     cursor: pointer;
-    transition: 0.3s;
+    background: #f1f3f4;
 }
 
-.icon:hover {
-    transform: scale(1.1);
+.button--hidden {
+    display: none;
 }
