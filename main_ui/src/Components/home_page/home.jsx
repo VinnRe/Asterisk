@@ -1,11 +1,11 @@
-import React from "react";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
 import accountIcon from '../Assets/home_assets/account-icon.svg';
 import joinIcon from '../Assets/home_assets/join-icon.svg';
 import addIcon from '../Assets/home_assets/add-icon.svg';
 import './styles.css';
 
-const HomePage = () => {
+export const HomePage = () => {
     useEffect(() => {
         const anchor = document.querySelector(".button__anchor");
         const backButton = document.querySelector(".form-button--back");
@@ -52,10 +52,10 @@ const HomePage = () => {
         <main>
             <section className="section section--conference">
             <div className="button--conference button--conference-join">
-                <a className="button__anchor" href="">
-                <img className="img--conference" src={joinIcon} alt="Join Icon" />
-                <p>Join Conference</p>
-                </a>
+                <Link to="/join"> {/* USE LINK COMPONENT FOR NAV  */}
+                    <img className="img--conference" src={joinIcon} alt="Join Icon" />
+                    <p>Join Conference</p>
+                </Link>
             </div>
 
             <form className="form form--hidden" action="">
@@ -73,10 +73,10 @@ const HomePage = () => {
             </form>
 
             <div className="button--conference button--conference-create">
-                <a className="button__anchor" href="">
-                <img className="img--conference" src={addIcon} alt="Add Icon" />
-                <p>Create Conference</p>
-                </a>
+                <Link to="/create"> {/* USE LINK COMPONENT FOR NAV  */}
+                    <img className="img--conference" src={addIcon} alt="Add Icon" />
+                    <p>Create Conference</p>
+                </Link>
             </div>
             </section>
 
@@ -98,4 +98,3 @@ const HomePage = () => {
     );
 };
 
-export default HomePage;
