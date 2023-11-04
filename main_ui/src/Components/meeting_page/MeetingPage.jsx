@@ -6,6 +6,37 @@ export const MeetingPage = () => {
   const audioRef = useRef(null);
 
   useEffect(() => {
+    // Function to handle resizing video elements
+    function resizeVideoElements() {
+      if (videoRef.current && audioRef.current) {
+          const videoContainerWidth = videoRef.current.offsetWidth;
+          const videoContainerHeight = videoRef.current.offsetHeight;
+          const aspectRatio = 4 / 3; // You can adjust this based on your desired aspect ratio
+
+          // Calculate the width and height for the video elements
+          let videoWidth = videoContainerWidth;
+          let videoHeight = videoContainerWidth / aspectRatio;
+
+          // Check if the calculated video height exceeds the container height
+          if (videoHeight > videoContainerHeight) {
+              videoHeight = videoContainerHeight;
+              videoWidth = videoContainerHeight * aspectRatio;
+          }
+
+          // Set the width and height for video elements
+          videoRef.current.style.width = `${videoWidth}px`;
+          videoRef.current.style.height = `${videoHeight}px`;
+          audioRef.current.style.width = `${videoWidth}px`;
+          audioRef.current.style.height = `${videoHeight}px`;
+      }
+  }
+
+  // Call the resize function when the window is resized
+  window.addEventListener('resize', resizeVideoElements);
+
+  // Call the resize function on initial render
+  resizeVideoElements();
+
     // Function to start the video and audio streams
     async function startStream() {
       try {
@@ -47,6 +78,10 @@ export const MeetingPage = () => {
     }
 
     startStream();
+    // Cleanup the event listener when the component is unmounted
+    return () => {
+      window.removeEventListener('resize', resizeVideoElements);
+    };
   }, []);
 
   return (
