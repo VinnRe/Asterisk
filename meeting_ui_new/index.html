@@ -1,0 +1,29 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asterisk Meeting </title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <main>
+        <section class="meeting-screen">
+            <img src="Images/account_icon.svg" alt="Account Icon">
+        </section>
+
+        <section class="meeting-controls">
+            <img id="mic-on" class="meeting-controls__button" 
+            src="Images/mic-on_icon.svg" onclick="toggle('mic')">
+            <img id="mic-off"class="meeting-controls__button | button--hidden" 
+            src="Images/mic-off_icon.svg" onclick="toggle('mic')">
+            <img id="cam-on" class="meeting-controls__button"
+            src="Images/cam-on_icon.svg" onclick="toggle('cam')"> 
+            <img id="cam-off" class="meeting-controls__button | button--hidden"
+            src="Images/cam-off_icon.svg" onclick="toggle('cam')">
+            <img class="meeting-controls__button" src="Images/message_icon.svg">
+            <img class="meeting-controls__button" src="Images/call-end_icon.svg">
+        </section>
+    </main>
+</body>
+</html>
