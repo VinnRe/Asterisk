@@ -4,6 +4,43 @@ import './styles.css';
 export const MeetingPage = () => {
   const videoRef = useRef(null);
   const audioRef = useRef(null);
+  const [stream, setStream] = useState(null);
+  const [camStatus, setCamStatus] = useState('Hide Cam');
+  const [micStatus, setMicStatus] = useState('Mute Mic');
+
+  // FIX THE FUCKING TOGGLE SHIT PAG NAKA ON YUNG CAM PWEDE MAMUTE YUNG MIC
+  // PAG NAKA ON YUNG MIC BAWAL MA OFF CAM
+  // PAG NAKAOFF YUNG CAM BAWAL MA OFF YUNG MIC
+
+   // Function to toggle the camera stream
+   function toggleCamera() {
+    // setIsCameraEnabled(prevState => !prevState);
+    if (stream) {
+      const videoTrack = stream.getTracks().find(track => track.kind === 'video');
+      if (videoTrack.enabled) {
+        videoTrack.enabled = false;
+        setCamStatus('Show Cam');
+      } else {
+        videoTrack.enabled = true;
+        setCamStatus('Hide Cam');
+      }
+    }
+  }
+
+  // Function to toggle the microphone stream
+  function toggleMic() {
+    // setIsMicEnabled(prevState => !prevState);
+    if (stream) {
+      const audioTrack = stream.getTracks().find(track => track.kind === 'audio');
+      if (audioTrack.enabled) {
+        audioTrack.enabled = false;
+        setMicStatus('Unmute Mic');
+      } else {
+        audioTrack.enabled = true;
+        setMicStatus('Mute Mic');
+      }
+    }
+  }
 
   useEffect(() => {
     // Function to handle resizing video elements
@@ -31,24 +68,29 @@ export const MeetingPage = () => {
       }
   }
 
-  // Call the resize function when the window is resized
-  window.addEventListener('resize', resizeVideoElements);
+    // Call the resize function when the window is resized
+    window.addEventListener('resize', resizeVideoElements);
 
-  // Call the resize function on initial render
-  resizeVideoElements();
+    // Call the resize function on initial render
+    resizeVideoElements();
 
     // Function to start the video and audio streams
     async function startStream() {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        const userMediaStream = await navigator.mediaDevices.getUserMedia({ 
+          video: true,
+          audio: true,
+          echoCancellation: true
+        });
+        setStream(userMediaStream);
         // Attach video stream to the video element
         if (videoRef.current) {
-          videoRef.current.srcObject = stream;
+          videoRef.current.srcObject = userMediaStream;
         }
 
         // Attach audio stream to the audio element
         if (audioRef.current) {
-          audioRef.current.srcObject = stream;
+          audioRef.current.srcObject = userMediaStream;
         }
 
         // Create an offer and send it to the backend
@@ -92,6 +134,10 @@ export const MeetingPage = () => {
           {/* Add video elements here */}
           <video ref={videoRef} autoPlay playsInline className="video-element"></video>
           <audio ref={audioRef} autoPlay playsInline className="audio-element"></audio>
+        </div>
+        <div className="toggle-buttons">
+            <button onClick={toggleCamera}>{camStatus}</button>
+            <button onClick={toggleMic}>{micStatus}</button>
         </div>
       </header>
     </div>
