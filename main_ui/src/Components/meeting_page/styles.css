@@ -21,6 +21,7 @@ body, html {
   }
   
   .video-element, .audio-element {
+      border: red 1px solid;
       margin: 10px;
       max-width: 100%; /* Set the maximum width for the video elements */
       max-height: 100%; /* Set the maximum height for the video elements */
