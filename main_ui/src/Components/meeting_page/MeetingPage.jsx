@@ -12,17 +12,29 @@ export const MeetingPage = () => {
   // PAG NAKA ON YUNG MIC BAWAL MA OFF CAM
   // PAG NAKAOFF YUNG CAM BAWAL MA OFF YUNG MIC
 
-   // Function to toggle the camera stream
-   function toggleCamera() {
+
+  // Function to toggle the camera stream
+  function toggleCamera() {
     // setIsCameraEnabled(prevState => !prevState);
     if (stream) {
       const videoTrack = stream.getTracks().find(track => track.kind === 'video');
-      if (videoTrack.enabled) {
-        videoTrack.enabled = false;
-        setCamStatus('Show Cam');
-      } else {
-        videoTrack.enabled = true;
-        setCamStatus('Hide Cam');
+      if (micStatus == "Mute Mic") { // mic on
+        if (!videoTrack.enabled) {
+          videoTrack.enabled = true;
+          setCamStatus('Hide Cam');
+        } else {
+          console.log("mic on -- u cant off cam")
+        }
+      }
+      else {
+        if (videoTrack.enabled) {
+          videoTrack.enabled = false;
+          setCamStatus('Show Cam');
+          toggleMic();
+        } else {
+          videoTrack.enabled = true;
+          setCamStatus('Hide Cam');
+        }
       }
     }
   }
@@ -32,12 +44,21 @@ export const MeetingPage = () => {
     // setIsMicEnabled(prevState => !prevState);
     if (stream) {
       const audioTrack = stream.getTracks().find(track => track.kind === 'audio');
-      if (audioTrack.enabled) {
-        audioTrack.enabled = false;
-        setMicStatus('Unmute Mic');
-      } else {
-        audioTrack.enabled = true;
-        setMicStatus('Mute Mic');
+      if (camStatus == "Hide Cam") { // cam on
+        if (audioTrack.enabled) {
+          audioTrack.enabled = false;
+          setMicStatus('Unmute Mic');
+        } else {
+          audioTrack.enabled = true;
+          setMicStatus('Mute Mic');
+        }
+      } else { // cam off
+        if (!audioTrack.enabled) {
+          audioTrack.enabled = true;
+          setMicStatus('Mute Mic');
+        } else {
+          console.log("cam off -- u cant off mic")
+        }
       }
     }
   }
@@ -138,6 +159,7 @@ export const MeetingPage = () => {
         <div className="toggle-buttons">
             <button onClick={toggleCamera}>{camStatus}</button>
             <button onClick={toggleMic}>{micStatus}</button>
+            {/* <button onClick={toggleScreenShare}>{screenStatus}</button> */}
         </div>
       </header>
     </div>
