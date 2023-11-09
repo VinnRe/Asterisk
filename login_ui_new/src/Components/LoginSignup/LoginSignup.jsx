@@ -1,26 +1,42 @@
 import React, { useState } from 'react';
 import './LSstyles.css';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import validator from 'validator';
 
 export const LoginSignup = () => {
+    // Switching
     const [isLoginForm, setIsLoginForm] = useState(true);
-    const [loginUsername, setLoginUsername] = useState('');
+    // Data Var
+    const [loginEmail, setLoginEmail] = useState('');
     const [loginPassword, setLoginPassword] = useState('');
-    const [signupUsername, setSignupUsername] = useState('');
+    // const [signupUsername, setSignupUsername] = useState('');
     const [signupEmail, setSignupEmail] = useState('');
     const [signupPassword, setSignupPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [usernameSErrorMessage, setUsernameSErrorMessage] = useState('');
+    const [signupFN, setSignupFN] = useState('');
+    const [signupMN, setSignupMN] = useState('');
+    const [signupLN, setSignupLN] = useState('');
+    const [signupNE, setSignupNE] = useState('');
+    const [signupBirthdate, setSignupBirthdate] = useState('');
+    const [signupGender, setSignupGender] = useState('');
+    // ERROR MESSAGES
+    // const [usernameSErrorMessage, setUsernameSErrorMessage] = useState('');
     const [emailSErrorMessage, setEmailSErrorMessage] = useState('');
     const [passwordSErrorMessage, setPasswordSErrorMessage] = useState('');
     const [confPassSErrorMessage, setConfPassSErrorMessage] = useState('');
     const [loginErrorMessage, setLoginErrorMessage] = useState('');
+    const [firstNSErrorMessage, setFirstNSErrorMessage] = useState('');
+    const [midNSErrorMessage, setMidNSErrorMessage] = useState('');
+    const [lastNSErrorMessage, setLastNSErrorMessage] = useState('');
+    const [nameESErrorMessage, setNameESErrorMessage] = useState('');
+    const [BDATESErrorMessage, setBDATESErrorMessage] = useState('');
+    const [genderSErrorMessage, setGenderSErrorMessage] = useState('');
 
 
     const handleToggleForm = () => {
         setIsLoginForm(!isLoginForm);
 
-        setUsernameSErrorMessage('');
         setEmailSErrorMessage('');
         setPasswordSErrorMessage('');
         setConfPassSErrorMessage('');
@@ -35,12 +51,10 @@ export const LoginSignup = () => {
     const handleLoginSubmit = async (event) => {
         window.event.preventDefault();
         try {
-            const isEmail = validator.isEmail(loginUsername);
+            const isEmail = validator.isEmail(loginEmail);
 
-            const requestBody = isEmail
-                ? {email: loginUsername, password: loginPassword}
-                : {username: loginUsername, password: loginErrorMessage};
-                
+            const requestBody = isEmail({email: loginEmail, password: loginPassword})
+                             
             const response = await fetch('http://localhost:8080/api/auth/signin', {
                 method: 'POST',
                 headers: {
@@ -80,7 +94,6 @@ export const LoginSignup = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    username: signupUsername,
                     email: signupEmail,
                     password: signupPassword,
 
@@ -89,12 +102,7 @@ export const LoginSignup = () => {
 
             // Validation of sign up form
             const MIN_PASSWORD_LENGTH = 8;
-            const MIN_USERNAME_LENGTH = 4;
             const validationErrors = {};
-
-            if (signupUsername.length < MIN_USERNAME_LENGTH) {
-                validationErrors.usernameSErrorMessage = 'Username must be at least 4 characters long.';
-            }
 
             if (signupPassword.length < MIN_PASSWORD_LENGTH) {
                 validationErrors.passwordSErrorMessage = 'Password must be at least 8 characters long.';
@@ -109,7 +117,6 @@ export const LoginSignup = () => {
                 validationErrors.emailSErrorMessage = 'Email is not valid.';
             }
 
-            setUsernameSErrorMessage(validationErrors.usernameSErrorMessage || '');
             setPasswordSErrorMessage(validationErrors.passwordSErrorMessage || '');
             setConfPassSErrorMessage(validationErrors.confPassSErrorMessage || '');
             setEmailSErrorMessage(validationErrors.emailSErrorMessage || '');
@@ -140,10 +147,10 @@ export const LoginSignup = () => {
                             type="text"
                             className="form__input"
                             autoFocus
-                            placeholder="Username or Email"
-                            value={loginUsername}
+                            placeholder="Email"
+                            value={loginEmail}
                             onChange={(e) => {
-                                setLoginUsername(e.target.value);
+                                setLoginEmail(e.target.value);
                                 setLoginErrorMessage('');
                             }}
                         />
@@ -175,17 +182,87 @@ export const LoginSignup = () => {
                     <div className="form__input-group">
                         <input
                             type="text"
-                            id="signupUsername"
+                            id="signupFN"
                             className="form__input"
                             autoFocus
-                            placeholder="Username"
-                            value={signupUsername}
+                            placeholder="First Name"
+                            value={signupFN}
                             onChange={(e) => {
-                                setSignupUsername(e.target.value);
-                                setUsernameSErrorMessage('');
+                                setSignupFN(e.target.value);
+                                setFirstNSErrorMessage('');
                             }}
                         />
-                        <div className="form__input-error-message">{usernameSErrorMessage}</div>
+                        <div className="form__input-error-message">{firstNSErrorMessage}</div>
+                    </div>
+                    <div className="form__input-group">
+                        <input 
+                            type="text"
+                            className="form__input"
+                            autoFocus
+                            placeholder='Middle Name'
+                            value={signupMN}
+                            onChange={(e) => {
+                                setSignupMN(e.target.value);
+                                setMidNSErrorMessage('');
+                            }} 
+                        />
+                        <div className="form__input-error-message">{midNSErrorMessage}</div>
+                    </div>
+                    <div className="form__input-group">
+                        <input 
+                            type="text"
+                            className="form__input"
+                            autoFocus
+                            placeholder='Last Name'
+                            value={signupLN}
+                            onChange={(e) => {
+                                setSignupLN(e.target.value);
+                                setLastNSErrorMessage('');
+                            }} 
+                        />
+                        <div className="form__input-error-message">{lastNSErrorMessage}</div>
+                    </div>
+                    <div className="form__input-group">
+                        <input 
+                            type="text"
+                            className="form__input"
+                            autoFocus
+                            placeholder='Name Extension'
+                            value={signupNE}
+                            onChange={(e) => {
+                                setSignupNE(e.target.value);
+                                setNameESErrorMessage('');
+                            }} 
+                            required={false}
+                        />
+                        <div className="form__input-error-message">{nameESErrorMessage}</div>
+                    </div>
+                    <div className="form__input-group--double">
+                        <DatePicker 
+                            selected={signupBirthdate}
+                            onChange={(date) => {setSignupBirthdate(date); setBDATESErrorMessage();}}
+                            placeholderText="Birth Date"
+                            dateFormat="dd/MM/yyyy"
+                            className="form__input"
+                            isClearable
+                            showYearDropdown
+                            yearDropdownItemNumber={70}
+                            scrollableYearDropdown
+                            yearDropDownMin={1950}
+                            yearDropDownMax={new Date().getFullYear()}
+                        />
+                        <select 
+                            className="form__input gender-dropdown"
+                            value={signupGender}
+                            onChange={(e) => {setSignupGender(e.target.value); setGenderSErrorMessage('');}}
+                        >
+                            <option value="">Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <div className="form__input-error-message">{genderSErrorMessage}</div>
+                        <div className="form__input-error-message">{BDATESErrorMessage}</div>
                     </div>
                     <div className="form__input-group">
                         <input
