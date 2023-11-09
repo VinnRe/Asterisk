@@ -6,13 +6,10 @@ import { MeetingPage } from './Components/meeting_page/MeetingPage';
 
 function App() {
   return (
-    // <div className="App">
-    //   <HomePage/>
-    // </div>
     <Router>
       <Routes> 
         <Route path='/' element={<HomePage />} />
-        {/* <Route path='/join' element={<JoinPage />} /> */}
+        <Route path='/create' element={<HomePage />} />
         <Route path='/create' element={<MeetingPage />} />
       </Routes>
     </Router>
