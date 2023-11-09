@@ -94,6 +94,12 @@ export const LoginSignup = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
+                    first_name: signupFN,
+                    middle_name: signupMN,
+                    last_name:signupLN,
+                    name_ext:signupNE,
+                    birthdate: signupBirthdate,
+                    gender: signupGender,
                     email: signupEmail,
                     password: signupPassword,
 
