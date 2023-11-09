@@ -7,11 +7,12 @@ export const MeetingPage = () => {
   const [stream, setStream] = useState(null);
   const [camStatus, setCamStatus] = useState('Hide Cam');
   const [micStatus, setMicStatus] = useState('Mute Mic');
+  const [screenStatus, setScreenStatus] = useState('Share Screen');
+  const [screenShareStream, setScreenShareStream] = useState(null);
 
   // FIX THE FUCKING TOGGLE SHIT PAG NAKA ON YUNG CAM PWEDE MAMUTE YUNG MIC
   // PAG NAKA ON YUNG MIC BAWAL MA OFF CAM
   // PAG NAKAOFF YUNG CAM BAWAL MA OFF YUNG MIC
-
 
   // Function to toggle the camera stream
   function toggleCamera() {
@@ -27,19 +28,14 @@ export const MeetingPage = () => {
         }
       }
       else {
-        if (videoTrack.enabled) {
-          videoTrack.enabled = false;
-          setCamStatus('Show Cam');
-          toggleMic();
-        } else {
-          videoTrack.enabled = true;
-          setCamStatus('Hide Cam');
-        }
+        videoTrack.enabled = false;
+        setCamStatus('Show Cam');
+        toggleMic();
       }
     }
   }
 
-  // Function to toggle the microphone stream
+    // Function to toggle the microphone stream
   function toggleMic() {
     // setIsMicEnabled(prevState => !prevState);
     if (stream) {
@@ -53,14 +49,58 @@ export const MeetingPage = () => {
           setMicStatus('Mute Mic');
         }
       } else { // cam off
-        if (!audioTrack.enabled) {
-          audioTrack.enabled = true;
-          setMicStatus('Mute Mic');
-        } else {
-          console.log("cam off -- u cant off mic")
-        }
+        console.log("cam off -- u cant off mic")
       }
     }
+  }
+
+  async function endStream() {
+    setScreenShareStream(null);
+    setScreenStatus("Share Screen");
+    let screen_con = await document.getElementById("screenShare");
+    screen_con.remove();
+  }
+
+  async function toggleScreenShare() {
+    
+    // paresize nalang tenks
+    
+    try {
+      if (screenShareStream == null) {
+        const userScreen = await navigator.mediaDevices.getDisplayMedia({
+          cursor:true,
+          video: true,
+          audio: true
+        })
+
+        await setScreenShareStream(userScreen);
+        await setScreenStatus("Stop Sharing");
+
+        let vid_con = document.getElementById("video-container");
+        let screen_vid_con = document.createElement("video");
+        screen_vid_con.setAttribute('id', 'screenShare');
+        screen_vid_con.setAttribute('playsInline', 'playsInline');
+        screen_vid_con.setAttribute('autoPlay', "autoPlay");
+        screen_vid_con.className = "video-element";
+        screen_vid_con.srcObject = userScreen;
+        vid_con.appendChild(screen_vid_con);
+      } else {
+        var tracks = await screenShareStream.getVideoTracks();
+        for (var i = 0; i < tracks.length; i++) {
+          tracks[i].stop();
+        }
+        endStream();  
+      }
+
+    } catch (error) {
+      console.log("Error: ", error);
+    }
+  }
+
+  if (screenShareStream != null) {
+    screenShareStream.getVideoTracks()[0].addEventListener('ended', async () => {
+      endStream();  
+    });
   }
 
   useEffect(() => {
@@ -151,7 +191,7 @@ export const MeetingPage = () => {
     <div className="container">
       <header className="meeting-header">
         <h1>Asterisk - Video Meeting App</h1>
-        <div className="video-container">
+        <div id="video-container" className="video-container">
           {/* Add video elements here */}
           <video ref={videoRef} autoPlay playsInline className="video-element"></video>
           <audio ref={audioRef} autoPlay playsInline className="audio-element"></audio>
@@ -159,7 +199,7 @@ export const MeetingPage = () => {
         <div className="toggle-buttons">
             <button onClick={toggleCamera}>{camStatus}</button>
             <button onClick={toggleMic}>{micStatus}</button>
-            {/* <button onClick={toggleScreenShare}>{screenStatus}</button> */}
+            <button onClick={toggleScreenShare}>{screenStatus}</button>
         </div>
       </header>
     </div>
