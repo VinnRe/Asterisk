@@ -1,5 +1,5 @@
 <div align="center">
-<h1 align="center">INSERT NAME</h1>
+<h1 align="center">ASTERISK</h1>
 
   <h3 align="center">
     An all-in-one video conference web application.
@@ -15,4 +15,4 @@
 </div>
 
 # vid-conf-wa
-video-conference-web-app using Java, JavaScript, and Kurento
+video-conference-web-app using Python, React, aiortc, aiohttp
