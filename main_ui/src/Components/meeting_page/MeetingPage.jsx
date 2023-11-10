@@ -32,11 +32,6 @@ export const MeetingPage = () => {
   let remoteStream;
   let pc;
 
-
-  // FIX THE FUCKING TOGGLE SHIT PAG NAKA ON YUNG CAM PWEDE MAMUTE YUNG MIC
-  // PAG NAKA ON YUNG MIC BAWAL MA OFF CAM
-  // PAG NAKAOFF YUNG CAM BAWAL MA OFF YUNG MIC
- 
   // Function to toggle the camera stream
   function toggleCamera() {
     // setIsCameraEnabled(prevState => !prevState);
