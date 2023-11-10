@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import './styles.css';
-
+import * as meetIcons from '../Assets/meet_assets';
 
 export const MeetingPage = () => {
 
@@ -312,7 +312,7 @@ export const MeetingPage = () => {
           <audio ref={remoteAudioRef} autoPlay playsInline className="audio-element"></audio>
         </div>
         <div className="toggle-buttons">
-            <button onClick={toggleCamera}>{camStatus}</button>
+            <button onClick={toggleCamera}>{camStatus === 'Hide Cam' ? (<img src={meetIcons.camOnIcon} />) : (<img src={meetIcons.camOffIcon} />)} {camStatus}</button>
             <button onClick={toggleMic}>{micStatus}</button>
             <button onClick={toggleScreenShare}>{screenStatus}</button>
         </div>
