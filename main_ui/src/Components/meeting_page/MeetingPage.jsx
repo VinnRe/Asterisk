@@ -19,18 +19,12 @@ export const MeetingPage = () => {
     // setIsCameraEnabled(prevState => !prevState);
     if (stream) {
       const videoTrack = stream.getTracks().find(track => track.kind === 'video');
-      if (micStatus == "Mute Mic") { // mic on
-        if (!videoTrack.enabled) {
-          videoTrack.enabled = true;
-          setCamStatus('Hide Cam');
-        } else {
-          console.log("mic on -- u cant off cam")
-        }
-      }
-      else {
+      if (videoTrack.enabled) {
         videoTrack.enabled = false;
         setCamStatus('Show Cam');
-        toggleMic();
+      } else {
+        videoTrack.enabled = true;
+        setCamStatus('Hide Cam');
       }
     }
   }
@@ -40,16 +34,12 @@ export const MeetingPage = () => {
     // setIsMicEnabled(prevState => !prevState);
     if (stream) {
       const audioTrack = stream.getTracks().find(track => track.kind === 'audio');
-      if (camStatus == "Hide Cam") { // cam on
-        if (audioTrack.enabled) {
-          audioTrack.enabled = false;
-          setMicStatus('Unmute Mic');
-        } else {
-          audioTrack.enabled = true;
-          setMicStatus('Mute Mic');
-        }
-      } else { // cam off
-        console.log("cam off -- u cant off mic")
+      if (audioTrack.enabled) {
+        audioTrack.enabled = false;
+        setMicStatus('Unmute Mic');
+      } else {
+        audioTrack.enabled = true;
+        setMicStatus('Mute Mic');
       }
     }
   }
