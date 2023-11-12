@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import './styles.css';
-import * as meetIcons from '../Assets/meet_assets';
+import * as meetIcons from './imports';
 
 export const MeetingPage = () => {
 
@@ -34,7 +34,6 @@ export const MeetingPage = () => {
 
   // Function to toggle the camera stream
   function toggleCamera() {
-    // setIsCameraEnabled(prevState => !prevState);
     if (stream) {
       const videoTrack = stream.getTracks().find(track => track.kind === 'video');
       if (videoTrack.enabled) {
@@ -49,7 +48,6 @@ export const MeetingPage = () => {
 
   // Function to toggle the microphone stream
   function toggleMic() {
-    // setIsMicEnabled(prevState => !prevState);
     if (stream) {
       const audioTrack = stream.getTracks().find(track => track.kind === 'audio');
       if (audioTrack.enabled) {
@@ -61,6 +59,12 @@ export const MeetingPage = () => {
       }
     }
   }
+
+  // Resize of button images
+  const imageSize = {
+    width: '50px',
+    height: '50px',
+  };
 
   async function endStream() {
     setScreenShareStream(null);
@@ -312,8 +316,26 @@ export const MeetingPage = () => {
           <audio ref={remoteAudioRef} autoPlay playsInline className="audio-element"></audio>
         </div>
         <div className="toggle-buttons">
-            <button onClick={toggleCamera}>{camStatus === 'Hide Cam' ? (<img src={meetIcons.camOnIcon} />) : (<img src={meetIcons.camOffIcon} />)} {camStatus}</button>
-            <button onClick={toggleMic}>{micStatus}</button>
+            <button className="toggle-button" onClick={toggleCamera}>
+              <div className="button-content">
+                {camStatus === 'Hide Cam' ? (
+                  <img src={meetIcons.camOnIcon} alt='camOn' style={imageSize} />
+                ) : (
+                  <img src={meetIcons.camOffIcon} alt='camOff' style={imageSize} />
+                )} 
+                <span>{camStatus}</span>
+              </div>
+            </button>
+            <button className="toggle-button" onClick={toggleMic}>
+              <div className="button-content">
+                {micStatus === 'Mute Mic' ? (
+                  <img src={meetIcons.micOnIcon} alt='micOn' style={imageSize} />
+                ) : (
+                  <img src={meetIcons.micOffIcon} alt='micOff' style={imageSize} />
+                )} 
+                <span>{micStatus}</span>
+              </div>
+            </button>
             <button onClick={toggleScreenShare}>{screenStatus}</button>
         </div>
       </header>
