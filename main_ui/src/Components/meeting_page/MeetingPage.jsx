@@ -62,8 +62,8 @@ export const MeetingPage = () => {
 
   // Resize of button images
   const imageSize = {
-    width: '50px',
-    height: '50px',
+    width: '2rem',
+    height: '2rem',
   };
 
   async function endStream() {
