@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import './styles.css';
 import * as meetIcons from './imports';
+import Clock from './clock';
 
 export const MeetingPage = () => {
 
@@ -312,10 +313,13 @@ export const MeetingPage = () => {
           <video ref={localVideoRef} autoPlay playsInline className="video-element"></video>
           <audio ref={localAudioRef} autoPlay playsInline className="audio-element"></audio>
 
-          <video ref={remoteVideoRef} autoPlay playsInline className="video-element"></video>
-          <audio ref={remoteAudioRef} autoPlay playsInline className="audio-element"></audio>
+          {/* <video ref={remoteVideoRef} autoPlay playsInline className="video-element"></video>
+          <audio ref={remoteAudioRef} autoPlay playsInline className="audio-element"></audio> */}
         </div>
-        <div className="toggle-buttons">
+        <div className="button__control-panel">
+            <div className="clock-content">
+              <Clock />
+            </div>
             <button className="toggle-button" onClick={toggleCamera}>
               <div className="button-content">
                 {camStatus === 'Hide Cam' ? (
@@ -336,7 +340,34 @@ export const MeetingPage = () => {
                 <span>{micStatus}</span>
               </div>
             </button>
-            <button onClick={toggleScreenShare}>{screenStatus}</button>
+            <button className="toggle-button" onClick={toggleScreenShare}>
+              <div className="button-content">
+                {screenStatus === 'Share Screen' ? (
+                  <img src={meetIcons.shareScreenOnIcon} alt='shareScreenOn' style={imageSize} />
+                ) : (
+                  <img src={meetIcons.shareScreenOffIcon} alt='shareScreenOff' style={imageSize} />
+                )} 
+                <span>{screenStatus}</span>
+              </div>
+            </button>
+            <button className="toggle-button" onClick>
+              <div className="button-content">
+                <img src={meetIcons.raiseHandIcon} alt="raiseHandIcon" style={imageSize} />
+                <span>Raise Hand</span>
+              </div>
+            </button>
+            <button className="toggle-button" onClick>
+              <div className="button-content">
+                <img src={meetIcons.chatIcon} alt="chatIcon" style={imageSize} />
+                <span>Open Chat</span>
+              </div>
+            </button>
+            <button className="toggle-button" onClick>
+                <div className="button-content">
+                  <img src={meetIcons.endCallIcon} alt="callEndIcon" style={imageSize} />
+                  <span>End Call</span>
+                </div>
+            </button>
         </div>
       </header>
     </div>
