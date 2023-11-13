@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asterisk</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Asterisk</h1>
+    </header>
+
+    <aside class="sidebar">
+        <div class="logo">
+            <span class="material-icons | logo-icon">emergency</span>
+            <h2>Asterisk</h2>
+        </div>
+
+        <nav>
+            <ul>
+                <li>
+                    <a href="">
+                        <i class="material-icons">account_circle</i>
+                        <span class="icon-text">Account</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="">
+                        <i class="material-icons">space_dashboard</i>
+                        <span class="icon-text">Dashboard</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a class="settings-button" href="">
+                        <i class="material-icons">settings</i>
+                        <span class="icon-text">Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <section class="opaque-background">
+        <div class="settings-overlay">
+            <h2>Settings</h2>
+
+            <a href="">
+                <span class="material-icons">speaker</span>     
+                <span>Audio</span>
+            </a>
+
+            <a href="">
+                <span class="material-icons">videocam</span>
+                <span>Video</span>
+            </a>
+            
+            <a href="">
+                <span class="material-icons">tune</span>
+                <span>General</span>
+            </a>
+
+            <div class="exit-button">
+                <span class="material-icons">close</span>
+            </div>
+        </div>
+
+        <div class="form-overlay">
+            <h2>Enter Meeting Code</h2>
+            <div class="form-buttons">
+                <input class="form__input" type="text" name="join-conference" autofocus>
+                <a href="" class="join">
+                    <span>Join</span>
+                </a>
+                <a href="" class="back-button">
+                    <span>Back</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <main>
+        <section class="main-section">
+            <div class="controls-container">
+                <a class="join-button" href="">
+                    <span class="material-icons">groups</span>
+                    <p>Join Conference</p>
+                </a>
+
+                <a href="">
+                    <span class="material-icons">add</span>
+                    <p>Create Conference</p>
+                </a>
+            </div>
+        </section>
+
+        <section class="main-section">
+            <div class="feature-container">
+                <div class="feature-button">Feature 1</div>
+                <div class="feature-button">Feature 2</div>
+                <div class="feature-button">Feature 3</div>
+            </div>
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,243 @@
+:root {
+    --dark-red: rgb(113, 53, 54);
+    --light-red: rgb(175, 51, 51);
+    --white: #d2cccc;
+    --pinkish-white: rgb(222, 216, 216);
+    --grey: rgba(100, 100, 100, 0.52);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+body {
+    height: 100vh;
+    background-color: var(--white);
+    font-family: "Poppins";
+    font-size: 0.85rem;
+}
+
+header {
+    height: 20vh;
+    display: flex;
+    justify-content: center;
+    color: var(--light-red);
+    font-size: 2.5rem;
+    padding-top: 0.5rem;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: var(--pinkish-white);
+    height: 100%;
+    width: 4rem;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    transition: 0.5s;
+    overflow-x: hidden;
+}
+
+.logo {
+    position: absolute;
+    top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.7rem;
+}
+
+.logo-icon {
+    font-size: 50px;
+}
+
+.logo h2 {
+    display: inline;
+    font-size: 1.3rem;
+    color: var(--light-red)
+}
+
+.logo-icon, 
+.logo h1 {
+    color: var(--light-red);
+}
+
+.material-icons {
+    font-size: 45px;
+}
+
+nav ul {
+    padding-inline-start: 0;
+    list-style-type: none;
+}
+
+nav ul li {
+    padding: 0.7rem;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: var(--dark-red);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+nav ul li a:hover {
+    color: var(--light-red);
+}
+
+.opaque-background {
+    height: 100vh;
+    width: 100%;
+    background-color: var(--grey);
+}
+
+.opaque-background,
+.settings-overlay,
+.form-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    visibility: hidden;
+    opacity: 0;
+    transition: 0.5s;
+}
+
+.settings-overlay {
+    background-color: var(--white);
+    width: 45rem;
+    height: 30rem;
+    border-radius: 3%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.settings-overlay h2 {
+    padding: 2rem;
+    font-size: 2.75rem;
+    color: var(--light-red);
+}
+
+.settings-overlay a {
+    padding: 1.5rem;
+    width: 20%;
+    border-radius: 2%;
+    text-decoration: none;
+    color: var(--dark-red);
+    transition: 0.2s;
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+}
+
+.settings-overlay a:hover {
+    color: var(--light-red);
+}
+
+.exit-button {
+    position: absolute;
+    top: 0.75rem;
+    right: 1rem;
+    color: var(--grey);
+    transition: 0.3s;
+}
+
+.exit-button:hover {
+    cursor: pointer;
+    color: var(--light-red);
+}
+
+.form-overlay {
+    background-color: var(--white);
+    width: 20rem;
+    height: 16rem;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.form-overlay h2 {
+    font-size: 1.5rem;
+    color: var(--light-red);
+}
+
+.form-buttons {
+    display: flex;
+    gap: 0.625rem;
+}
+
+.form__input {
+    border-radius: calc(10px - 0.25rem);
+    padding: 0.25rem;
+    width: 8rem;
+    background-color: var(--white);
+    border-color: var(--grey);
+}
+
+.form-overlay a {
+    text-decoration: none;
+    color: var(--dark-red);
+    font-size: 1rem;
+}
+
+.form-overlay a:hover {
+    color: var(--light-red);
+}
+
+main {
+    height: 80vh;
+}
+
+.main-section {
+    height: 40vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.controls-container,
+.feature-container {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+.controls-container a {
+    text-decoration: none;
+    color: var(--dark-red);
+    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.controls-container a:hover {
+    color: var(--light-red);
+}
+
+.controls-container a span {
+    font-size: 9rem;
+}
+
+.feature-button {
+    background-color: var(--dark-red);
+    color: var(--white);
+    border-radius: 10%;
+    padding: 3rem;
+    transition: 0.2s;
+}
+
+.feature-button:hover {
+    cursor: pointer;
+    background-color: var(--light-red);
+}
