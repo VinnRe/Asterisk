@@ -36,65 +36,67 @@ export const HomePage = () => {
         }
       }, []); // Empty dependency array ensures this effect runs once after the initial render
     
-    return (
+      return (
         <div>
-        <header>
+          <header>
             <h1 className="header__name--large">Asterisk</h1>
-
+      
             <div className="card--icon-account">
-            <a className="button__anchor--icon-account" href="">
+              <a className="button__anchor--icon-account" href="">
                 <img className="img--icon-account" src={accountIcon} alt="Account Icon" />
                 <p>Account Name</p>
-            </a>
+              </a>
             </div>
-        </header>
-
-        <main>
+          </header>
+      
+          <main>
             <section className="section section--conference">
-            <div className="button--conference button--conference-join">
-                <Link to="/join"> {/* USE LINK COMPONENT FOR NAV  */}
-                    <img className="img--conference" src={joinIcon} alt="Join Icon" />
-                    <p>Join Conference</p>
+              <div className="button--conference button--conference-join">
+                <Link to="/join">
+                  <img className="img--conference" src={joinIcon} alt="Join Icon" />
+                  <p>Join Conference</p>
                 </Link>
-            </div>
-
-            <form className="form form--hidden" action="">
+              </div>
+      
+              <form className="form form--hidden" action="">
                 <label htmlFor="conference-join">Enter Meeting Code</label>
                 <input
-                className="form__input"
-                type="text"
-                name="conference-join"
-                id="join-conference"
-                placeholder="Code"
-                autoFocus
+                  className="form__input"
+                  type="text"
+                  name="conference-join"
+                  id="join-conference"
+                  placeholder="Code"
+                  autoFocus
                 />
-                <input className="form__submit" type="submit" value="Enter" /> // ADD TO SWITCH TO MEETING PAGE WITH THE LINK FOR THE PAGE
-                <button className="form-button--back">Back</button>
-            </form>
-
-            <div className="button--conference button--conference-create">
-                <Link to="/create"> {/* USE LINK COMPONENT FOR NAV  */}
-                    <img className="img--conference" src={addIcon} alt="Add Icon" />
-                    <p>Create Conference</p>
+                <div className="form__buttons">
+                  <input className="form__submit" type="submit" value="Enter" />
+                  <button className="form-button--back">Back</button>
+                </div>
+              </form>
+      
+              <div className="button--conference button--conference-create">
+                <Link to="/create">
+                  <img className="img--conference" src={addIcon} alt="Add Icon" />
+                  <p>Create Conference</p>
                 </Link>
-            </div>
+              </div>
             </section>
-
+      
             <section className="section section--features">
-            <button className="button--feature">
+              <button className="button--feature">
                 <p>Feature 1</p>
-            </button>
-
-            <button className="button--feature">
+              </button>
+      
+              <button className="button--feature">
                 <p>Feature 2</p>
-            </button>
-
-            <button className="button--feature">
+              </button>
+      
+              <button className="button--feature">
                 <p>Feature 3</p>
-            </button>
+              </button>
             </section>
-        </main>
+          </main>
         </div>
-    );
+      );      
 };
 

@@ -113,3 +113,27 @@
 .button--feature:active {
     transform: scale(0.9);
 }
+
+.button--conference {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background-color: #ffff;
+    border-radius: 1rem;
+}
+
+.button--conference a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    text-decoration: none;
+    color: inherit;
+}
+
+.img--conference {
+    width: 80px; 
+    height: 80px;
+}
+
