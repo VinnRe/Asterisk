@@ -91,112 +91,6 @@ nav ul li a:hover {
     color: var(--light-red);
 }
 
-.opaque-background {
-    height: 100vh;
-    width: 100%;
-    background-color: var(--grey);
-}
-
-.opaque-background,
-.dashboard-overlay,
-.account-overlay,
-.settings-overlay,
-.form-overlay {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    visibility: hidden;
-    opacity: 0;
-    transition: 0.5s;
-}
-
-.settings-overlay {
-    background-color: var(--white);
-    width: 45rem;
-    height: 30rem;
-    border-radius: 3%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.settings-overlay h2 {
-    padding: 2rem;
-    font-size: 2.75rem;
-    color: var(--light-red);
-}
-
-.settings-overlay a {
-    padding: 1.5rem;
-    width: 20%;
-    border-radius: 2%;
-    text-decoration: none;
-    color: var(--dark-red);
-    transition: 0.2s;
-    display: flex;
-    gap: 0.8rem;
-    align-items: center;
-}
-
-.settings-overlay a:hover {
-    color: var(--light-red);
-}
-
-.exit-button {
-    position: absolute;
-    top: 0.75rem;
-    right: 1rem;
-    color: var(--grey);
-    transition: 0.3s;
-}
-
-.exit-button:hover {
-    cursor: pointer;
-    color: var(--light-red);
-}
-
-.form-overlay {
-    background-color: var(--white);
-    width: 20rem;
-    height: 16rem;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 1.25rem;
-}
-
-.form-overlay h2 {
-    font-size: 1.5rem;
-    color: var(--light-red);
-}
-
-.form-buttons {
-    display: flex;
-    gap: 0.625rem;
-}
-
-.form__input {
-    border-radius: calc(10px - 0.25rem);
-    padding: 0.25rem;
-    width: 8rem;
-    background-color: var(--white);
-    border-color: var(--grey);
-}
-
-.form-overlay a {
-    text-decoration: none;
-    color: var(--dark-red);
-    font-size: 1rem;
-}
-
-.form-overlay a:hover {
-    color: var(--light-red);
-}
-
 main {
     height: 80vh;
 }
@@ -243,4 +137,147 @@ main {
 .feature-button:hover {
     cursor: pointer;
     background-color: var(--light-red);
+}
+
+.opaque-background {
+    height: 100vh;
+    width: 100%;
+    background-color: var(--grey);
+}
+
+.opaque-background,
+.dashboard-overlay,
+.account-overlay,
+.settings-overlay,
+.form-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    visibility: hidden;
+    opacity: 0;
+    transition: 0.5s;
+}
+
+.settings-overlay {
+    background-color: var(--white);
+    width: 45rem;
+    height: 30rem;
+    border-radius: 3%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.settings-overlay h2 {
+    padding: 2rem;
+    font-size: 2.75rem;
+    color: var(--light-red);
+}
+ 
+.settings-overlay a {
+    padding: 1.5rem;
+    width: 20%;
+    text-decoration: none;
+    color: var(--dark-red);
+    transition: 0.2s;
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+}
+
+.exit-button {
+    position: absolute;
+    top: 0.75rem;
+    right: 1rem;
+    color: var(--grey);
+    transition: 0.3s;
+}
+
+.exit-button:hover {
+    cursor: pointer;
+    color: var(--light-red);
+}
+
+.account-overlay {
+    background-color: var(--white);
+    width: 25rem;
+    height: 30rem;
+    border-radius: 5%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.account-overlay a {
+    padding: 0.5rem;
+    width: 40%;
+    text-decoration: none;
+    color: var(--dark-red);
+    display: flex;
+    align-items: center;
+    transition: 0.2s;
+    gap: 0.5rem;
+}
+
+.account-overlay a:hover,
+.settings-overlay a:hover {
+    color: var(--light-red);
+}
+
+.profile {
+    margin-bottom: 2.5rem;
+}
+
+.profile-icon {
+    font-size: 10rem;
+    color: var(--light-red);
+}
+
+.profile-name {
+    text-align: center;
+    font-size: 1.5rem;
+    color: var(--light-red);
+}
+
+.form-overlay {
+    background-color: var(--white);
+    width: 20rem;
+    height: 16rem;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.form-overlay h2 {
+    font-size: 1.5rem;
+    color: var(--light-red);
+}
+
+.form-buttons {
+    display: flex;
+    gap: 0.625rem;
+}
+
+.form__input {
+    border-radius: calc(10px - 0.25rem);
+    padding: 0.25rem;
+    width: 8rem;
+    background-color: var(--white);
+    border-color: var(--grey);
+}
+
+.form-overlay a {
+    text-decoration: none;
+    color: var(--dark-red);
+    font-size: 1rem;
+}
+
+.form-overlay a:hover {
+    color: var(--light-red);
 }

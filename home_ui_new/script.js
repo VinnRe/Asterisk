@@ -3,10 +3,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const opaqueBackground = document.querySelector(".opaque-background");
     const settingsButton = document.querySelector(".settings-button");
     const settingsOverlay = document.querySelector(".settings-overlay");
-    const exitButton = document.querySelector(".exit-button");
+    const settingsExitButton = document.querySelector(".settings-exit-button");
     const joinButton = document.querySelector(".join-button");
     const formOverlay = document.querySelector(".form-overlay");
     const backButton = document.querySelector(".back-button");
+    const accountButton = document.querySelector(".account-button");
+    const accountOverlay = document.querySelector(".account-overlay");
+    const accountExitButton = document.querySelector(".account-exit-button");
     
     function toggleSidebar(mouseEvent, width) {
         sidebar.addEventListener(mouseEvent , (event) => {
@@ -29,7 +32,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     toggleOverlay(settingsButton, settingsOverlay, "visible", "1");
-    toggleOverlay(exitButton, settingsOverlay, "hidden", "0");
+    toggleOverlay(settingsExitButton, settingsOverlay, "hidden", "0");
     toggleOverlay(joinButton, formOverlay, "visible", "1");
     toggleOverlay(backButton, formOverlay, "hidden", "0");
+    toggleOverlay(accountButton, accountOverlay, "visible", "1");
+    toggleOverlay(accountExitButton, accountOverlay, "hidden", "0");
 });
