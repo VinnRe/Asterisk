@@ -309,8 +309,11 @@ export const MeetingPage = () => {
       <body className='body--m'>
         <div className="container--m">
           <header className="meeting-header">
+            <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet' />
             <h1 className='h1--m'>Asterisk - Video Meeting App</h1>
-            <div id="video-container" className="video-container">
+          </header>
+        </div>
+        <div id="video-container" className="video-container">
               {/* Add video elements here */}
               <video ref={localVideoRef} autoPlay playsInline className="video-element"></video>
               <audio ref={localAudioRef} autoPlay playsInline className="audio-element"></audio>
@@ -371,8 +374,6 @@ export const MeetingPage = () => {
                     </div>
                 </button>
             </div>
-          </header>
-        </div>
       </body>
     </html>
   );
