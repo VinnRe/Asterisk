@@ -1,150 +1,280 @@
-.home-page {
+:root {
+    --dark-red: rgb(113, 53, 54);
+    --light-red: rgb(175, 51, 51);
+    --white: #d2cccc;
+    --pinkish-white: rgb(222, 216, 216);
+    --grey: rgba(100, 100, 100, 0.52);
+}
+
+.body--h {
     box-sizing: border-box;
     margin: 0;
-    background-color: #A78C9C;
     height: 100vh;
+    background-color: var(--white);
+    font-family: "Poppins";
+    font-size: 0.85rem;
 }
 
-.page-container {
-    display: flex;
-    flex-direction: column;
-}
-
-.header__name--large {
-    font-size: 6rem;
-    margin: 1.5rem 0 0 0;
-}
-
-.header__name--large,
-.button__anchor {
-    text-align: center;
-}
-
-.card--icon-account {
-    position: absolute;
-    top: 1em;
-    right: 2em;
-}
-
-.button__anchor--icon-account, 
-.button__anchor  {
-    text-decoration: none;
-    color: black;
-}
-
-.section {
+.header--h {
+    height: 20vh;
     display: flex;
     justify-content: center;
-    gap: 5rem;
+    color: var(--light-red);
+    font-size: 2.5rem;
+    padding-top: 0.5rem;
 }
 
-.section--conference {
-    margin: 5rem;
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: var(--pinkish-white);
+    height: 100%;
+    width: 2.8rem;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    transition: 0.5s;
+    overflow-x: hidden;
 }
 
-.card--icon-account,
-.img--icon-account, 
-.button--conference, 
-.img--conference {
-    height: 100px;
-    width: 100px;
+.logo {
+    position: absolute;
+    top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.7rem;
 }
 
-.card--icon-account:hover, 
-.button--conference:hover {
-    transform: scale(1.1);
+.logo-icon {
+    font-size: 50px;
 }
 
-.form {
+.logo h2 {
+    display: inline;
+    font-size: 1.3rem;
+    color: var(--light-red)
+}
+
+.logo-icon, 
+.logo h1 {
+    color: var(--light-red);
+}
+
+.material-icons {
+    font-size: 45px;
+}
+
+.nav--h ul {
+    padding-inline-start: 0;
+    list-style-type: none;
+}
+
+.nav--h ul li {
+    padding: 0.7rem;
+}
+
+.nav--h ul li a {
+    text-decoration: none;
+    color: var(--dark-red);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: 0.3s;
+}
+
+.nav--h ul li a:hover {
+    color: var(--light-red);
+}
+
+.main--h {
+    height: 80vh;
+}
+
+.main-section {
+    height: 40vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.controls-container,
+.feature-container {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+.controls-container a {
+    text-decoration: none;
+    color: var(--dark-red);
+    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.controls-container a:hover {
+    color: var(--light-red);
+}
+
+.controls-container a span {
+    font-size: 9rem;
+}
+
+.feature-button {
+    background-color: var(--dark-red);
+    color: var(--white);
+    border-radius: 10%;
     padding: 3rem;
-    border: 2.5px solid black;
-    border-radius: 10%;
-    width: 300px;
-}
-
-.form__input {
-    width: 100%;
-    margin: 1rem auto;
-    padding: 0.4rem;
-    border-radius: calc(10% - 3rem);
-}
-
-
-
-.form__submit:hover, 
-.form-button--back:hover {
-    text-decoration: underline;
-}
-
-.form--hidden {
-    display: none;
-}
-
-.form__submit, 
-.form-button--back {
-    background-color: white;
-    border: none;
-}
-
-.section--features {
-    margin: 8rem 0 0 0;
-}
-
-.button--feature {
-    padding: 2rem;
-    border-radius: 10%;
-    background-color: white;
-}
-
-.card--icon-account,
-.button--conference,
-.form__submit,
-.form-button--back,
-.button--feature {
     transition: 0.2s;
 }
 
-.button--feature:hover {
-    background-color: black;
-    color: white;
-}
-
-.form__submit:hover, 
-.form-button--back:hover,
-.button--feature:hover {
+.feature-button:hover {
     cursor: pointer;
+    background-color: var(--light-red);
 }
 
-.card--icon-account:active, 
-.button--conference:active, 
-.button--feature:active {
-    transform: scale(0.9);
+.opaque-background {
+    height: 100vh;
+    width: 100%;
+    background-color: var(--grey);
 }
 
-.button--conference {
+.opaque-background,
+.dashboard-overlay,
+.account-overlay,
+.settings-overlay,
+.form-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    visibility: hidden;
+    opacity: 0;
+    transition: 0.5s;
+}
+
+.settings-overlay {
+    background-color: var(--white);
+    width: 45rem;
+    height: 30rem;
+    border-radius: 3%;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
-    text-align: center;
-    background-color: #ffff;
-    border-radius: 1rem;
-    padding: 1rem;
 }
 
-.button--conference a {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+.settings-overlay h2 {
+    padding: 2rem;
+    font-size: 2.75rem;
+    color: var(--light-red);
+}
+ 
+.settings-overlay a {
+    padding: 1.5rem;
+    width: 20%;
     text-decoration: none;
-    color: inherit;
+    color: var(--dark-red);
+    transition: 0.2s;
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
 }
 
-.img--conference {
-    width: 80px; 
-    height: 80px;
+.exit-button {
+    position: absolute;
+    top: 0.75rem;
+    right: 1rem;
+    color: var(--grey);
+    transition: 0.3s;
 }
 
-.button--conference p {
-    margin-top: -0.3rem;
+.exit-button:hover {
+    cursor: pointer;
+    color: var(--light-red);
+}
+
+.account-overlay {
+    background-color: var(--white);
+    width: 25rem;
+    height: 30rem;
+    border-radius: 5%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.account-overlay a {
+    padding: 0.5rem;
+    width: 40%;
+    text-decoration: none;
+    color: var(--dark-red);
+    display: flex;
+    align-items: center;
+    transition: 0.2s;
+    gap: 0.5rem;
+}
+
+.account-overlay a:hover,
+.settings-overlay a:hover {
+    color: var(--light-red);
+}
+
+.profile {
+    margin-bottom: 2.5rem;
+}
+
+.profile-icon {
+    font-size: 10rem;
+    color: var(--light-red);
+}
+
+.profile-name {
+    text-align: center;
+    font-size: 1.5rem;
+    color: var(--light-red);
+}
+
+.form-overlay {
+    background-color: var(--white);
+    width: 20rem;
+    height: 16rem;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.form-overlay h2 {
+    font-size: 1.5rem;
+    color: var(--light-red);
+}
+
+.form-buttons {
+    display: flex;
+    gap: 0.625rem;
+}
+
+.form__input {
+    border-radius: calc(10px - 0.25rem);
+    padding: 0.25rem;
+    width: 8rem;
+    background-color: var(--white);
+    border-color: var(--grey);
+}
+
+.form-overlay a {
+    text-decoration: none;
+    color: var(--dark-red);
+    font-size: 1rem;
+}
+
+.form-overlay a:hover {
+    color: var(--light-red);
 }
