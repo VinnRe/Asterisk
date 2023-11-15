@@ -13,6 +13,30 @@
         <h1>Asterisk</h1>
     </header>
 
+    <main>
+        <section class="main-section">
+            <div class="controls-container">
+                <a class="join-button" href="">
+                    <span class="material-icons">groups</span>
+                    <p>Join Conference</p>
+                </a>
+
+                <a href="">
+                    <span class="material-icons">add</span>
+                    <p>Create Conference</p>
+                </a>
+            </div>
+        </section>
+
+        <section class="main-section">
+            <div class="feature-container">
+                <div class="feature-button">Feature 1</div>
+                <div class="feature-button">Feature 2</div>
+                <div class="feature-button">Feature 3</div>
+            </div>
+        </section>
+    </main>
+
     <aside class="sidebar">
         <div class="logo">
             <span class="material-icons | logo-icon">emergency</span>
@@ -22,19 +46,19 @@
         <nav>
             <ul>
                 <li>
+                    <a class="dashboard-button" href="">
+                        <i class="material-icons">space_dashboard</i>
+                        <span class="icon-text">Dashboard</span>
+                    </a>
+                </li>
+                
+                <li>
                     <a href="">
                         <i class="material-icons">account_circle</i>
                         <span class="icon-text">Account</span>
                     </a>
                 </li>
-
-                <li>
-                    <a href="">
-                        <i class="material-icons">space_dashboard</i>
-                        <span class="icon-text">Dashboard</span>
-                    </a>
-                </li>
-
+                
                 <li>
                     <a class="settings-button" href="">
                         <i class="material-icons">settings</i>
@@ -46,6 +70,14 @@
     </aside>
 
     <section class="opaque-background">
+        <div class="dashboard-overlay">
+            <h2>Dashboard</h2>
+        </div>
+
+        <div class="account-overlay">
+            <h2>Account</h2>
+        </div>
+
         <div class="settings-overlay">
             <h2>Settings</h2>
 
@@ -82,30 +114,6 @@
             </div>
         </div>
     </section>
-
-    <main>
-        <section class="main-section">
-            <div class="controls-container">
-                <a class="join-button" href="">
-                    <span class="material-icons">groups</span>
-                    <p>Join Conference</p>
-                </a>
-
-                <a href="">
-                    <span class="material-icons">add</span>
-                    <p>Create Conference</p>
-                </a>
-            </div>
-        </section>
-
-        <section class="main-section">
-            <div class="feature-container">
-                <div class="feature-button">Feature 1</div>
-                <div class="feature-button">Feature 2</div>
-                <div class="feature-button">Feature 3</div>
-            </div>
-        </section>
-    </main>
-    <script src="script.js"></script>
+    <script src="script.js"></script>   
 </body>
 </html>

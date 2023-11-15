@@ -84,6 +84,7 @@ nav ul li a {
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    transition: 0.3s;
 }
 
 nav ul li a:hover {
@@ -97,6 +98,8 @@ nav ul li a:hover {
 }
 
 .opaque-background,
+.dashboard-overlay,
+.account-overlay,
 .settings-overlay,
 .form-overlay {
     position: absolute;
