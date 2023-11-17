@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import '../../Styles/meet_styles.css';
 import * as meetIcons from './imports';
 import Clock from './clock';
+import { Link } from 'react-router-dom';
 
 export const MeetingPage = () => {
 
@@ -72,6 +73,31 @@ export const MeetingPage = () => {
     setScreenStatus("Share Screen");
     let screen_con = await document.getElementById("screenShare");
     screen_con.remove();
+  }
+
+  async function endCall() {
+    console.log("Ending call...");
+    ws.close();
+
+    if (localStream) {
+      console.log('Stopping local stream...');
+      const tracks = localStream.getTracks();
+      tracks.forEach((track) => {
+        console.log('Stopping track:', track);
+        track.stop();
+      });
+    }
+    
+
+    if (remoteStream) {
+      console.log('Stopping remote stream...');
+      remoteStream.getTracks().forEach((track) => {
+        console.log('Stopping track:', track);
+        track.stop();
+      });
+    }
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    console.log("Call Ended.");
   }
 
   async function toggleScreenShare() {
@@ -367,12 +393,15 @@ export const MeetingPage = () => {
                     <span>Open Chat</span>
                   </div>
                 </button>
-                <button className="toggle-button" onClick>
-                    <div className="button-content">
-                      <img src={meetIcons.endCallIcon} alt="callEndIcon" style={imageSize} />
-                      <span>End Call</span>
-                    </div>
-                </button>
+                <Link to="/">
+                  <button className="toggle-button" onClick={endCall}>
+                      <div className="button-content">
+                        <img src={meetIcons.endCallIcon} alt="callEndIcon" style={imageSize} />
+                        <span>End Call</span>
+                      </div>
+                  </button>
+                </Link>
+                
             </div>
       </body>
     </html>

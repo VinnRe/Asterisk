@@ -1,3 +1,11 @@
+:root {
+    --dark-red: rgb(113, 53, 54);
+    --light-red: rgb(175, 51, 51);
+    --white: #d2cccc;
+    --pinkish-white: rgb(222, 216, 216);
+    --grey: rgba(100, 100, 100, 0.52);
+}
+
 .body--m, .html--m {
 
     --color-primary: #F46566;
@@ -7,8 +15,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #A78C9C;
+    background-color: var(--white);
     background-size: cover;
+    font-family: "Poppins";
   }
 
 .body--m {
@@ -22,6 +31,7 @@
     top: 0;
     left: 0;
     margin: 10px;
+    color: var(--light-red);
 }
 
 .meeting-header {
@@ -59,7 +69,7 @@
 
 .clock-content {
     position: absolute;
-    left: 10px;
+    left: 20px;
     bottom: 10px;
 }
 
@@ -70,13 +80,13 @@
     width: 100px;
     white-space: nowrap;
     border-radius: 1rem;
-    background-color: var(--color-primary);
+    background-color: var(--light-red);
     border: 2px solid var(--color-primary-dark);
     transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .toggle-button:hover {
-    background-color: var(--color-primary-dark);
+    background-color: var(--dark-red);
     transform: scale(1.05);
 }
   
