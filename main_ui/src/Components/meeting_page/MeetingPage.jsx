@@ -451,7 +451,7 @@ export const MeetingPage = () => {
 
         console.log([track][0])
 
-        videoElement.srcObject = localStream;
+        videoElement.srcObject = new MediaStream([ track ]);
 
 
         // let the server know which consumerid to resume
