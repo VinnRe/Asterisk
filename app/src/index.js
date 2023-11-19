@@ -6,8 +6,6 @@ import cors from 'cors';
 import { Server } from 'socket.io';
 import * as socket from '../lib/socket.js';
 
-import WebSocket, { WebSocketServer } from 'ws';
-
 const privateKey = fs.readFileSync('./server/ssl/server.key', 'utf8');
 const certificate = fs.readFileSync('./server/ssl/server.crt', 'utf8');
 
