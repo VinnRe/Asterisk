@@ -1,10 +1,10 @@
 import os from 'os';
 
 const config = {
-	http: {
-		listenIp: '0.0.0.0',
-		listenPort: 8080
-	},
+	// http: {
+	// 	listenIp: '0.0.0.0',
+	// 	listenPort: 8080
+	// },
 
 	mediasoup: {
 		numOfWorkers: Object.keys(os.cpus()).length,
@@ -31,14 +31,20 @@ const config = {
 					channels: 2
 				},
 				{
+					// kind: 'video',
+					// mimeType: 'video/H264',
+					// clockRate: 90000,
+					// parameters: {
+					// 	"packetization-mode" : 1,
+				 //    	"profile-level-id" : "42e01f",
+				 //  	  	"level-asymmetry-allowed" : 1
+					// }
 					kind: 'video',
-					mimeType: 'video/H264',
-					clockRate: 90000,
-					parameters: {
-						"packetization-mode" : 1,
-				    	"profile-level-id" : "42e01f",
-				  	  	"level-asymmetry-allowed" : 1
-					}
+				    mimeType: 'video/VP8',
+				    clockRate: 90000,
+				    parameters: {
+				      'x-google-start-bitrate': 1000,
+				    },
 				},
 			]
 		},
@@ -50,7 +56,7 @@ const config = {
 				{
 					protocol: "udp", 
 					ip: '0.0.0.0',
-					announcedIp: '127.0.0.1' // replace by public IP address
+					announcedIp: '192.168.0.116' // replace by public IP address
 				}
 				// {
 				// 	// accept connection from anywhere

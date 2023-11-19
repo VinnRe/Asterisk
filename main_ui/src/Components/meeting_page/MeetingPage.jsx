@@ -9,7 +9,7 @@
 // yung btn na create conference need maggenerate ng random pathName
 // http://localhost:3000/room/{anyy} -- use this sa create conference
 
-// idk why hindi nagloload yung remote stream 
+// edit the config.js file   announcedIp: '192.168.0.116' // replace by public IP address
 
 
 
@@ -24,7 +24,7 @@ import { io } from "socket.io-client";
 
 
 export const MeetingPage = () => {
-  const userID = window.crypto.randomUUID();
+  // const userID = window.crypto.randomUUID();
 
   // create channel link "?room=asdfafafgbn"
   const roomName = window.location.pathname.split('/')[2];
@@ -52,6 +52,7 @@ export const MeetingPage = () => {
 
   let localStream;
   let device;
+  let rtpCapabilities
   let producerTransport;
   let consumerTransports = []
   let producer;
@@ -71,7 +72,7 @@ export const MeetingPage = () => {
       },
       {
         rid: 'r2',
-        maxBitrate: 900000,
+        maxBitrate: 300000,
         scalabilityMode: 'S1T3'
       }
     ], 
@@ -129,7 +130,7 @@ export const MeetingPage = () => {
         const userScreen = await navigator.mediaDevices.getDisplayMedia({
           cursor:true,
           video: true,
-          audio: true
+          audio: false
         })
 
         await setScreenShareStream(userScreen);
@@ -191,8 +192,6 @@ export const MeetingPage = () => {
     }
 
     const socket = io('https://127.0.0.1:8000/mediasoup');
-
-    socket.emit("roomName", (roomName));
     
     function connectSocket() {
       socket.on('connect', () => {
@@ -200,8 +199,8 @@ export const MeetingPage = () => {
 
         // send yung roomName sa server-side
       })
-      socket.on('connection-success', ({ socketId, existsProducer}) => {
-        console.log(socketId, existsProducer);
+      socket.on('connection-success', ({ socketId }) => {
+        console.log(socketId);
         startStream();
       });
     }
@@ -246,13 +245,13 @@ export const MeetingPage = () => {
       socket.emit('joinRoom', { roomName }, (data) => {
         // get the router rtp capability
         console.log("Router RTP Capabilities", data.rtpCapabilities)
-
-        createDevice(data.rtpCapabilities)
+        rtpCapabilities = data.rtpCapabilities;
+        createDevice()
       })
     }
 
 
-    async function createDevice(rtpCapabilities) {
+    async function createDevice() {
       try {
         device = new mediasoupClient.Device()
 
@@ -291,7 +290,7 @@ export const MeetingPage = () => {
 
     function createSendTransport() {
       //  when we join, we join as a producer
-      socket.emit('createWebrtcTransport', { consumer:false }, ({ params }) => {
+      socket.emit('createWebRtcTransport', { consumer:false }, ({ params }) => {
       
       // get producers transport parameters from the server side
         if (params.error) {
@@ -330,6 +329,7 @@ export const MeetingPage = () => {
             }, ({ serverProducerId, producerExist }) => {
               // server will let us know if there's other producer
               // Tell the transport that parameters were transmitted and produced
+              callback({ serverProducerId })
               
               // if producer exist, join the room
               if (producerExist) {
@@ -337,7 +337,6 @@ export const MeetingPage = () => {
               }
 
 
-              callback({ serverProducerId })
             })
           } catch (error) {
             errback(error);
@@ -367,10 +366,13 @@ export const MeetingPage = () => {
     }
 
     async function createNewConsumerTransport(remoteProducerId) {
-      console.log("NEW USER JUST JOINED");
+      // console.log("NEW USER JUST JOINED");
+
+      //     if (consumingTransports.includes(remoteProducerId)) return;
+      // consumingTransports.push(remoteProducerId);
 
 
-      await socket.emit('createWebrtcTransport', { consumer: true }, ({ params }) => {
+      await socket.emit('createWebRtcTransport', { consumer: true }, ({ params }) => {
         if (params.error) {
           console.log("consumer transport create error", params.error);
           return;
@@ -379,8 +381,15 @@ export const MeetingPage = () => {
 
         let consumerTransport;
 
-        //  create the recv transport
-        consumerTransport = device.createRecvTransport(params);
+        try {
+
+          //  create the recv transport
+          consumerTransport = device.createRecvTransport(params);
+        } catch (error) {
+          console.log(error)
+          return
+        }
+
 
         consumerTransport.on('connect', async ({ dtlsParameters }, callback, errback) => {
           try {
@@ -442,8 +451,8 @@ export const MeetingPage = () => {
         let vid_con = document.getElementById("video-container");
         const videoElement = document.createElement('video');
         videoElement.setAttribute('id', remoteProducerId);
-        videoElement.setAttribute('playsInline', 'playsInline');
-        videoElement.setAttribute('autoPlay', "autoPlay");
+        videoElement.setAttribute('playsInline', true);
+        videoElement.setAttribute('autoPlay', true);
         videoElement.className = "video-element";
         vid_con.appendChild(videoElement);
         
@@ -451,11 +460,13 @@ export const MeetingPage = () => {
 
         console.log([track][0])
 
-        videoElement.srcObject = new MediaStream([ track ]);
 
+        videoElement.srcObject = new MediaStream([ track ]);
 
         // let the server know which consumerid to resume
         socket.emit('consumerResume', { serverConsumerId: params.serverConsumerId})
+
+
       })
     }
 
@@ -471,7 +482,7 @@ export const MeetingPage = () => {
       producerToClose.consumer.close()
 
       // remove that consumer transport in the consumerTransports array
-      consumerTransports = consumerTransports.filter((transportData) => 
+      consumerTransports = consumerTransports.filter(transportData => 
         transportData.producerId !== remoteProducerId
       )
 
