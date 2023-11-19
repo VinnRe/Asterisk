@@ -75,7 +75,7 @@ export const HomePage = () => {
               </form>
       
               <div className="button--conference button--conference-create">
-                <Link to="/create">
+                <Link to="/room">
                   <img className="img--conference" src={addIcon} alt="Add Icon" />
                   <p>Create Conference</p>
                 </Link>
