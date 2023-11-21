@@ -25,23 +25,27 @@ async function ioConnection(io) {
 	const connections = io.of('/mediasoup');
 
 	async function createWorker() {
-		worker = await mediasoup.createWorker({
-			logLevel: config.mediasoup.worker.logLevel,
-			logTags: config.mediasoup.worker.logTags,
-			rtcMinPort: config.mediasoup.worker.rtcMinPort,
-			rtcMaxPort: config.mediasoup.worker.rtcMaxPort
-		});
+		try {		
+			worker = await mediasoup.createWorker({
+				logLevel: config.mediasoup.worker.logLevel,
+				logTags: config.mediasoup.worker.logTags,
+				rtcMinPort: config.mediasoup.worker.rtcMinPort,
+				rtcMaxPort: config.mediasoup.worker.rtcMaxPort
+			});
 
-		console.log(`Worker id: ${worker.pid}`);
+			console.log(`Worker id: ${worker.pid}`);
 
-		worker.on('died', () => {
-			console.error(`mediasoup worker died, exiting in 2 seconds... ${worker.pid}`);
-			setTimeout( () => {
-				process.exit(1);
-			}, 2000);
-		});
+			worker.on('died', () => {
+				console.error(`mediasoup worker died, exiting in 2 seconds... ${worker.pid}`);
+				setTimeout( () => {
+					process.exit(1);
+				}, 2000);
+			});
 
-		return worker
+			return worker
+		} catch (error) {
+			console.log('Worker Error: ', error);
+		}
 	}
 
 	worker = createWorker();
@@ -179,7 +183,7 @@ async function ioConnection(io) {
 
 
 		socket.on('transportConnect', ({ dtlsParameters }) => {
-			console.log("DTLS Parameters: ", { dtlsParameters });
+			// console.log("DTLS Parameters: ", { dtlsParameters });
 
 			getTransport(socket.id).connect({ dtlsParameters })
 		})
@@ -232,7 +236,7 @@ async function ioConnection(io) {
 		}
 
 		socket.on('transportProduce', async ({ kind, rtpParameters, appData }, callback) => {
-			console.log("rtp parametersssss", rtpParameters)
+			// console.log("rtp parametersssss", rtpParameters)
 			const producer = await getTransport(socket.id).produce({ 
 				kind,
 				rtpParameters,
