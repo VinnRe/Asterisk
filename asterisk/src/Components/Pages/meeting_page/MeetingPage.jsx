@@ -1,15 +1,34 @@
+// move other functions to join Conference jsx
+// matitira here is yung functions needed sa pagcreate lang ng new room
+
+
+// run index.js
+// /app/src/npm run start:dev
+
+// create conference
+// yung btn na create conference need maggenerate ng random pathName
+// http://localhost:3000/room/{anyy} -- use this sa create conference
+
+// edit the config.js file   announcedIp: '192.168.0.116' // replace by public IP address
+
+
 import React, { useEffect, useState, useRef } from 'react';
 import '../../Styles/meet_styles.css';
 import * as meetIcons from './imports';
 import Clock from './clock';
 import { Link } from 'react-router-dom';
+import * as mediasoupClient from "mediasoup-client";
+import { io } from "socket.io-client";
+import { resizeVideoElements, createVideoElement } from './videoFunctions';
 
 export const MeetingPage = () => {
 
-  const userID = window.crypto.randomUUID();
+  // const userID = window.crypto.randomUUID();
 
   // create channel link "?room=asdfafafgbn"
-  const ws = new WebSocket(`ws://localhost:8000/ws/${userID}`)
+  const roomName = window.location.pathname.split('/')[2];
+
+  console.log(roomName);
 
   // free stun server -- from google
   const servers = {
@@ -31,8 +50,35 @@ export const MeetingPage = () => {
   const [screenShareStream, setScreenShareStream] = useState(null);
 
   let localStream;
-  let remoteStream;
-  let pc;
+  let device;
+  let rtpCapabilities
+  let producerTransport;
+  let consumerTransports = []
+  let producer;
+  let consumer;
+  let isProducer = false
+  let params = {
+    encoding: [
+      {
+        rid: 'r0',
+        maxBitrate: 100000,
+        scalabilityMode: 'S1T3'
+      },
+      {
+        rid: 'r1',
+        maxBitrate: 300000,
+        scalabilityMode: 'S1T3'
+      },
+      {
+        rid: 'r2',
+        maxBitrate: 300000,
+        scalabilityMode: 'S1T3'
+      }
+    ], 
+    codecOptions: {
+      videoGoogleStartBitrate : 1000
+    }
+  };
 
   // Function to toggle the camera stream
   function toggleCamera() {
@@ -77,7 +123,6 @@ export const MeetingPage = () => {
 
   async function endCall() {
     console.log("Ending call...");
-    ws.close();
 
     if (localStream) {
       console.log('Stopping local stream...');
@@ -89,13 +134,13 @@ export const MeetingPage = () => {
     }
     
 
-    if (remoteStream) {
-      console.log('Stopping remote stream...');
-      remoteStream.getTracks().forEach((track) => {
-        console.log('Stopping track:', track);
-        track.stop();
-      });
-    }
+    // if (remoteStream) {
+    //   console.log('Stopping remote stream...');
+    //   remoteStream.getTracks().forEach((track) => {
+    //     console.log('Stopping track:', track);
+    //     track.stop();
+    //   });
+    // }
     await new Promise(resolve => setTimeout(resolve, 1000));
     console.log("Call Ended.");
   }
@@ -107,7 +152,7 @@ export const MeetingPage = () => {
         const userScreen = await navigator.mediaDevices.getDisplayMedia({
           cursor:true,
           video: true,
-          audio: true
+          audio: false
         })
 
         await setScreenShareStream(userScreen);
@@ -142,36 +187,19 @@ export const MeetingPage = () => {
 
 
   useEffect(() => {
+    const socket = io('https://127.0.0.1:8000/mediasoup');
+    
+    function connectSocket() {
+      socket.on('connect', () => {
+        console.log('Connected!');
 
-    function resizeVideoElements(videoRef, audioRef) {
-      if (videoRef.current && audioRef.current) {
-        const videoContainerWidth = videoRef.current.offsetWidth;
-        const videoContainerHeight = videoRef.current.offsetHeight;
-        const aspectRatio = 4 / 3; // You can adjust this based on your desired aspect ratio
-
-        // Calculate the width and height for the video elements
-        let videoWidth = videoContainerWidth;
-        let videoHeight = videoContainerWidth / aspectRatio;
-
-        // Check if the calculated video height exceeds the container height
-        if (videoHeight > videoContainerHeight) {
-            videoHeight = videoContainerHeight;
-            videoWidth = videoContainerHeight * aspectRatio;
-        }
-
-        // Set the width and height for video elements
-        videoRef.current.style.width = `${videoWidth}px`;
-        videoRef.current.style.height = `${videoHeight}px`;
-        audioRef.current.style.width = `${videoWidth}px`;
-        audioRef.current.style.height = `${videoHeight}px`;
-      }
+        // send yung roomName sa server-side
+      })
+      socket.on('connection-success', ({ socketId }) => {
+        console.log(socketId);
+        startStream();
+      });
     }
-
-    // Call the resize function when the window is resized
-    window.addEventListener('resize', resizeVideoElements);
-
-    // Call the resize function on initial render
-    resizeVideoElements(localVideoRef, localAudioRef);
 
 
     async function startStream() {
@@ -184,6 +212,8 @@ export const MeetingPage = () => {
 
         setStream(localStream);
 
+        console.log(localStream);
+
         // Attach video localStream to the video element
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = localStream;
@@ -194,134 +224,281 @@ export const MeetingPage = () => {
           localAudioRef.current.srcObject = localStream;
         }
 
-        ws.onopen = function(event) {
-          console.log("Connection is open");
-          console.log(userID, "has arrived!");
-
-          ws.send(JSON.stringify({"userID":userID}));
+        const track = localStream.getVideoTracks()[0];
+        params = {
+          track,
+          ...params
         }
 
-        ws.onclose = function(event) {
-          console.log("Connection is closed");
-        }
+        joinRoom();
 
-        ws.onmessage = function(event) {
-
-          let obj = JSON.parse(event.data);
-
-          if (obj.type) {
-            if (obj.type === "offer") {
-              console.log("received offer!");
-              createAnswer(userID, obj.offer);
-            } else if (obj.type === "answer") {
-              console.log("received answer!");
-              addAnswer(obj.answer);
-            } else if (obj.type === "candidate") {
-              console.log("received candidate!");
-              if (pc) {
-                pc.addIceCandidate(obj.candidate)
-              }
-            }
-          } else {
-            // another user has joined!!!
-            createOffer(userID);
-            console.log(obj.userID, "has arrived!");
-          }
-        }
-
-        // ws.onclose
 
       } catch (error) {
         console.error('Error accessing media devices: ', error);
       }
     }
 
-    async function createPeerConnection(userID) {
-      pc = new RTCPeerConnection(servers);
+    function joinRoom() {
+      socket.emit('joinRoom', { roomName }, (data) => {
+        // get the router rtp capability
+        console.log("Router RTP Capabilities", data.rtpCapabilities)
+        rtpCapabilities = data.rtpCapabilities;
+        createDevice()
+      })
+    }
 
-      remoteStream = new MediaStream();
-      remoteVideoRef.current.srcObject = remoteStream;
-      remoteAudioRef.current.srcObject = remoteStream;
 
-      resizeVideoElements(remoteVideoRef, remoteAudioRef);
+    async function createDevice() {
+      try {
+        device = new mediasoupClient.Device()
 
+        await device.load({
+          routerRtpCapabilities: rtpCapabilities
+        })
 
-      if (!localStream) {
-        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        console.log("Device RTP Capabilities: ", device.rtpCapabilities);
 
-        // Attach video localStream to the video element
-        if (localVideoRef.current) {
-          localVideoRef.current.srcObject = localStream;
-        }
+        // everyone is both producer and consumer
+        createSendTransport();
 
-        // Attach audio localStream to the audio element
-        if (localAudioRef.current) {
-          localAudioRef.current.srcObject = localStream;
+      } catch (error) {
+        console.log(`Error: ${error}`);
+
+        if (error.name === 'UnsupportedError') {
+          console.warn('browser not supported');
         }
       }
+    }
 
-      localStream.getTracks().forEach((track) => {
-        pc.addTrack(track, localStream)
+    // server informs the client that a new producer (user) just joined
+    socket.on('newProducer', ({ producerId }) => {
+      createNewConsumerTransport(producerId);
+    })
+
+    // ask the server to get the producer's ids
+    function getProducers() {
+      socket.emit('getProducers', remoteProducersIds => {
+        //  for each producer create consumer
+        remoteProducersIds.forEach(remoteProducerId => {
+          createNewConsumerTransport(remoteProducerId);
+        })
+      })
+    }
+
+    function createSendTransport() {
+      //  when we join, we join as a producer
+      socket.emit('createWebRtcTransport', { consumer:false }, ({ params }) => {
+      
+      // get producers transport parameters from the server side
+        if (params.error) {
+          console.log("producer transport create error", params.error);
+          return;
+        }
+        console.log(params);
+
+        // creae new webrtc transport to send media
+        producerTransport = device.createSendTransport(params);
+
+        producerTransport.on('connect', async ({ dtlsParameters }, callback, errback) => {
+          try {
+            // send local DTLS parameters to the server side transport
+            await socket.emit('transportConnect', {
+              dtlsParameters: dtlsParameters
+            })
+
+            // Tell the transport that parameters were transmitted
+            callback();
+
+          } catch (error) {
+            errback(error);
+          }
+        })
+
+        producerTransport.on('produce', async (parameters, callback, errback) => {
+          console.log(parameters);
+
+          try {
+            // tell the server to create a Producer
+            await socket.emit('transportProduce', {
+              kind: parameters.kind,
+              rtpParameters: parameters.rtpParameters,
+              appData: parameters.appData
+            }, ({ serverProducerId, producerExist }) => {
+              // server will let us know if there's other producer
+              // Tell the transport that parameters were transmitted and produced
+              callback({ serverProducerId })
+              
+              // if producer exist, join the room
+              if (producerExist) {
+                getProducers();
+              }
+
+
+            })
+          } catch (error) {
+            errback(error);
+          }
+
+        })
+
+        connectSendTransport();
       })
 
-      pc.ontrack = (event) => {
-        event.streams[0].getTracks().forEach((track) => {
-          remoteStream.addTrack(track)
-        })
-      }
+    }
 
-      pc.onicecandidate = async (event) => {
-        if (event.candidate) {
-          // console.log(event.candidate);
-          ws.send(JSON.stringify({
-            "type":"candidate", 
-            "candidate":event.candidate
-          }))
+    async function connectSendTransport() {
+      producer = await producerTransport.produce(params)
+
+      producer.on('trackended', () => {
+        console.log('track ended');
+
+        // close video track
+      })
+
+      producer.on('transportclose', () => {
+        console.log('transport ended');
+
+        // close video track
+      })
+    }
+
+    async function createNewConsumerTransport(remoteProducerId) {
+      // console.log("NEW USER JUST JOINED");
+
+      //     if (consumingTransports.includes(remoteProducerId)) return;
+      // consumingTransports.push(remoteProducerId);
+
+
+      await socket.emit('createWebRtcTransport', { consumer: true }, ({ params }) => {
+        if (params.error) {
+          console.log("consumer transport create error", params.error);
+          return;
         }
-      }
+        console.log(params);
+
+        let consumerTransport;
+
+        try {
+
+          //  create the recv transport
+          consumerTransport = device.createRecvTransport(params);
+        } catch (error) {
+          console.log(error)
+          return
+        }
+
+
+        consumerTransport.on('connect', async ({ dtlsParameters }, callback, errback) => {
+          try {
+            // send local DTLS parameters to the server side transport
+            await socket.emit('transportRecvConnect', {
+              dtlsParameters: dtlsParameters,
+              serverConsumerTransportId: params.id
+            })
+
+            // Tell the transport that parameters were transmitted
+            callback();
+          } catch (error) {
+            errback(error);
+          }
+        })
+        // params.id is the server side consumer transport id
+        connectRecvTransport(consumerTransport, remoteProducerId, params.id);
+      });
     }
 
+    async function connectRecvTransport(consumerTransport, remoteProducerId, serverConsumerTransportId) {
+      //  tell the server to create a consumer based on the rtp capabilities
+      //  if the router can consume, server side will send back params
+      await socket.emit('consume', {
+        rtpCapabilities: device.rtpCapabilities,
+        remoteProducerId,
+        serverConsumerTransportId
+      }, async ({ params }) => {
+        if (params.error) {
+          console.log("Cannot Consumer")
+          return
+        }
 
-    async function createOffer(userID) {
+        console.log(params)
 
-      await createPeerConnection(userID);
+        // consume with the local consumer transport which creates a consumer
 
-      const offer = await pc.createOffer();
-      await pc.setLocalDescription(offer);
+        const consumer = await consumerTransport.consume({
+          id: params.id,
+          producerId: params.producerId,
+          kind: params.kind,
+          rtpParameters: params.rtpParameters
+        })
+
+        consumerTransports = [
+          ...consumerTransports,
+          {
+            consumerTransport,
+            serverConsumerTransportId: params.id,
+            producerId: remoteProducerId,
+            consumer
+          }
+        ]
+
+        // get audio/video track
+        // create a new div element for the new consumer media
+        // append sa video-container
+        // console.log('here')
+        let vid_con = document.getElementById("video-container");
+        const videoElement = document.createElement('video');
+        videoElement.setAttribute('id', remoteProducerId);
+        videoElement.setAttribute('playsInline', true);
+        videoElement.setAttribute('autoPlay', true);
+        videoElement.className = "video-element";
+        vid_con.appendChild(videoElement);
+        
+        const { track } = consumer
+
+        console.log([track][0])
 
 
-      // send the offer to peer (offer, userID)
-      ws.send(JSON.stringify({
-        "type":"offer", 
-        "offer":offer,
-        "userID": userID
-      }))
+        videoElement.srcObject = new MediaStream([ track ]);
+
+        // let the server know which consumerid to resume
+        socket.emit('consumerResume', { serverConsumerId: params.serverConsumerId})
+
+
+      })
     }
 
-    async function createAnswer(userID, offer) {
-      await createPeerConnection(userID);
+    socket.on('producerClosed', ({ remoteProducerId }) => {
+      // server will let us know when a user left
+      // filter the remoteProducerId in thconsumertransport array 
 
-      await pc.setRemoteDescription(offer);
+      const producerToClose = consumerTransports.find((transportData) => 
+        transportData.producerId === remoteProducerId
+      )
 
-      let answer = await pc.createAnswer();
-      await pc.setLocalDescription(answer);
+      producerToClose.consumerTransport.close()
+      producerToClose.consumer.close()
 
-      // send back the answer to other peer (answer, userID)
-      ws.send(JSON.stringify({
-        "type":"answer",
-        "answer":answer,
-        "userID":userID
-      }))
-    }
+      // remove that consumer transport in the consumerTransports array
+      consumerTransports = consumerTransports.filter(transportData => 
+        transportData.producerId !== remoteProducerId
+      )
 
-    async function addAnswer(answer) {
-      if (!pc.currentRemoteDescription) {
-        pc.setRemoteDescription(answer)
-      }
-    }
+      // remove the video element
+      let vid_con = document.getElementById("video-container");
+      vid_con.removeChild(document.getElementById(remoteProducerId))
+    })
 
 
-    startStream();
+
+    // Call the resize function when the window is resized
+    const handleResize = () => resizeVideoElements(localVideoRef, localAudioRef);
+    window.addEventListener('resize', handleResize);
+
+    // Call the resize function on initial render
+    resizeVideoElements(localVideoRef, localAudioRef);
+
+
+    connectSocket();
 
     // Cleanup the event listener when the component is unmounted
     return () => {

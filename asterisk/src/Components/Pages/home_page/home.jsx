@@ -67,7 +67,7 @@ return (
                           </a>
 
                           <a href="">
-                            <Link to="/create">
+                            <Link to="/room">
                               <span className="material-icons">add</span>
                               <p>Create Conference</p>
                             </Link>
