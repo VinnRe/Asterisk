@@ -12,9 +12,6 @@
 // edit the config.js file   announcedIp: '192.168.0.116' // replace by public IP address
 
 
-
-
-
 import React, { useEffect, useState, useRef } from 'react';
 import './styles.css';
 import * as meetIcons from './imports';
@@ -49,13 +46,16 @@ export const MeetingPage = () => {
   const [micStatus, setMicStatus] = useState('Mute Mic');
   const [screenStatus, setScreenStatus] = useState('Share Screen');
   const [screenShareStream, setScreenShareStream] = useState(null);
+  // const [endCall, setEndCall] = useState(false);
 
   let localStream;
   let device;
   let rtpCapabilities
   let producerTransport;
   let consumerTransports = []
-  let producer;
+  let audioProducer
+  let videoProducer
+  let screenshareProducer
   let consumer;
   let isProducer = false
   let params = {
@@ -80,6 +80,12 @@ export const MeetingPage = () => {
       videoGoogleStartBitrate : 1000
     }
   };
+
+  let audioParams
+  let screenshareAudParams
+  let videoParams = { params }
+  let screenshareVidParams = { params }
+  let consumingTransports = []
 
 
   // Function to toggle the camera stream
@@ -119,18 +125,19 @@ export const MeetingPage = () => {
   async function endStream() {
     setScreenShareStream(null);
     setScreenStatus("Share Screen");
-    let screen_con = await document.getElementById("screenShare");
-    screen_con.remove();
+    let screenVidCon = await document.getElementById("screenVidShare");
+    let screenAudCon = await document.getElementById("screenAudShare");
+    screenVidCon.remove();
+    screenAudCon.remove();
   }
 
   async function toggleScreenShare() {
-    // paresizee nalang tenks
     try {
       if (screenShareStream == null) {
         const userScreen = await navigator.mediaDevices.getDisplayMedia({
           cursor:true,
           video: true,
-          audio: false
+          audio: true
         })
 
         await setScreenShareStream(userScreen);
@@ -138,12 +145,36 @@ export const MeetingPage = () => {
 
         let vid_con = document.getElementById("video-container");
         let screen_vid_con = document.createElement("video");
-        screen_vid_con.setAttribute('id', 'screenShare');
+        let screen_aud_con = document.createElement("audio");
+
+        screen_vid_con.setAttribute('id', 'screenVidShare');
+        screen_aud_con.setAttribute('id', 'screenAudShare');
+
         screen_vid_con.setAttribute('playsInline', 'playsInline');
         screen_vid_con.setAttribute('autoPlay', "autoPlay");
         screen_vid_con.className = "video-element";
         screen_vid_con.srcObject = userScreen;
+
         vid_con.appendChild(screen_vid_con);
+        vid_con.appendChild(screen_aud_con);
+
+        const cur_screen_vid_con = {current: screen_vid_con}
+        const cur_screen_aud_con = {current: screen_aud_con}
+
+        resizeVideoElements(cur_screen_vid_con);
+        resizeVideoElements(cur_screen_aud_con)
+
+        screenshareVidParams = {
+          track: userScreen.getAudioTracks()[0],
+          ...screenshareVidParams
+        }
+
+        screenshareAudParams = {
+          track: userScreen.getVideoTracks()[0],
+          ...screenshareAudParams
+        }
+
+      
       } else {
         var tracks = await screenShareStream.getVideoTracks();
         for (var i = 0; i < tracks.length; i++) {
@@ -157,39 +188,41 @@ export const MeetingPage = () => {
     }
   }
 
-  if (screenShareStream != null) {
+  if (screenShareStream != null) {  // screenshare on
     screenShareStream.getVideoTracks()[0].addEventListener('ended', async () => {
       endStream();  
     });
   }
 
+  function endCall() {
+    window.location.replace("http://localhost:3000");
+  }
+
+  function resizeVideoElements(videoRef) {
+    if (videoRef.current) {
+      const videoContainerWidth = videoRef.current.offsetWidth;
+      const videoContainerHeight = videoRef.current.offsetHeight;
+      const aspectRatio = 4 / 3; // You can adjust this based on your desired aspect ratio
+
+      // Calculate the width and height for the video elements
+      let videoWidth = videoContainerWidth;
+      let videoHeight = videoContainerWidth / aspectRatio;
+
+      // Check if the calculated video height exceeds the container height
+      if (videoHeight > videoContainerHeight) {
+          videoHeight = videoContainerHeight;
+          videoWidth = videoContainerHeight * aspectRatio;
+      }
+
+      // Set the width and height for video elements
+      videoRef.current.style.width = `${videoWidth}px`;
+      videoRef.current.style.height = `${videoHeight}px`;
+    }
+  }
 
 
   useEffect(() => {
 
-    function resizeVideoElements(videoRef, audioRef) {
-      if (videoRef.current && audioRef.current) {
-        const videoContainerWidth = videoRef.current.offsetWidth;
-        const videoContainerHeight = videoRef.current.offsetHeight;
-        const aspectRatio = 4 / 3; // You can adjust this based on your desired aspect ratio
-
-        // Calculate the width and height for the video elements
-        let videoWidth = videoContainerWidth;
-        let videoHeight = videoContainerWidth / aspectRatio;
-
-        // Check if the calculated video height exceeds the container height
-        if (videoHeight > videoContainerHeight) {
-            videoHeight = videoContainerHeight;
-            videoWidth = videoContainerHeight * aspectRatio;
-        }
-
-        // Set the width and height for video elements
-        videoRef.current.style.width = `${videoWidth}px`;
-        videoRef.current.style.height = `${videoHeight}px`;
-        audioRef.current.style.width = `${videoWidth}px`;
-        audioRef.current.style.height = `${videoHeight}px`;
-      }
-    }
 
     const socket = io('https://127.0.0.1:8000/mediasoup');
     
@@ -209,13 +242,12 @@ export const MeetingPage = () => {
       try {
         localStream = await navigator.mediaDevices.getUserMedia({
           video: true, 
-          audio: true,
-          echoCancellation: true
+          audio: true
         });
+
 
         setStream(localStream);
 
-        console.log(localStream);
 
         // Attach video localStream to the video element
         if (localVideoRef.current) {
@@ -227,11 +259,16 @@ export const MeetingPage = () => {
           localAudioRef.current.srcObject = localStream;
         }
 
-        const track = localStream.getVideoTracks()[0];
-        params = {
-          track,
-          ...params
+        videoParams = {
+          track: localStream.getVideoTracks()[0],
+          ...videoParams
         }
+
+        audioParams = {
+          track: localStream.getAudioTracks()[0],
+          ...audioParams
+        }
+
 
         joinRoom();
 
@@ -297,7 +334,7 @@ export const MeetingPage = () => {
           console.log("producer transport create error", params.error);
           return;
         }
-        console.log(params);
+        // console.log(params);
 
         // creae new webrtc transport to send media
         producerTransport = device.createSendTransport(params);
@@ -318,7 +355,7 @@ export const MeetingPage = () => {
         })
 
         producerTransport.on('produce', async (parameters, callback, errback) => {
-          console.log(parameters);
+          // console.log(parameters);
 
           try {
             // tell the server to create a Producer
@@ -350,16 +387,36 @@ export const MeetingPage = () => {
     }
 
     async function connectSendTransport() {
-      producer = await producerTransport.produce(params)
 
-      producer.on('trackended', () => {
-        console.log('track ended');
+      audioProducer = await producerTransport.produce(audioParams)
+      videoProducer = await producerTransport.produce(videoParams)
+
+      // console.log(screenShareStream)
+      // if (screenShareStream == null) {  // screenshare on
+      //   console.log('hehe')
+      // }
+      // screenshareProducer = await producerTransport.produce()
+
+      audioProducer.on('trackended', () => {
+        console.log('audio track ended')
+
+        // close audio track
+      })
+
+      audioProducer.on('transportclose', () => {
+        console.log('audio transport ended')
+
+        // close audio track
+      })
+
+      videoProducer.on('trackended', () => {
+        console.log('video track ended')
 
         // close video track
       })
 
-      producer.on('transportclose', () => {
-        console.log('transport ended');
+      videoProducer.on('transportclose', () => {
+        console.log('video trans ended')
 
         // close video track
       })
@@ -368,8 +425,10 @@ export const MeetingPage = () => {
     async function createNewConsumerTransport(remoteProducerId) {
       // console.log("NEW USER JUST JOINED");
 
-      //     if (consumingTransports.includes(remoteProducerId)) return;
-      // consumingTransports.push(remoteProducerId);
+      if (consumingTransports.includes(remoteProducerId)) {
+        return;
+      }
+      consumingTransports.push(remoteProducerId);
 
 
       await socket.emit('createWebRtcTransport', { consumer: true }, ({ params }) => {
@@ -377,7 +436,7 @@ export const MeetingPage = () => {
           console.log("consumer transport create error", params.error);
           return;
         }
-        console.log(params);
+        // console.log(params);
 
         let consumerTransport;
 
@@ -423,7 +482,7 @@ export const MeetingPage = () => {
           return
         }
 
-        console.log(params)
+        // console.log(params)
 
         // consume with the local consumer transport which creates a consumer
 
@@ -447,21 +506,41 @@ export const MeetingPage = () => {
         // get audio/video track
         // create a new div element for the new consumer media
         // append sa video-container
-        // console.log('here')
-        let vid_con = document.getElementById("video-container");
-        const videoElement = document.createElement('video');
-        videoElement.setAttribute('id', remoteProducerId);
-        videoElement.setAttribute('playsInline', true);
-        videoElement.setAttribute('autoPlay', true);
-        videoElement.className = "video-element";
-        vid_con.appendChild(videoElement);
         
+        let vid_con = document.getElementById("video-container");
+        let audioElement
+        let videoElement
+
+        if (params.kind == 'audio') {
+          audioElement = document.createElement('audio');
+          audioElement.setAttribute('id', remoteProducerId);
+          audioElement.setAttribute('playsInline', true);
+          audioElement.setAttribute('autoPlay', true);
+          audioElement.className = "audio-element";
+          vid_con.appendChild(audioElement);
+        } else {
+          videoElement = document.createElement('video');
+          videoElement.setAttribute('id', remoteProducerId);
+          videoElement.setAttribute('playsInline', true);
+          videoElement.setAttribute('autoPlay', true);
+          videoElement.className = "video-element";
+          vid_con.appendChild(videoElement);
+        }
+
+
         const { track } = consumer
+        const remoteElem = document.getElementById(remoteProducerId)
 
-        console.log([track][0])
+        remoteElem.srcObject = new MediaStream([ track ]);
 
+        const remoteCurrentVid = {current: videoElement}
+        const remoteCurrentAud = {current: audioElement}
 
-        videoElement.srcObject = new MediaStream([ track ]);
+        console.log(remoteCurrentVid)
+
+        resizeVideoElements(remoteCurrentVid)
+        resizeVideoElements(remoteCurrentAud)
+
 
         // let the server know which consumerid to resume
         socket.emit('consumerResume', { serverConsumerId: params.serverConsumerId})
@@ -497,7 +576,8 @@ export const MeetingPage = () => {
     window.addEventListener('resize', resizeVideoElements);
 
     // Call the resize function on initial render
-    resizeVideoElements(localVideoRef, localAudioRef);
+    resizeVideoElements(localVideoRef)
+    resizeVideoElements(localAudioRef)
 
 
     connectSocket();
@@ -515,11 +595,9 @@ export const MeetingPage = () => {
         <h1>Asterisk - Video Meeting App</h1>
         <div id="video-container" className="video-container">
           {/* Add video elements here */}
-          <video ref={localVideoRef} autoPlay playsInline className="video-element"></video>
-          <audio ref={localAudioRef} autoPlay playsInline className="audio-element"></audio>
+          <video ref={localVideoRef} muted autoPlay playsInline className="video-element"></video>
+          <audio ref={localAudioRef} muted autoPlay playsInline className="audio-element"></audio>
 
-          {/*<video ref={remoteVideoRef} autoPlay playsInline className="video-element"></video>*/}
-          {/*<audio ref={remoteAudioRef} autoPlay playsInline className="audio-element"></audio>*/}
         </div>
         <div className="button__control-panel">
             <div className="clock-content">
@@ -567,9 +645,9 @@ export const MeetingPage = () => {
                 <span>Open Chat</span>
               </div>
             </button>
-            <button className="toggle-button" onClick>
+            <button className="toggle-button" onClick={endCall}>
                 <div className="button-content">
-                  <img src={meetIcons.endCallIcon} alt="callEndIcon" style={imageSize} />
+                  <img src={meetIcons.endCallIcon} id="endCallBtn" alt="callEndIcon" style={imageSize} />
                   <span>End Call</span>
                 </div>
             </button>

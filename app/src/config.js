@@ -56,14 +56,12 @@ const config = {
 				{
 					protocol: "udp", 
 					ip: '0.0.0.0',
+<<<<<<< HEAD
 					announcedIp: '192.168.0.113' // replace by public IP address
+=======
+					announcedIp: '192.168.68.169' // replace by public IP address
+>>>>>>> 2bdafe76994c3a96bba111a757b77ff72648268a
 				}
-				// {
-				// 	// accept connection from anywhere
-				// 	protocol: "udp", 
-				// 	// ip: '0.0.0.0',
-				// 	// announcedIp: '127.0.0.1' // replace by public IP address
-				// }
 			],
 			enableUdp: true,
 			enableTcp: true,
