@@ -12,28 +12,43 @@ public class UserDetailsImpl implements UserDetails {
     private static final long serialVersionUID = 1L;
 
     private String id;
-    private String username;
     private String email;
     private String password;
+    private String firstName;
+    private String middleName;
+    private String lastName;
+    private String nameExtension;
+    private String gender;
+    private String birthdate;
 
-    public UserDetailsImpl(String id, String username, String email, String password) {
+    public UserDetailsImpl(String id, String email, String password, String firstName, String middleName, String lastName, String nameExtension, String gender, String birthdate) {
         this.id = id;
-        this.username = username;
         this.email = email;
         this.password = password;
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.lastName = lastName;
+        this.nameExtension = nameExtension;
+        this.gender = gender;
+        this.birthdate = birthdate;
     }
 
     public static UserDetailsImpl build(User user) {
         return new UserDetailsImpl(
             user.getId(),
-            user.getUsername(),
             user.getEmail(),
-            user.getPassword());
+            user.getPassword(),
+            user.getFirstName(),
+            user.getMiddleName(),
+            user.getLastName(),
+            user.getNameExtension(),
+            user.getGender(),
+            user.getBirthdate()
+        );
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // In a system without roles, you can return an empty list here.
         return List.of();
     }
 
@@ -46,13 +61,37 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
     public String getPassword() {
         return password;
     }
 
-    @Override
-    public String getUsername() {
-        return username;
+    public String getFirstName(){
+        return firstName;
+    }
+
+    public String getMiddleName(){
+        return middleName;
+    }
+
+    public String getLastName(){
+        return lastName;
+    }
+
+    public String getNameExtension(){
+        return nameExtension;
+    }
+
+    public String getGender(){
+        return gender;
+    }
+
+    public String getBirthdate(){
+        return birthdate;
     }
 
     @Override

@@ -8,10 +8,9 @@ import org.springframework.stereotype.Repository;
 import com.burgis.loginsystem.models.User;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
-  Optional<User> findByUsername(String username);
-
-  Boolean existsByUsername(String username);
+public interface UserRepository extends JpaRepository<User, String> {
+  Optional<User> findById(String id);
+  Optional<User> findByEmail(String email);
 
   Boolean existsByEmail(String email);
 }

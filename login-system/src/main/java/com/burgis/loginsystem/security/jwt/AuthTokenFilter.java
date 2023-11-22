@@ -7,7 +7,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 
@@ -25,10 +28,15 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         try {
             String jwt = parseJwt(request);
             if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
-                String username = jwtUtils.getUserNameFromJwtToken(jwt);
+                String email = jwtUtils.getEmailFromJwtToken(jwt);
 
-                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    // No explicit authentication creation is needed; Spring Security will handle it
+                if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    // Set the authentication in SecurityContextHolder
+                    UserDetails userDetails = jwtUtils.getUserDetailsFromJwtToken(jwt);
+                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                            email, null, userDetails.getAuthorities());
+                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                 }
             }
         } catch (Exception e) {
@@ -37,6 +45,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
+
 
     private String parseJwt(HttpServletRequest request) {
         return jwtUtils.getJwtFromCookies(request);
