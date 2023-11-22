@@ -19,7 +19,7 @@ import Clock from './clock';
 import { Link } from 'react-router-dom';
 import * as mediasoupClient from "mediasoup-client";
 import { io } from "socket.io-client";
-import { resizeVideoElements, createVideoElement } from './videoFunctions';
+import { resizeVideoElements } from './videoFunctions';
 
 export const MeetingPage = () => {
 
@@ -54,9 +54,11 @@ export const MeetingPage = () => {
   let rtpCapabilities
   let producerTransport;
   let consumerTransports = []
-  let producer;
+  let audioProducer;
+  let videoProducer;
+  let screenshareProducer;
   let consumer;
-  let isProducer = false
+  let isProducer = false;
   let params = {
     encoding: [
       {
@@ -79,6 +81,11 @@ export const MeetingPage = () => {
       videoGoogleStartBitrate : 1000
     }
   };
+  let audioParams;
+  let screenshareAudParams;
+  let videoParams = { params };
+  let screenshareVidParams = { params };
+  let consumingTransports = [];
 
   // Function to toggle the camera stream
   function toggleCamera() {
@@ -117,32 +124,14 @@ export const MeetingPage = () => {
   async function endStream() {
     setScreenShareStream(null);
     setScreenStatus("Share Screen");
-    let screen_con = await document.getElementById("screenShare");
-    screen_con.remove();
+    let screenVidCon = await document.getElementById("screenVidShare");
+    let screenAudCon = await document.getElementById("screenAudShare");
+    screenVidCon.remove();
+    screenAudCon.remove();
   }
 
-  async function endCall() {
-    console.log("Ending call...");
-
-    if (localStream) {
-      console.log('Stopping local stream...');
-      const tracks = localStream.getTracks();
-      tracks.forEach((track) => {
-        console.log('Stopping track:', track);
-        track.stop();
-      });
-    }
-    
-
-    // if (remoteStream) {
-    //   console.log('Stopping remote stream...');
-    //   remoteStream.getTracks().forEach((track) => {
-    //     console.log('Stopping track:', track);
-    //     track.stop();
-    //   });
-    // }
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log("Call Ended.");
+  function endCall() {
+    window.location.replace("http://localhost:3000");
   }
 
   async function toggleScreenShare() {
@@ -160,12 +149,34 @@ export const MeetingPage = () => {
 
         let vid_con = document.getElementById("video-container");
         let screen_vid_con = document.createElement("video");
-        screen_vid_con.setAttribute('id', 'screenShare');
+        let screen_aud_con = document.createElement("audio");
+
+        screen_vid_con.setAttribute('id', 'screenVidShare');
+        screen_aud_con.setAttribute('id', 'screenAudShare');
+
         screen_vid_con.setAttribute('playsInline', 'playsInline');
         screen_vid_con.setAttribute('autoPlay', "autoPlay");
         screen_vid_con.className = "video-element";
         screen_vid_con.srcObject = userScreen;
+        
         vid_con.appendChild(screen_vid_con);
+        vid_con.appendChild(screen_aud_con);
+
+        const cur_screen_vid_con = {current: screen_vid_con}
+        const cur_screen_aud_con = {current: screen_aud_con}
+
+        resizeVideoElements(cur_screen_vid_con);
+        resizeVideoElements(cur_screen_aud_con);
+
+        screenshareVidParams = {
+          track: userScreen.getAudioTracks()[0],
+          ...screenshareVidParams
+        }
+
+        screenshareAudParams = {
+          track: userScreen.getVideoTracks()[0],
+          ...screenshareAudParams
+        }
       } else {
         var tracks = await screenShareStream.getVideoTracks();
         for (var i = 0; i < tracks.length; i++) {
@@ -206,13 +217,10 @@ export const MeetingPage = () => {
       try {
         localStream = await navigator.mediaDevices.getUserMedia({
           video: true, 
-          audio: true,
-          echoCancellation: true
+          audio: true
         });
 
         setStream(localStream);
-
-        console.log(localStream);
 
         // Attach video localStream to the video element
         if (localVideoRef.current) {
@@ -224,10 +232,14 @@ export const MeetingPage = () => {
           localAudioRef.current.srcObject = localStream;
         }
 
-        const track = localStream.getVideoTracks()[0];
-        params = {
-          track,
-          ...params
+        videoParams = {
+          track: localStream.getVideoTracks()[0],
+          ...videoParams
+        }
+
+        audioParams = {
+          track: localStream.getAudioTracks()[0],
+          ...audioParams
         }
 
         joinRoom();
@@ -294,7 +306,7 @@ export const MeetingPage = () => {
           console.log("producer transport create error", params.error);
           return;
         }
-        console.log(params);
+        // console.log(params);
 
         // creae new webrtc transport to send media
         producerTransport = device.createSendTransport(params);
@@ -315,7 +327,7 @@ export const MeetingPage = () => {
         })
 
         producerTransport.on('produce', async (parameters, callback, errback) => {
-          console.log(parameters);
+          // console.log(parameters);
 
           try {
             // tell the server to create a Producer
@@ -347,26 +359,35 @@ export const MeetingPage = () => {
     }
 
     async function connectSendTransport() {
-      producer = await producerTransport.produce(params)
+      
+      audioProducer = await producerTransport.produce(audioParams)
+      videoProducer = await producerTransport.produce(videoParams)
 
-      producer.on('trackended', () => {
-        console.log('track ended');
-
-        // close video track
+      audioProducer.on('trackended', () => {
+        console.log('audio track ended')
+        // close audio track
       })
 
-      producer.on('transportclose', () => {
-        console.log('transport ended');
+      audioProducer.on('transportclose', () => {
+        console.log('audio transport ended')
+      })
+      
+      videoProducer.on('trackended', () => {
+        console.log('video track ended')
+      }) // close video track
 
-        // close video track
+      videoProducer.on('transportclose', () => {
+        console.log('video transport ended')
       })
     }
 
     async function createNewConsumerTransport(remoteProducerId) {
       // console.log("NEW USER JUST JOINED");
 
-      //     if (consumingTransports.includes(remoteProducerId)) return;
-      // consumingTransports.push(remoteProducerId);
+      if (consumingTransports.includes(remoteProducerId)) {
+        return;
+      }
+      consumingTransports.push(remoteProducerId);
 
 
       await socket.emit('createWebRtcTransport', { consumer: true }, ({ params }) => {
@@ -374,7 +395,7 @@ export const MeetingPage = () => {
           console.log("consumer transport create error", params.error);
           return;
         }
-        console.log(params);
+        // console.log(params);
 
         let consumerTransport;
 
@@ -420,7 +441,7 @@ export const MeetingPage = () => {
           return
         }
 
-        console.log(params)
+        // console.log(params)
 
         // consume with the local consumer transport which creates a consumer
 
@@ -445,25 +466,42 @@ export const MeetingPage = () => {
         // create a new div element for the new consumer media
         // append sa video-container
         // console.log('here')
+        
         let vid_con = document.getElementById("video-container");
-        const videoElement = document.createElement('video');
-        videoElement.setAttribute('id', remoteProducerId);
-        videoElement.setAttribute('playsInline', true);
-        videoElement.setAttribute('autoPlay', true);
-        videoElement.className = "video-element";
-        vid_con.appendChild(videoElement);
+        let audioElement
+        let videoElement
+        
+        if (params.kind == 'audio') {
+          audioElement = document.createElement('audio');
+          audioElement.setAttribute('id', remoteProducerId);
+          audioElement.setAttribute('playsInLine', true);
+          audioElement.setAttribute('autoPlay', true);
+          audioElement.className = "audio-element";
+          vid_con.appendChild(audioElement);
+        } else {
+          videoElement = document.createElement('video');
+          videoElement.setAttribute('id', remoteProducerId);
+          videoElement.setAttribute('playsInline', true);
+          videoElement.setAttribute('autoPlay', true);
+          videoElement.className = "video-element";
+          vid_con.appendChild(videoElement);
+        }
         
         const { track } = consumer
+        const remoteElem = document.getElementById(remoteProducerId)
 
-        console.log([track][0])
+        remoteElem.srcObject = new MediaStream([ track ]);
 
+        const remoteCurrentVid = {current: videoElement}
+        const remoteCurrentAud = {current: audioElement}
 
-        videoElement.srcObject = new MediaStream([ track ]);
+        console.log(remoteCurrentVid)
+
+        resizeVideoElements(remoteCurrentVid)
+        resizeVideoElements(remoteCurrentAud)
 
         // let the server know which consumerid to resume
         socket.emit('consumerResume', { serverConsumerId: params.serverConsumerId})
-
-
       })
     }
 
@@ -491,12 +529,11 @@ export const MeetingPage = () => {
 
 
     // Call the resize function when the window is resized
-    const handleResize = () => resizeVideoElements(localVideoRef, localAudioRef);
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', resizeVideoElements);
 
     // Call the resize function on initial render
-    resizeVideoElements(localVideoRef, localAudioRef);
-
+    resizeVideoElements(localVideoRef)
+    resizeVideoElements(localAudioRef)
 
     connectSocket();
 
