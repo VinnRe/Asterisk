@@ -35,7 +35,6 @@ public class User {
   @Size(max = 30)
   private String lastName;
 
-  @NotBlank
   @Size(max = 10)
   private String nameExtension;
 
