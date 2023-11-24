@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
+// import jwt from 'jsonwebtoken';
 import '../../Styles/login-signup_styles.css';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -7,6 +10,7 @@ import validator from 'validator';
 export const LoginSignup = () => {
     // Switching
     const [isLoginForm, setIsLoginForm] = useState(true);
+    const navigate = useNavigate();
     // Data Var
     const [loginEmail, setLoginEmail] = useState('');
     const [loginPassword, setLoginPassword] = useState('');
@@ -64,7 +68,15 @@ export const LoginSignup = () => {
             });
 
             if (response.ok) {
-                // Handle successful login, e.g., redirect user to dashboard
+                const data = await response.json();
+                const { accessToken } = data;
+
+                // Store JWT Token in cookies
+                Cookies.set('accessToken', accessToken);
+
+                // Redirect to home page
+                navigate('/home');
+
                 console.log("SUCCESS");
             } else {
                 // Handle login failure, show error message
