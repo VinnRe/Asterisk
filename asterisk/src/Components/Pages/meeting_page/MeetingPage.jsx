@@ -131,7 +131,7 @@ export const MeetingPage = () => {
   }
 
   function endCall() {
-    window.location.replace("http://localhost:3000");
+    window.location.replace("http://localhost:3000/home");
   }
 
   async function toggleScreenShare() {

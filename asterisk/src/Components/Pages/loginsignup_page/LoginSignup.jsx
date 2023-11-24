@@ -56,7 +56,10 @@ export const LoginSignup = () => {
         try {
             const isEmail = validator.isEmail(loginEmail);
 
-            const requestBody = isEmail({email: loginEmail, password: loginPassword})
+            const requestBody = {
+                email: loginEmail,
+                password: loginPassword
+            }
                              
             const response = await fetch('http://localhost:8080/api/auth/signin', {
                 method: 'POST',
@@ -105,14 +108,14 @@ export const LoginSignup = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    first_name: signupFN,
-                    middle_name: signupMN,
-                    last_name:signupLN,
-                    name_ext:signupNE,
-                    birthdate: signupBirthdate,
-                    gender: signupGender,
                     email: signupEmail,
                     password: signupPassword,
+                    firstName: signupFN,
+                    middleName: signupMN,
+                    lastName:signupLN,
+                    nameExtension:signupNE,
+                    gender: signupGender,
+                    birthdate: signupBirthdate,
 
                 }),
             });

@@ -17,7 +17,7 @@ function App() {
           path='/'
           element={<AuthRoute />}
         >
-          <Route path='/' element={<HomePage />} />
+          <Route path='/home' element={<HomePage />} />
           <Route path='/room/:roomName' element={<MeetingPage />} />
         </Route>
       </Routes>

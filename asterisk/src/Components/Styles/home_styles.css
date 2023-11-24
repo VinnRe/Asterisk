@@ -88,6 +88,10 @@
     color: var(--light-red);
 }
 
+.nav--h ul li {
+    padding: 0.7rem;
+}
+
 .main--h {
     height: 80vh;
 }

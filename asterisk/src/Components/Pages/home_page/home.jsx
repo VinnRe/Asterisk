@@ -1,185 +1,196 @@
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import '../../Styles/home_styles.css';
+import Cookies from "js-cookie";
 
 export const HomePage = () => {
-  useEffect(() => {
-    const sidebar = document.querySelector(".sidebar");
-    const opaqueBackground = document.querySelector(".opaque-background");
-    const settingsButton = document.querySelector(".settings-button");
-    const settingsOverlay = document.querySelector(".settings-overlay");
-    const settingsExitButton = document.querySelector(".settings-exit-button");
-    const joinButton = document.querySelector(".join-button");
-    const formOverlay = document.querySelector(".form-overlay");
-    const backButton = document.querySelector(".back-button");
-    const accountButton = document.querySelector(".account-button");
-    const accountOverlay = document.querySelector(".account-overlay");
-    const accountExitButton = document.querySelector(".account-exit-button");
 
-    function toggleSidebar(mouseEvent, isExpanded) {
-        sidebar.addEventListener(mouseEvent, (event) => {
-            event.preventDefault();
-            sidebar.style.width = isExpanded ? "10rem" : "2.8rem";
-        });
-    }
+    const navigate = useNavigate();
+    const handleLogout = () => {
+        // Clear the authentication token from cookies
+        Cookies.remove('accessToken');
+    
+        // Redirect to the login page or any other desired page
+        navigate("/login-signup");
+      };
 
-    toggleSidebar("mouseover", true);
-    toggleSidebar("mouseout", false);
+    useEffect(() => {
+        const sidebar = document.querySelector(".sidebar");
+        const opaqueBackground = document.querySelector(".opaque-background");
+        const settingsButton = document.querySelector(".settings-button");
+        const settingsOverlay = document.querySelector(".settings-overlay");
+        const settingsExitButton = document.querySelector(".settings-exit-button");
+        const joinButton = document.querySelector(".join-button");
+        const formOverlay = document.querySelector(".form-overlay");
+        const backButton = document.querySelector(".back-button");
+        const accountButton = document.querySelector(".account-button");
+        const accountOverlay = document.querySelector(".account-overlay");
+        const accountExitButton = document.querySelector(".account-exit-button");
 
-    function toggleOverlay(addEvent, value, visibility, opacity) {
-        addEvent.addEventListener("click", (event) => {
-            event.preventDefault();
-            opaqueBackground.style.visibility = visibility;
-            opaqueBackground.style.opacity = opacity;
-            value.style.visibility = visibility;
-            value.style.opacity = opacity;
-        });
-    }
+        function toggleSidebar(mouseEvent, isExpanded) {
+            sidebar.addEventListener(mouseEvent, (event) => {
+                event.preventDefault();
+                sidebar.style.width = isExpanded ? "10rem" : "2.8rem";
+            });
+        }
 
-    toggleOverlay(settingsButton, settingsOverlay, "visible", "1");
-    toggleOverlay(settingsExitButton, settingsOverlay, "hidden", "0");
-    toggleOverlay(joinButton, formOverlay, "visible", "1");
-    toggleOverlay(backButton, formOverlay, "hidden", "0");
-    toggleOverlay(accountButton, accountOverlay, "visible", "1");
-    toggleOverlay(accountExitButton, accountOverlay, "hidden", "0");
-}, []);
+        toggleSidebar("mouseover", true);
+        toggleSidebar("mouseout", false);
 
-return (
-      <html lang="en">
-          <head>
-              <meta charset="UTF-8" />
-              <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-              <title>Asterisk</title>
-              <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-              <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet' />
-          </head>
-          <body className="body--h">
-              <header className="header--h">
-                  <h1>Asterisk</h1>
-              </header>
+        function toggleOverlay(addEvent, value, visibility, opacity) {
+            addEvent.addEventListener("click", (event) => {
+                event.preventDefault();
+                opaqueBackground.style.visibility = visibility;
+                opaqueBackground.style.opacity = opacity;
+                value.style.visibility = visibility;
+                value.style.opacity = opacity;
+            });
+        }
 
-              <main className="main--h">
-                  <section className="main-section">
-                      <div className="controls-container">
-                          <a className="join-button" href="">
-                              <span className="material-icons">groups</span>
-                              <p>Join Conference</p>
-                          </a>
+        toggleOverlay(settingsButton, settingsOverlay, "visible", "1");
+        toggleOverlay(settingsExitButton, settingsOverlay, "hidden", "0");
+        toggleOverlay(joinButton, formOverlay, "visible", "1");
+        toggleOverlay(backButton, formOverlay, "hidden", "0");
+        toggleOverlay(accountButton, accountOverlay, "visible", "1");
+        toggleOverlay(accountExitButton, accountOverlay, "hidden", "0");
+    }, []);
 
-                          <a href="">
-                            <Link to="/room">
-                              <span className="material-icons">add</span>
-                              <p>Create Conference</p>
-                            </Link>
-                          </a>
-                      </div>
-                  </section>
+    return (
 
-                  <section className="main-section">
-                      <div className="feature-container">
-                          <div className="feature-button">Feature 1</div>
-                          <div className="feature-button">Feature 2</div>
-                          <div className="feature-button">Feature 3</div>
-                      </div>
-                  </section>
-              </main>
+        // REWORK THE BUTTONS TO BE BETTER
+        <html lang="en">
+            <head>
+                <meta charset="UTF-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <title>Asterisk</title>
+                <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+                <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet' />
+            </head>
+            <body className="body--h">
+                <header className="header--h">
+                    <h1>Asterisk</h1>
+                </header>
 
-              <aside className="sidebar">
-                  <div className="logo">
-                      <span className="material-icons | logo-icon">emergency</span>
-                      <h2>Asterisk</h2>
-                  </div>
+                <main className="main--h">
+                    <section className="main-section">
+                        <div className="controls-container">
+                            <a className="join-button" href="">
+                                <span className="material-icons">groups</span>
+                                <p>Join Conference</p>
+                            </a>
 
-                  <nav className="nav--h">
-                      <ul>
-                          <li>
-                              <a className="dashboard-button" href="">
-                                  <i className="material-icons">space_dashboard</i>
-                                  <span className="icon-text">Dashboard</span>
-                              </a>
-                          </li>
+                            <a href="">
+                                <Link to="/room">
+                                <span className="material-icons">add</span>
+                                <p>Create Conference</p>
+                                </Link>
+                            </a>
+                        </div>
+                    </section>
 
-                          <li>
-                              <a className="account-button" href="">
-                                  <i className="material-icons">account_circle</i>
-                                  <span className="icon-text">Account</span>
-                              </a>
-                          </li>
+                    <section className="main-section">
+                        <div className="feature-container">
+                            <div className="feature-button">Feature 1</div>
+                            <div className="feature-button">Feature 2</div>
+                            <div className="feature-button">Feature 3</div>
+                        </div>
+                    </section>
+                </main>
 
-                          <li>
-                              <a className="settings-button" href="">
-                                  <i className="material-icons">settings</i>
-                                  <span className="icon-text">Settings</span>
-                              </a>
-                          </li>
-                      </ul>
-                  </nav>
-              </aside>
+                <aside className="sidebar">
+                    <div className="logo">
+                        <span className="material-icons | logo-icon">emergency</span>
+                        <h2>Asterisk</h2>
+                    </div>
 
-              <section className="opaque-background">
-                  <div className="dashboard-overlay">
-                      <h2>Dashboard</h2>
-                  </div>
+                    <nav className="nav--h">
+                        <ul>
+                            <li>
+                                <a className="dashboard-button" href="">
+                                    <i className="material-icons">space_dashboard</i>
+                                    <span className="icon-text">Dashboard</span>
+                                </a>
+                            </li>
 
-                  <div className="account-overlay">
-                      <div className="profile">
-                          <div className="profile-icon | material-icons">face</div>
-                          <p className="profile-name">Name</p>
-                      </div>
+                            <li>
+                                <a className="account-button" href="">
+                                    <i className="material-icons">account_circle</i>
+                                    <span className="icon-text">Account</span>
+                                </a>
+                            </li>
 
-                      <a href="">
-                          <span className="material-icons">edit</span>
-                          <span>Edit Profile</span>
-                      </a>
+                            <li>
+                                <a className="settings-button" href="">
+                                    <i className="material-icons">settings</i>
+                                    <span className="icon-text">Settings</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </aside>
 
-                      <a href="">
-                          <span className="material-icons">logout</span>
-                          <span>Logout</span>
-                      </a>
+                <section className="opaque-background">
+                    <div className="dashboard-overlay">
+                        <h2>Dashboard</h2>
+                    </div>
 
-                      <div className="account-exit-button | exit-button">
-                          <span className="material-icons">close</span>
-                      </div>
-                  </div>
+                    <div className="account-overlay">
+                        <div className="profile">
+                            <div className="profile-icon | material-icons">face</div>
+                            <p className="profile-name">Name</p>
+                        </div>
 
-                  <div className="settings-overlay">
-                      <h2>Settings</h2>
+                        <a href="">
+                            <span className="material-icons">edit</span>
+                            <span>Edit Profile</span>
+                        </a>
+                        {/* THIS WORKS JUST THE STYLE IS NOT WORKING */}
+                        <span className="material-icons logout-span" onClick={handleLogout}>logout</span>
+                        <span>Logout</span>
 
-                      <a href="">
-                          <span className="material-icons">speaker</span>
-                          <span>Audio</span>
-                      </a>
+                        <div className="account-exit-button | exit-button">
+                            <span className="material-icons">close</span>
+                        </div>
+                    </div>
 
-                      <a href="">
-                          <span className="material-icons">videocam</span>
-                          <span>Video</span>
-                      </a>
+                    <div className="settings-overlay">
+                        <h2>Settings</h2>
 
-                      <a href="">
-                          <span className="material-icons">tune</span>
-                          <span>General</span>
-                      </a>
+                        <a href="">
+                            <span className="material-icons">speaker</span>
+                            <span>Audio</span>
+                        </a>
 
-                      <div className="settings-exit-button | exit-button">
-                          <span className="material-icons">close</span>
-                      </div>
-                  </div>
+                        <a href="">
+                            <span className="material-icons">videocam</span>
+                            <span>Video</span>
+                        </a>
 
-                  <div className="form-overlay">
-                      <h2>Enter Meeting Code</h2>
-                      <div className="form-buttons">
-                          <input className="form__input" type="text" name="join-conference" autoFocus />
-                          <a href="" className="join">
-                              <span>Join</span>
-                          </a>
-                          <a href="" className="back-button">
-                              <span>Back</span>
-                          </a>
-                      </div>
-                  </div>
-              </section>
-          </body>
-      </html>
-);      
+                        <a href="">
+                            <span className="material-icons">tune</span>
+                            <span>General</span>
+                        </a>
+
+                        <div className="settings-exit-button | exit-button">
+                            <span className="material-icons">close</span>
+                        </div>
+                    </div>
+
+                    <div className="form-overlay">
+                        <h2>Enter Meeting Code</h2>
+                        <div className="form-buttons">
+                            <input className="form__input" type="text" name="join-conference" autoFocus />
+                            <a href="" className="join">
+                                <span>Join</span>
+                            </a>
+                            <a href="" className="back-button">
+                                <span>Back</span>
+                            </a>
+                        </div>
+                    </div>
+                </section>
+            </body>
+        </html>
+    );      
 };
 
