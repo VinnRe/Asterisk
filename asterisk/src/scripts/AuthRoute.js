@@ -2,15 +2,8 @@ import React from 'react';
 import { Route, Navigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
-const AuthRoute = ({ element: Element, ...rest }) => {
+export const AuthRoute = ({ children }) => {
   const isAuthenticated = !!Cookies.get('accessToken');
 
-  return (
-    <Route
-      {...rest}
-      element={isAuthenticated ? <Element /> : <Navigate to="/login-signup" replace />}
-    />
-  );
+  return isAuthenticated ? <>{children}</> : <Navigate to="/login-signup" />
 };
-
-export default AuthRoute;
