@@ -31,14 +31,20 @@ const io = new Server(server, {
 });
 
 app.get("/", (request, response) => {
-	// console.log(request.params.roomId);
-	response.send("Go to to create room http://localhost:3000/room/{roomName}")
+	// console.log(request);
+	response.send("Go to to create room http://localhost:3000/room/{roomName}");
+})
+
+// to get the number of users in roomName 
+app.get("/get_users/:room", (request, response) => {
+	let roomName = request.params.room
+	let users = socket.getUsers(roomName)
+	response.send(`Number of users in ${roomName} is ${users}`)
 })
 
 
-
 server.listen(port, () => {
-	console.log(`Server is running at http://localhost:${port}`);
+	console.log(`Server is running at https://localhost:${port}`);
 });
 
 socket.ioConnection(io);

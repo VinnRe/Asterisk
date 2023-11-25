@@ -65,15 +65,18 @@ async function ioConnection(io) {
 			producers = removeItems(producers, socket.id, 'producer')
 			transports = removeItems(transports, socket.id, 'transport')
 
+			if (peers[socket.id]) {
+				const { roomName } = peers[socket.id]
+				delete peers[socket.id]
 
-			const { roomName } = peers[socket.id]
-			delete peers[socket.id]
-
-			// remove socket from room
-			rooms[roomName] = {
-				router: rooms[roomName].router,
-				peers: rooms[roomName].peers.filter(socketId => socketId !== socket.id)
+				
+				// remove socket from room
+				rooms[roomName] = {
+					router: rooms[roomName].router,
+					peers: rooms[roomName].peers.filter(socketId => socketId !== socket.id)
+				}
 			}
+
 		})
 
 		function removeItems(items, socketId, type) {
@@ -138,6 +141,8 @@ async function ioConnection(io) {
 		socket.on('createWebRtcTransport', async ({ consumer }, callback) => {
 			// get the room name for this peer
 			const roomName = peers[socket.id].roomName
+
+			// console.log(rooms[roomName].peers.length)
 
 			// based on the roomname get the router
 			const router = rooms[roomName].router
@@ -408,8 +413,14 @@ async function ioConnection(io) {
 	}
 }
 
+function getUsers(roomName) {
+	// const roomName = peers[socket.id].roomName
+	let users = rooms[roomName].peers.length
+	return users
+}
+
 
 
 export {
-	ioConnection
+	ioConnection, getUsers
 };

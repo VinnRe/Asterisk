@@ -21,19 +21,13 @@ import { io } from "socket.io-client";
 
 
 export const MeetingPage = () => {
-  // const userID = window.crypto.randomUUID();
+  const userID = window.crypto.randomUUID();
 
   // create channel link "?room=asdfafafgbn"
   const roomName = window.location.pathname.split('/')[2];
 
   console.log(roomName);
 
-  // free stun server -- from google
-  const servers = {
-    iceServers: [{
-      urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302']
-    }]
-  }
 
   const localVideoRef = useRef(null);
   const localAudioRef = useRef(null);
@@ -41,11 +35,14 @@ export const MeetingPage = () => {
   const remoteVideoRef = useRef(null);
   const remoteAudioRef = useRef(null);
 
+  const [socket, setSocket] = useState(io('https://127.0.0.1:8000/mediasoup'));
+
   const [stream, setStream] = useState(null);
   const [camStatus, setCamStatus] = useState('Hide Cam');
   const [micStatus, setMicStatus] = useState('Mute Mic');
   const [screenStatus, setScreenStatus] = useState('Share Screen');
   const [screenShareStream, setScreenShareStream] = useState(null);
+  const [ddevice, setDevice] = useState(null);
   // const [endCall, setEndCall] = useState(false);
 
   let localStream;
@@ -55,7 +52,8 @@ export const MeetingPage = () => {
   let consumerTransports = []
   let audioProducer
   let videoProducer
-  let screenshareProducer
+  let screenshareAudioProducer
+  let screenshareVidProducer
   let consumer;
   let isProducer = false
   let params = {
@@ -134,6 +132,9 @@ export const MeetingPage = () => {
   async function toggleScreenShare() {
     try {
       if (screenShareStream == null) {
+        // create new transport
+
+
         const userScreen = await navigator.mediaDevices.getDisplayMedia({
           cursor:true,
           video: true,
@@ -174,7 +175,7 @@ export const MeetingPage = () => {
           ...screenshareAudParams
         }
 
-      
+
       } else {
         var tracks = await screenShareStream.getVideoTracks();
         for (var i = 0; i < tracks.length; i++) {
@@ -220,12 +221,7 @@ export const MeetingPage = () => {
     }
   }
 
-
-  useEffect(() => {
-
-
-    const socket = io('https://127.0.0.1:8000/mediasoup');
-    
+  useEffect(() => {  
     function connectSocket() {
       socket.on('connect', () => {
         console.log('Connected!');
@@ -252,11 +248,13 @@ export const MeetingPage = () => {
         // Attach video localStream to the video element
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = localStream;
+          localVideoRef.current.muted = true;
         }
 
         // Attach audio localStream to the audio element
         if (localAudioRef.current) {
           localAudioRef.current.srcObject = localStream;
+          localAudioRef.current.muted = true;
         }
 
         videoParams = {
@@ -291,6 +289,8 @@ export const MeetingPage = () => {
     async function createDevice() {
       try {
         device = new mediasoupClient.Device()
+
+        setDevice(device);
 
         await device.load({
           routerRtpCapabilities: rtpCapabilities
@@ -388,14 +388,11 @@ export const MeetingPage = () => {
 
     async function connectSendTransport() {
 
+      // console.log(producerTransport)
+
       audioProducer = await producerTransport.produce(audioParams)
       videoProducer = await producerTransport.produce(videoParams)
 
-      // console.log(screenShareStream)
-      // if (screenShareStream == null) {  // screenshare on
-      //   console.log('hehe')
-      // }
-      // screenshareProducer = await producerTransport.produce()
 
       audioProducer.on('trackended', () => {
         console.log('audio track ended')
@@ -589,6 +586,81 @@ export const MeetingPage = () => {
 
   }, []);
 
+  useEffect(() => {
+    if (screenShareStream) {
+      console.log('screen sharing')
+      console.log(ddevice)
+
+      function createSendTransport() {
+        // create new producer for screen sharing
+        socket.emit('createWebRtcTransport', { consumer:false }, ({ params }) => {
+      
+        // get producers transport parameters from the server side
+          if (params.error) {
+            console.log("producer transport create error", params.error);
+            return;
+          }
+
+          console.log(params);
+
+        // creae new webrtc transport to send media
+        // producerTransport = device.createSendTransport(params);
+
+        // producerTransport.on('connect', async ({ dtlsParameters }, callback, errback) => {
+        //   try {
+        //     // send local DTLS parameters to the server side transport
+        //     await socket.emit('transportConnect', {
+        //       dtlsParameters: dtlsParameters
+        //     })
+
+        //     // Tell the transport that parameters were transmitted
+        //     callback();
+
+        //   } catch (error) {
+        //     errback(error);
+        //   }
+        // })
+
+        // producerTransport.on('produce', async (parameters, callback, errback) => {
+        //   // console.log(parameters);
+
+        //   try {
+        //     // tell the server to create a Producer
+        //     await socket.emit('transportProduce', {
+        //       kind: parameters.kind,
+        //       rtpParameters: parameters.rtpParameters,
+        //       appData: parameters.appData
+        //     }, ({ serverProducerId, producerExist }) => {
+        //       // server will let us know if there's other producer
+        //       // Tell the transport that parameters were transmitted and produced
+        //       callback({ serverProducerId })
+              
+        //       // if producer exist, join the room
+        //       if (producerExist) {
+        //         getProducers();
+        //       }
+
+
+        //     })
+        //   } catch (error) {
+        //     errback(error);
+        //   }
+
+        // })
+
+        // connectSendTransport();
+        })
+
+      }
+
+
+
+      // create new transport and 2 producers
+    } else {
+      console.log('screen not sharing')
+    }
+  }, [screenShareStream]);
+
   return (
     <div className="container">
       <header className="meeting-header">
@@ -633,13 +705,13 @@ export const MeetingPage = () => {
                 <span>{screenStatus}</span>
               </div>
             </button>
-            <button className="toggle-button" onClick>
+            <button className="toggle-button">
               <div className="button-content">
                 <img src={meetIcons.raiseHandIcon} alt="raiseHandIcon" style={imageSize} />
                 <span>Raise Hand</span>
               </div>
             </button>
-            <button className="toggle-button" onClick>
+            <button className="toggle-button">
               <div className="button-content">
                 <img src={meetIcons.chatIcon} alt="chatIcon" style={imageSize} />
                 <span>Open Chat</span>
