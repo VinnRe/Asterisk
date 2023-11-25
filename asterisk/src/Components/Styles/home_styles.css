@@ -9,14 +9,14 @@
 .body--h {
     box-sizing: border-box;
     margin: 0;
-    height: 100vh;
+    min-height: 100vh;
     background-color: var(--white);
     font-family: "Poppins";
     font-size: 0.85rem;
 }
 
 .header--h {
-    height: 20vh;
+    height: 18.8vh;
     display: flex;
     justify-content: center;
     color: var(--light-red);
@@ -93,7 +93,8 @@
 }
 
 .main--h {
-    height: 80vh;
+    min-height: 80vh;
+    margin-left: 2.8rem;
 }
 
 .main-section {
