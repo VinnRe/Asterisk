@@ -19,7 +19,7 @@ const config = {
 				'rtcp',
 			],
 			rtcMinPort: 10000,
-			rtcMaxPort: 10100,
+			rtcMaxPort: 10500,
 		},
 		router: {
 			// rtp codec capability
@@ -31,20 +31,20 @@ const config = {
 					channels: 2
 				},
 				{
-					// kind: 'video',
-					// mimeType: 'video/H264',
-					// clockRate: 90000,
-					// parameters: {
-					// 	"packetization-mode" : 1,
-				 //    	"profile-level-id" : "42e01f",
-				 //  	  	"level-asymmetry-allowed" : 1
-					// }
 					kind: 'video',
-				    mimeType: 'video/VP8',
-				    clockRate: 90000,
-				    parameters: {
-				      'x-google-start-bitrate': 1000,
-				    },
+					mimeType: 'video/H264',
+					clockRate: 90000,
+					parameters: {
+						"packetization-mode" : 1,
+				    	"profile-level-id" : "42e01f",
+				  	  	"level-asymmetry-allowed" : 1
+					}
+					// kind: 'video',
+				 //    mimeType: 'video/VP8',
+				 //    clockRate: 90000,
+				 //    parameters: {
+				 //      'x-google-start-bitrate': 1000,
+				 //    },
 				},
 			]
 		},
@@ -56,11 +56,7 @@ const config = {
 				{
 					protocol: "udp", 
 					ip: '0.0.0.0',
-<<<<<<< HEAD
-					announcedIp: '192.168.18.33' // replace by public IP address
-=======
-					announcedIp: '192.168.5.171' // replace by public IP address
->>>>>>> e45690b8d18f18b335b5afb834dcff29d057a0c7
+					announcedIp: '192.168.0.116' // replace by public IP address
 				}
 			],
 			enableUdp: true,

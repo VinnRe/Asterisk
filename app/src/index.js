@@ -39,8 +39,22 @@ app.get("/", (request, response) => {
 app.get("/get_users/:room", (request, response) => {
 	let roomName = request.params.room
 	let users = socket.getUsers(roomName)
-	response.send(`Number of users in ${roomName} is ${users}`)
+	response.send({users})
 })
+
+app.get("/get_transports/:room", (request, response) => {
+	let roomName = request.params.room
+	let transports = socket.getTransports(roomName)
+	response.send(transports)
+})
+
+
+app.get("/get_consumers/:room", (request, response) => {
+	let roomName = request.params.room
+	let consumers = socket.getConsumers(roomName)
+	response.send(consumers)
+})
+
 
 
 server.listen(port, () => {

@@ -19,6 +19,8 @@ import Clock from './clock';
 import * as mediasoupClient from "mediasoup-client";
 import { io } from "socket.io-client";
 
+let socket = io.connect('https://127.0.0.1:8000/mediasoup');
+
 
 export const MeetingPage = () => {
   const userID = window.crypto.randomUUID();
@@ -35,19 +37,20 @@ export const MeetingPage = () => {
   const remoteVideoRef = useRef(null);
   const remoteAudioRef = useRef(null);
 
-  const [socket, setSocket] = useState(io('https://127.0.0.1:8000/mediasoup'));
-
   const [stream, setStream] = useState(null);
   const [camStatus, setCamStatus] = useState('Hide Cam');
   const [micStatus, setMicStatus] = useState('Mute Mic');
   const [screenStatus, setScreenStatus] = useState('Share Screen');
   const [screenShareStream, setScreenShareStream] = useState(null);
   const [ddevice, setDevice] = useState(null);
+  const [screenVidParams, setScreenVidParams] = useState(null);
+  const [screenAudParams, setScreenAudParams] = useState(null);
   // const [endCall, setEndCall] = useState(false);
 
   let localStream;
   let device;
   let rtpCapabilities
+  let screenProducerTransport
   let producerTransport;
   let consumerTransports = []
   let audioProducer
@@ -61,7 +64,7 @@ export const MeetingPage = () => {
       {
         rid: 'r0',
         maxBitrate: 100000,
-        scalabilityMode: 'S1T3'
+        scalabilityMode: 'S1T1'
       },
       {
         rid: 'r1',
@@ -166,15 +169,17 @@ export const MeetingPage = () => {
         resizeVideoElements(cur_screen_aud_con)
 
         screenshareVidParams = {
-          track: userScreen.getAudioTracks()[0],
+          track: userScreen.getVideoTracks()[0],
           ...screenshareVidParams
         }
 
         screenshareAudParams = {
-          track: userScreen.getVideoTracks()[0],
+          track: userScreen.getAudioTracks()[0],
           ...screenshareAudParams
         }
 
+        setScreenVidParams(screenshareVidParams);
+        setScreenAudParams(screenshareAudParams);
 
       } else {
         var tracks = await screenShareStream.getVideoTracks();
@@ -222,7 +227,9 @@ export const MeetingPage = () => {
   }
 
   useEffect(() => {  
+  
     function connectSocket() {
+
       socket.on('connect', () => {
         console.log('Connected!');
 
@@ -240,7 +247,6 @@ export const MeetingPage = () => {
           video: true, 
           audio: true
         });
-
 
         setStream(localStream);
 
@@ -311,23 +317,25 @@ export const MeetingPage = () => {
     }
 
     // server informs the client that a new producer (user) just joined
-    socket.on('newProducer', ({ producerId }) => {
-      createNewConsumerTransport(producerId);
+    socket.on('newProducer', ({ producerId, producerType }) => {
+      // console.log(producerType)
+      createNewConsumerTransport(producerId, producerType);
     })
 
     // ask the server to get the producer's ids
     function getProducers() {
-      socket.emit('getProducers', remoteProducersIds => {
+      socket.emit('getProducers', remoteProducers => {
         //  for each producer create consumer
-        remoteProducersIds.forEach(remoteProducerId => {
-          createNewConsumerTransport(remoteProducerId);
+        remoteProducers.forEach(remoteProducer => {
+          // console.log(remoteProducer.producerType)
+          createNewConsumerTransport(remoteProducer.producerId, remoteProducer.producerType);
         })
       })
     }
 
     function createSendTransport() {
       //  when we join, we join as a producer
-      socket.emit('createWebRtcTransport', { consumer:false }, ({ params }) => {
+      socket.emit('createWebRtcTransport', { consumer:false, type:"userProducer" }, ({ params }) => {
       
       // get producers transport parameters from the server side
         if (params.error) {
@@ -336,13 +344,14 @@ export const MeetingPage = () => {
         }
         // console.log(params);
 
-        // creae new webrtc transport to send media
+        // creae send transport
         producerTransport = device.createSendTransport(params);
 
         producerTransport.on('connect', async ({ dtlsParameters }, callback, errback) => {
           try {
             // send local DTLS parameters to the server side transport
             await socket.emit('transportConnect', {
+              transportId: producerTransport.id,
               dtlsParameters: dtlsParameters
             })
 
@@ -362,7 +371,10 @@ export const MeetingPage = () => {
             await socket.emit('transportProduce', {
               kind: parameters.kind,
               rtpParameters: parameters.rtpParameters,
-              appData: parameters.appData
+              appData: parameters.appData,
+              transportId: producerTransport.id,
+              type: "userProducer"
+
             }, ({ serverProducerId, producerExist }) => {
               // server will let us know if there's other producer
               // Tell the transport that parameters were transmitted and produced
@@ -419,16 +431,24 @@ export const MeetingPage = () => {
       })
     }
 
-    async function createNewConsumerTransport(remoteProducerId) {
-      // console.log("NEW USER JUST JOINED");
+    async function createNewConsumerTransport(remoteProducerId, remoteProducerType) {
+      console.log(remoteProducerId);
+      console.log(remoteProducerType);
+
+      let consumerType;
+
+      if (remoteProducerType === "screenShareProducer") {
+        consumerType = "screenShareConsumer"
+      } else {
+        consumerType = "userConsumer"
+      }
 
       if (consumingTransports.includes(remoteProducerId)) {
         return;
       }
       consumingTransports.push(remoteProducerId);
 
-
-      await socket.emit('createWebRtcTransport', { consumer: true }, ({ params }) => {
+      await socket.emit('createWebRtcTransport', { consumer: true, type:consumerType }, ({ params }) => {
         if (params.error) {
           console.log("consumer transport create error", params.error);
           return;
@@ -462,17 +482,18 @@ export const MeetingPage = () => {
           }
         })
         // params.id is the server side consumer transport id
-        connectRecvTransport(consumerTransport, remoteProducerId, params.id);
+        connectRecvTransport(consumerTransport, remoteProducerId, params.id, consumerType);
       });
     }
 
-    async function connectRecvTransport(consumerTransport, remoteProducerId, serverConsumerTransportId) {
+    async function connectRecvTransport(consumerTransport, remoteProducerId, serverConsumerTransportId, consumerType) {
       //  tell the server to create a consumer based on the rtp capabilities
       //  if the router can consume, server side will send back params
       await socket.emit('consume', {
         rtpCapabilities: device.rtpCapabilities,
         remoteProducerId,
-        serverConsumerTransportId
+        serverConsumerTransportId,
+        consumerType: consumerType
       }, async ({ params }) => {
         if (params.error) {
           console.log("Cannot Consumer")
@@ -568,7 +589,6 @@ export const MeetingPage = () => {
     })
 
 
-
     // Call the resize function when the window is resized
     window.addEventListener('resize', resizeVideoElements);
 
@@ -587,77 +607,118 @@ export const MeetingPage = () => {
   }, []);
 
   useEffect(() => {
-    if (screenShareStream) {
-      console.log('screen sharing')
-      console.log(ddevice)
+    if (screenShareStream){
+      console.log("sharing screen")
 
-      function createSendTransport() {
+      // create new transport and 2 producers
+      function screenCreateSendTransport() {
         // create new producer for screen sharing
-        socket.emit('createWebRtcTransport', { consumer:false }, ({ params }) => {
-      
+        socket.emit('createWebRtcTransport', { consumer:false, type:"screenShareProducer" }, ({ params }) => {
         // get producers transport parameters from the server side
+        // webrtctransport created!!
           if (params.error) {
             console.log("producer transport create error", params.error);
             return;
           }
 
-          console.log(params);
+          // console.log(params);
 
-        // creae new webrtc transport to send media
-        // producerTransport = device.createSendTransport(params);
+          // create new producer transport to send media
+          screenProducerTransport = ddevice.createSendTransport(params);
 
-        // producerTransport.on('connect', async ({ dtlsParameters }, callback, errback) => {
-        //   try {
-        //     // send local DTLS parameters to the server side transport
-        //     await socket.emit('transportConnect', {
-        //       dtlsParameters: dtlsParameters
-        //     })
+          screenProducerTransport.on('connect', async ({ dtlsParameters }, callback, errback) => {
+            try {
+              console.log('producer on connect')
+              // send local DTLS parameters to the server side transport
+              await socket.emit('transportConnect', {
+                transportId: screenProducerTransport.id,
+                dtlsParameters: dtlsParameters
+              })
 
-        //     // Tell the transport that parameters were transmitted
-        //     callback();
+              // Tell the transport that parameters were transmitted
+              callback();
 
-        //   } catch (error) {
-        //     errback(error);
-        //   }
-        // })
+            } catch (error) {
+              errback(error);
+            }
+          })
 
-        // producerTransport.on('produce', async (parameters, callback, errback) => {
-        //   // console.log(parameters);
+          screenProducerTransport.on('produce', async (parameters, callback, errback) => {
+            try {
 
-        //   try {
-        //     // tell the server to create a Producer
-        //     await socket.emit('transportProduce', {
-        //       kind: parameters.kind,
-        //       rtpParameters: parameters.rtpParameters,
-        //       appData: parameters.appData
-        //     }, ({ serverProducerId, producerExist }) => {
-        //       // server will let us know if there's other producer
-        //       // Tell the transport that parameters were transmitted and produced
-        //       callback({ serverProducerId })
-              
-        //       // if producer exist, join the room
-        //       if (producerExist) {
-        //         getProducers();
-        //       }
+              console.log('producer on produce')
 
+              // // tell the server to create a Producer
+              await socket.emit('transportProduce', {
+                kind: parameters.kind,
+                rtpParameters: parameters.rtpParameters,
+                appData: parameters.appData,
+                transportId: screenProducerTransport.id,
+                type: "screenShareProducer"
+              }, ({ serverProducerId, producerExist }) => {
+                // server will let us know if there's other producer
+                // Tell the transport that parameters were transmitted and produced
+                callback({ serverProducerId })
+              })
+            } catch (error) {
+              errback(error);
+            }
 
-        //     })
-        //   } catch (error) {
-        //     errback(error);
-        //   }
-
-        // })
-
-        // connectSendTransport();
+          })
+          connectSendTransport();
         })
 
       }
 
+      async function connectSendTransport() {
+        // console.log(screenVidParams);
+        // console.log(screenAudParams);
+
+        if (screenshareVidParams != undefined) {
+          console.log('vid not undefined')
+          screenshareVidProducer = await screenProducerTransport.produce(screenVidParams)
+        }
+
+        if (screenshareAudParams != undefined) {
+          console.log('audio not undefined')
+          screenshareAudioProducer = await screenProducerTransport.produce(screenAudParams)
+
+          screenshareAudioProducer.on('trackended', () => {
+            console.log('audio track ended')
+
+            // close audio track
+          })
+
+          screenshareAudioProducer.on('transportclose', () => {
+            console.log('audio transport ended')
+
+            // close audio track
+          })
+        }
+
+        screenshareVidProducer.on('trackended', () => {
+          console.log('video track ended')
+
+          // close video track
+        })
+
+        screenshareVidProducer.on('transportclose', () => {
+          console.log('video trans ended')
+
+          // close video track
+        })
+      }
 
 
-      // create new transport and 2 producers
+      screenCreateSendTransport();
+
+
     } else {
-      console.log('screen not sharing')
+      console.log("not sharing screen")
+
+      if (socket.connected) {
+        socket.emit("closingScreenShare")
+      }
     }
   }, [screenShareStream]);
 

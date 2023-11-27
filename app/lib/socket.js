@@ -1,4 +1,4 @@
-
+// fix transport and consumer nadodoble doble
 
 import * as mediasoup from 'mediasoup';
 import { config } from '../src/config.js';
@@ -13,6 +13,7 @@ import { config } from '../src/config.js';
  *         |-> Consumer 
  **/
 let worker
+var devicee
 let rooms = {}          // { roomName1: { Router, rooms: [ sicketId1, ... ] }, ...}
 let peers = {}          // { socketId1: { roomName1, socket, transports = [id1, id2,] }, producers = [id1, id2,] }, consumers = [id1, id2,], peerDetails }, ...}
 let transports = []     // [ { socketId1, roomName1, transport, consumer }, ... ]
@@ -138,11 +139,9 @@ async function ioConnection(io) {
 
 
 
-		socket.on('createWebRtcTransport', async ({ consumer }, callback) => {
+		socket.on('createWebRtcTransport', async ({ consumer, type }, callback) => {
 			// get the room name for this peer
 			const roomName = peers[socket.id].roomName
-
-			// console.log(rooms[roomName].peers.length)
 
 			// based on the roomname get the router
 			const router = rooms[roomName].router
@@ -159,21 +158,22 @@ async function ioConnection(io) {
 						}
 					})
 
-					addTransport(transport, roomName, consumer)
+					addTransport(transport, roomName, consumer, type)
 				}, error => {
 					console.log(error);
 				}
 			)
 		})
 
-		function addTransport(transport, roomName, consumer) {
+		function addTransport(transport, roomName, consumer, type) {
 			transports = [
 				...transports,
 				{
 					socketId: socket.id,
 					transport,
 					roomName,
-					consumer
+					consumer,
+					type
 				}
 			]
 
@@ -184,29 +184,35 @@ async function ioConnection(io) {
 					transport.id
 				]
 			}
+
+			// balik dito for checking ng number of transports sa user
+			// console.log("TRANSPORT: ", transports)
 		}
 
 
-		socket.on('transportConnect', ({ dtlsParameters }) => {
-			// console.log("DTLS Parameters: ", { dtlsParameters });
+		socket.on('transportConnect', ({ dtlsParameters, transportId }) => {
 
-			getTransport(socket.id).connect({ dtlsParameters })
+			getTransport(socket.id, transportId).connect({ dtlsParameters })
 		})
 
-		function getTransport(socketId) {
+		function getTransport(socketId, transportId) {
+
 			const [ producerTransport ] = transports.filter(transport =>
-				transport.socketId === socketId && !transport.consumer
+				transport.transport.internal.transportId === transportId && !transport.consumer
 			)
+
 			return producerTransport.transport
 		}
 
-		function addProducer(producer, roomName) {
+
+		function addProducer(producer, roomName, type) {
 			producers = [
 				...producers,
 				{
 					socketId: socket.id,
 					producer,
-					roomName
+					roomName, 
+					type
 				}
 			]
 
@@ -219,13 +225,14 @@ async function ioConnection(io) {
 			}
 		}
 
-		function addConsumer(consumer, roomName) {
+		function addConsumer(consumer, roomName, consumerType) {
 			consumers = [
 				...consumers,
 				{
 					socketId: socket.id,
 					consumer,
-					roomName
+					roomName,
+					consumerType
 				}
 			]
 
@@ -240,9 +247,8 @@ async function ioConnection(io) {
 			}
 		}
 
-		socket.on('transportProduce', async ({ kind, rtpParameters, appData }, callback) => {
-			// console.log("rtp parametersssss", rtpParameters)
-			const producer = await getTransport(socket.id).produce({ 
+		socket.on('transportProduce', async ({ kind, rtpParameters, appData, transportId, type }, callback) => {
+			const producer = await getTransport(socket.id, transportId).produce({ 
 				kind,
 				rtpParameters,
 			})
@@ -250,12 +256,12 @@ async function ioConnection(io) {
 			// add producer in the producers array
 			const { roomName } = peers[socket.id]
 
-			addProducer(producer, roomName)
+			addProducer(producer, roomName, type)
 
 			// inform other clients that a new producer has joined so they can consume
 			informConsumers(roomName, socket.id, producer.id);
 
-			console.log('Producer ID: ', producer.id, producer.kind)
+			console.log('Producer ID: ', producer.id, producer.kind ,type)
 
 			producer.on('transportclose', () => {
 				console.log('transport for this producer closed')
@@ -270,22 +276,57 @@ async function ioConnection(io) {
 
 
 		socket.on('transportRecvConnect', async ({ dtlsParameters, serverConsumerTransportId }) => {
-			console.log("DTLS Parameters: ", { dtlsParameters });
+			// console.log("DTLS Parameters: ", { dtlsParameters });
 			const consumerTransport = transports.find(transport => (
 				transport.consumer && transport.transport.id == serverConsumerTransportId
 			)).transport
 
 
-			    // console.log(`DTLS PARAMS: ${dtlsParameters}`)
-			    // const consumerTransport = transports.find(transportData => (
-			    //   transportData.consumer && transportData.transport.id == serverConsumerTransportId
-			    // )).transport
-
 			await consumerTransport.connect({ dtlsParameters })
 		})
 
-		socket.on('consume', async ({ rtpCapabilities, remoteProducerId, serverConsumerTransportId }, callback) => {
+		socket.on('closingScreenShare', () => {
+			// close screen share transports
+			console.log("SCREEN SHARE CLOSING ", socket.id)
+
+			// socket.emit('producerClosed', { remoteProducerId })
+
+			transports = removeScreenItem(transports, socket.id, "screenShareProducer")
+			producers = removeScreenItem(producers, socket.id, "screenShareProducer")
+			consumers = removeScreenItem(consumers, socket.id, "screenShareConsumer")
+
+			console.log("transports", transports)
+			console.log("producers", producers)
+			console.log("consumers", consumers)
+		})
+
+		function removeScreenItem(items, socketId, type) {
+			let itemToRemove
+			items.forEach(item => {
+				if (item.socketId === socketId && item.type === type) {
+					if (item['transport']) {
+						item['transport'].close()
+						console.log("TRANSPORTTT")
+					}
+					if (item['producer']) {
+						item['producer'].close()
+						console.log("PRODUCERRRR")
+					}
+					if (item['consumer']) {
+						item['consumer'].close()
+						console.log("CONSUMERRRR")
+					}
+					itemToRemove = item
+				}
+			})
+			items = items.filter(item => item !== itemToRemove)
+
+			return items
+		}
+
+		socket.on('consume', async ({ rtpCapabilities, remoteProducerId, serverConsumerTransportId, consumerType }, callback) => {
 			try {
+
 				const { roomName } = peers[socket.id]
 				const router = rooms[roomName].router
 				let consumerTransport = transports.find(transport => (
@@ -302,6 +343,10 @@ async function ioConnection(io) {
 						paused: true
 					})
 
+					console.log('consumer ID: ', consumer.id)
+
+					let consumerId = consumer.id
+
 					consumer.on('transportclose', () => {
 						console.log('transport close from consumer')
 					})
@@ -314,10 +359,12 @@ async function ioConnection(io) {
 						consumerTransport.close([])
 						transports = transports.filter(transport => transport.transport.id !== consumerTransport.id)
 						consumer.close()
-						consumers = consumers.filter(consumer => consumer.consumer.id !== consumer.id)
+
+						consumers = consumers.filter(consumer => consumer.consumer.id !== consumerId)
+						console.log("consumersssss", consumers)
 					})
 
-					addConsumer(consumer, roomName)
+					addConsumer(consumer, roomName, consumerType)
 
 					const params = {
 						id: consumer.id,
@@ -340,23 +387,42 @@ async function ioConnection(io) {
 		})
 
 		socket.on('consumerResume', async({ serverConsumerId }) => {
-			console.log('consumer resume')
+			// console.log('consumer resume')
 			const { consumer } = consumers.find(consumer => consumer.consumer.id === serverConsumerId)
 			await consumer.resume();
 		})
 
+		let userSharing = false
 		function informConsumers(roomName, socketId, producerId) {
-			console.log('just joined, id', producerId, roomName, socketId)
-
+			// console.log('just joined, id', producerId, roomName, socketId)
 			// a new produced jus joined
 			// all consumer will consume this producer
 			producers.forEach(producer => {
+
+				if (producer.type === "screenShareProducer") {
+					userSharing = true
+					return
+				}
+			})
+
+			producers.forEach(producer => {
+
 				// check if producer is in the same room with the clients
 				if (producer.socketId !== socketId && producer.roomName === roomName) {
 					const producerSocket = peers[producer.socketId].socket
-
+					
 					// use socket to send producer id to other producer (user) to consume its media
-					producerSocket.emit('newProducer', { producerId: producerId })
+					if (userSharing) {
+						producerSocket.emit('newProducer', { 
+							producerId: producerId,
+							producerType: "screenShareProducer"
+						})
+					} else {
+						producerSocket.emit('newProducer', { 
+							producerId: producerId,
+							producerType: producer.type
+						})
+					}
 				}
 			})
 		}
@@ -372,10 +438,15 @@ async function ioConnection(io) {
 				if (producer.socketId !== socket.id && producer.roomName === roomName) {
 					producerList = [
 						...producerList,
-						producer.producer.id
+						{
+							producerId: producer.producer.id,
+							producerType: producer.type
+						}
 					]
 				}
 			})
+
+			// console.log(producerList)
 
 			// return back to client
 			callback(producerList);
@@ -387,8 +458,6 @@ async function ioConnection(io) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				const configWebRtcTransport = config.mediasoup.webRtcTransport;
-
-				// console.log("configWebRtcTransport: ", configWebRtcTransport);
 
 				let transport = await router.createWebRtcTransport(configWebRtcTransport);
 
@@ -419,8 +488,16 @@ function getUsers(roomName) {
 	return users
 }
 
+function getTransports(roomName) {
+	let transportss = transports
+	return transportss
+}
+
+function getConsumers(roomName) {
+	return consumers
+}
 
 
 export {
-	ioConnection, getUsers
+	ioConnection, getUsers, getTransports, getConsumers
 };
