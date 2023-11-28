@@ -19,10 +19,10 @@ import Clock from './clock';
 import * as mediasoupClient from "mediasoup-client";
 import { io } from "socket.io-client";
 
-let socket = io.connect('https://127.0.0.1:8000/mediasoup');
 
-
+  let socket = io.connect('https://127.0.0.1:8000/mediasoup');
 export const MeetingPage = () => {
+
   const userID = window.crypto.randomUUID();
 
   // create channel link "?room=asdfafafgbn"
@@ -45,6 +45,7 @@ export const MeetingPage = () => {
   const [ddevice, setDevice] = useState(null);
   const [screenVidParams, setScreenVidParams] = useState(null);
   const [screenAudParams, setScreenAudParams] = useState(null);
+  // const [socket, setSocket] = useState(io.connect('https://127.0.0.1:8000/mediasoup'))
   // const [endCall, setEndCall] = useState(false);
 
   let localStream;
