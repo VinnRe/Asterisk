@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import '../../Styles/home_styles.css';
 import Cookies from "js-cookie";
 
-export const HomePage = () => {
+export const HomePage = ({ userName }) => {
 
     const navigate = useNavigate();
     const handleLogout = () => {
@@ -137,16 +137,18 @@ export const HomePage = () => {
                     <div className="account-overlay">
                         <div className="profile">
                             <div className="profile-icon | material-icons">face</div>
-                            <p className="profile-name">Name</p>
+                            <p className="profile-name">{userName}</p>
                         </div>
 
                         <a href="">
                             <span className="material-icons">edit</span>
                             <span>Edit Profile</span>
                         </a>
-                        {/* THIS WORKS JUST THE STYLE IS NOT WORKING */}
-                        <span className="material-icons logout-span" onClick={handleLogout}>logout</span>
-                        <span>Logout</span>
+
+                        <a>
+                            <span className="material-icons" onClick={handleLogout}>logout</span>
+                            <span>Logout</span>
+                        </a>
 
                         <div className="account-exit-button | exit-button">
                             <span className="material-icons">close</span>

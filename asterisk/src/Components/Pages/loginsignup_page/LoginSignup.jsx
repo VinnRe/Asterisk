@@ -6,7 +6,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import validator from 'validator';
 
-export const LoginSignup = () => {
+export const LoginSignup = ( {setUserName} ) => {
     // Switching
     const [isLoginForm, setIsLoginForm] = useState(true);
     const navigate = useNavigate();
@@ -71,10 +71,20 @@ export const LoginSignup = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                const { accessToken } = data;
-
+                console.log(data)
+                
                 // Store JWT Token in cookies
-                Cookies.set('accessToken', accessToken);
+                Cookies.set('accessToken', data.accessToken);
+                localStorage.setItem('firstName', data.firstName);
+                localStorage.setItem('lastName', data.lastName);
+                localStorage.setItem('nameExtension', data.nameExtension);
+                
+                // Fetch user deets using token
+                setUserName(`
+                    ${data.firstName},
+                    ${data.lastName}
+                    ${data.nameExtension}
+                `);
 
                 // Redirect to home page
                 navigate('/home');
