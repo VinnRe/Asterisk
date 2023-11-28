@@ -140,13 +140,8 @@ export const HomePage = ({ userName }) => {
                             <p className="profile-name">{userName}</p>
                         </div>
 
-                        <a href="">
-                            <span className="material-icons">edit</span>
-                            <span>Edit Profile</span>
-                        </a>
-
-                        <a>
-                            <span className="material-icons" onClick={handleLogout}>logout</span>
+                        <a onClick={handleLogout}>
+                            <span className="material-icons">logout</span>
                             <span>Logout</span>
                         </a>
 
