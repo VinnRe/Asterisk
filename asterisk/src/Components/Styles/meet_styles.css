@@ -41,9 +41,10 @@
 .video-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 10px; /* Adjust gap as needed */
-    margin: auto; /* Center the container horizontally */
-    max-width: 800px; /* Set a maximum width if needed */
+    gap: 10px;
+    margin: auto;
+    max-width: 800px;
+    place-items: center;
 }
 
 .video-element, .audio-element {

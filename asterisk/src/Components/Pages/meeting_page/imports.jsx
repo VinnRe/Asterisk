@@ -8,3 +8,4 @@ export {default as shareScreenOffIcon } from '../../Assets/meet_assets/share-scr
 export {default as chatIcon } from '../../Assets/meet_assets/chat_icon.svg';
 export {default as endCallIcon } from '../../Assets/meet_assets/end-call_icon.svg';
 export {default as raiseHandIcon } from '../../Assets/meet_assets/raise-hand_icon.svg';
+export {default as threeDotsIcon} from '../../Assets/meet_assets/three-dots_icon.svg'

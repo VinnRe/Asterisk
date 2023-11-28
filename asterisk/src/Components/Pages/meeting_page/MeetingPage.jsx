@@ -624,7 +624,12 @@ export const MeetingPage = () => {
                 </div>
             </button>
           </Link>
-          
+          <button className="toggle-button" onClick>
+            <div className="button-content">
+              <img src={meetIcons.threeDotsIcon} alt="moreIcon" style={imageSize} />
+              <span>More</span>
+            </div>
+          </button>
       </div>
       </body>
 
