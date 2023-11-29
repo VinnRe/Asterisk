@@ -1,24 +1,24 @@
-* {
+/* /* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-size: 1rem;
     font-family: Arial, Helvetica, sans-serif;
-}
-
+} */
+/* 
 body {
     background-color: #000;
     color: #fff;
-}
+} */
 
-main {
+.main-chat {
     height: 100vh;
     padding: 1rem;
     display: flex;
     flex-flow: column;
 }
 
-form {
+.form-msg {
     width: 100%;
     margin: auto;
     max-width: 600px;
@@ -28,17 +28,27 @@ form {
     gap: .25rem;
 }
 
-input {
+.form-join {
+    width: 100%;
+    margin: auto;
+    max-width: 600px;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    gap: .25rem;
+}
+
+.input-chat {
     flex-grow: 1;
     max-width: calc(80% - .25rem);
 }
 
-button {
+.button-chat {
     width: 20%;
 }
 
-input,
-button {
+.input-chat,
+.button-chat {
     border-radius: 10px;
     padding: .5rem;
 }

@@ -64,11 +64,12 @@ function ChatApp() {
   };
 
   return (
-    <main>
+    <main className="main-chat">
       <form className="form-join" onSubmit={enterRoom}>
         <input
           type="text"
           id="name"
+          className='input-chat'
           maxLength="8"
           placeholder="Your name"
           size="5"
@@ -79,13 +80,14 @@ function ChatApp() {
         <input
           type="text"
           id="room"
+          className='input-chat'
           placeholder="Chat room"
           size="5"
           required
           value={room}
           onChange={(e) => setRoom(e.target.value)}
         />
-        <button type="submit">Join</button>
+        <button type="submit" className='button-chat'>Join</button>
       </form>
 
       <ul className="chat-display" id="chatDisplay">
@@ -109,13 +111,14 @@ function ChatApp() {
         <input
           type="text"
           id="message"
+          className='input-chat'
           placeholder="Your message"
           required
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyPress={() => socket.emit('activity', name)}
         />
-        <button type="submit">Send</button>
+        <button type="submit" className='button-chat'>Send</button>
       </form>
     </main>
   );
