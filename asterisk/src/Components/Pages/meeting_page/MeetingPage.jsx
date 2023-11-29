@@ -20,8 +20,16 @@ import { Link } from 'react-router-dom';
 import * as mediasoupClient from "mediasoup-client";
 import { io } from "socket.io-client";
 import { resizeVideoElements } from './videoFunctions';
+import ChatApp from '../chat_bar/ChatApp';
 
 export const MeetingPage = () => {
+
+  const [isChatOpen, setChatOpen] = useState(false);
+
+  // Function to toggle the chat sidebar
+  const toggleChat = () => {
+    setChatOpen(!isChatOpen);
+  };
 
   // const userID = window.crypto.randomUUID();
 
@@ -610,12 +618,12 @@ export const MeetingPage = () => {
               <span>Raise Hand</span>
             </div>
           </button>
-          <button className="toggle-button" onClick>
-            <div className="button-content">
-              <img src={meetIcons.chatIcon} alt="chatIcon" style={imageSize} />
-              <span>Open Chat</span>
-            </div>
-          </button>
+          <button className="toggle-button" onClick={toggleChat}>
+              <div className="button-content">
+                <img src={meetIcons.chatIcon} alt="chatIcon" style={imageSize} />
+                <span>Open Chat</span>
+              </div>
+            </button>
           <Link to="/">
             <button className="toggle-button" onClick={endCall}>
                 <div className="button-content">
@@ -630,6 +638,11 @@ export const MeetingPage = () => {
               <span>More</span>
             </div>
           </button>
+          {isChatOpen && (
+            <div className="chat-sidebar">
+              <ChatApp />
+            </div>
+          )}
       </div>
       </body>
 
