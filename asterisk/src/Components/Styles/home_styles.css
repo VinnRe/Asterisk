@@ -290,3 +290,7 @@
 .form-overlay a:hover {
     color: var(--light-red);
 }
+
+.volume-slider {
+    color: var(--dark-red);
+}

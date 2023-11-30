@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import '../../Styles/home_styles.css';
 import Cookies from "js-cookie";
 
-export const HomePage = ({ userName }) => {
+export const HomePage = ({ userName, audioVolume, setAudioVolume }) => {
 
     const navigate = useNavigate();
     const handleLogout = () => {
@@ -157,17 +157,19 @@ export const HomePage = ({ userName }) => {
                             <span className="material-icons">speaker</span>
                             <span>Audio</span>
                         </a>
+                        <input
+                            type="range"
+                            min="0"
+                            max="100"
+                            value={audioVolume}
+                            onChange={(e) => setAudioVolume(e.target.value)}
+                            className="volume-slider"
+                        />
 
                         <a href="">
                             <span className="material-icons">videocam</span>
                             <span>Video</span>
                         </a>
-
-                        <a href="">
-                            <span className="material-icons">tune</span>
-                            <span>General</span>
-                        </a>
-
                         <div className="settings-exit-button | exit-button">
                             <span className="material-icons">close</span>
                         </div>

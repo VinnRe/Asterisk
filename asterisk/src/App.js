@@ -9,17 +9,26 @@ import { useState, useEffect } from 'react';
 
 function App() {
   const [userName, setUserName] = useState("");
+  const [audioVolume, setAudioVolume] = useState(50);
+
+  const handleVolumeChange = (newVolume) => {
+    setAudioVolume(newVolume);
+    localStorage.setItem('audioVolume', newVolume);
+  };
 
   useEffect(() => {
 
     const storedFirstName = localStorage.getItem('firstName');
     const storedLastName = localStorage.getItem('lastName');
     const storedNameExtension = localStorage.getItem('nameExtension');
+    const storedAudioVolume = localStorage.getItem('audioVolume');
 
     console.log(storedFirstName, storedLastName, storedNameExtension)
     if (storedFirstName && storedLastName || storedNameExtension) {
-      setUserName(`${storedFirstName}, ${storedLastName} ${storedNameExtension}`);
+      setUserName(`${storedFirstName} ${storedLastName} ${storedNameExtension}`);
     }
+
+    setAudioVolume(storedAudioVolume ? Number(storedAudioVolume) : 50);
   }, [])
 
   return (
@@ -33,8 +42,8 @@ function App() {
           element={<AuthRoute />}
         >
           <Route index element={<Navigate to="/home" />} />
-          <Route path='/home' element={<HomePage userName={userName} />} />
-          <Route path='/room/:roomName' element={<MeetingPage userName={userName} />} />
+          <Route path='/home' element={<HomePage userName={userName} audioVolume={audioVolume} setAudioVolume={handleVolumeChange} />} />
+          <Route path='/room/:roomName' element={<MeetingPage userName={userName} audioVolume={audioVolume} setAudioVolume={handleVolumeChange} />} />
         </Route>
       </Routes>
     </Router>

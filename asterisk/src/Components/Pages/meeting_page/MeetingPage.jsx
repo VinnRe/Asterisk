@@ -22,13 +22,14 @@ import { io } from "socket.io-client";
 import { resizeVideoElements } from './videoFunctions';
 import ChatApp from '../chat_bar/ChatApp';
 
-export const MeetingPage = () => {
+export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
   // const userID = window.crypto.randomUUID();
 
   // create channel link "?room=asdfafafgbn"
   const roomName = window.location.pathname.split('/')[2];
 
   console.log(roomName);
+  console.log(audioVolume);
 
   // free stun server -- from google
   const servers = {
@@ -534,8 +535,8 @@ export const MeetingPage = () => {
       vid_con.removeChild(document.getElementById(remoteProducerId))
     })
 
-    // Get the user count FOR OTHER PURPOSE
-    const fetchUserCount = async () => {
+      // Get the user count FOR OTHER PURPOSE
+      const fetchUserCount = async () => {
       const response = await fetch('api/user-count'); // CHANGE THE API ENDPOINT FOR USERCOUNT
       const data = await response.json();
 
@@ -552,6 +553,12 @@ export const MeetingPage = () => {
     resizeVideoElements(localAudioRef)
 
     connectSocket();
+
+    // Get the audio volume value from localStorage and set it in the state
+    const storedAudioVolume = localStorage.getItem('audioVolume');
+    if (storedAudioVolume !== null) {
+      setAudioVolume(Number(storedAudioVolume));
+    }
 
     // Cleanup the event listener when the component is unmounted
     return () => {
@@ -574,7 +581,14 @@ export const MeetingPage = () => {
         <div id="video-container" className="video-container">
           {/* Add video elements here */}
           <video ref={localVideoRef} autoPlay playsInline className="video-element"></video>
-          <audio ref={localAudioRef} autoPlay playsInline className="audio-element"></audio>
+          <audio 
+            ref={localAudioRef} 
+            autoPlay 
+            playsInline 
+            className="audio-element" 
+            volume={audioVolume / 100} 
+            onVolumeChange={(e) => setAudioVolume(e.target.volume * 100)}>
+          </audio>
         </div>
 
         <div className="button__control-panel">
