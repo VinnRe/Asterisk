@@ -23,14 +23,6 @@ import { resizeVideoElements } from './videoFunctions';
 import ChatApp from '../chat_bar/ChatApp';
 
 export const MeetingPage = () => {
-
-  const [isChatOpen, setChatOpen] = useState(false);
-
-  // Function to toggle the chat sidebar
-  const toggleChat = () => {
-    setChatOpen(!isChatOpen);
-  };
-
   // const userID = window.crypto.randomUUID();
 
   // create channel link "?room=asdfafafgbn"
@@ -56,6 +48,13 @@ export const MeetingPage = () => {
   const [micStatus, setMicStatus] = useState('Mute Mic');
   const [screenStatus, setScreenStatus] = useState('Share Screen');
   const [screenShareStream, setScreenShareStream] = useState(null);
+  
+  const [isChatOpen, setChatOpen] = useState(false);
+
+  // Function to toggle the chat sidebar
+  const toggleChat = () => {
+    setChatOpen(!isChatOpen);
+  };
 
   const [userCount, setUserCount] = useState(1);
 
@@ -621,7 +620,7 @@ export const MeetingPage = () => {
           <button className="toggle-button" onClick={toggleChat}>
               <div className="button-content">
                 <img src={meetIcons.chatIcon} alt="chatIcon" style={imageSize} />
-                <span>Open Chat</span>
+                <span>{isChatOpen ? 'Close Chat' : 'Open Chat'}</span>
               </div>
             </button>
           <Link to="/">
@@ -638,11 +637,9 @@ export const MeetingPage = () => {
               <span>More</span>
             </div>
           </button>
-          {isChatOpen && (
-            <div className="chat-sidebar">
-              <ChatApp />
-            </div>
-          )}
+          <div className={`chat-sidebar ${isChatOpen ? 'chat-sidebar-open' : ''}`}>
+            <ChatApp />
+          </div>
       </div>
       </body>
 

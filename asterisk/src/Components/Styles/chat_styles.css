@@ -1,26 +1,40 @@
-/* /* {
+:root {
+    --dark-red: rgb(113, 53, 54);
+    --light-red: rgb(175, 51, 51);
+    --white: #d2cccc;
+    --pinkish-white: rgb(222, 216, 216);
+    --grey: rgba(100, 100, 100, 0.52);
+}
+
+.chat--system {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-size: 1rem;
-    font-family: Arial, Helvetica, sans-serif;
-} */
-/* 
-body {
-    background-color: #000;
+    font-family: "Poppins";
+    float: left;
+}
+
+.body-chat {
+    display: grid;
+    grid-template-columns: 1fr;
+    background-color: var(--grey);
     color: #fff;
-} */
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
 
 .main-chat {
     height: 100vh;
-    padding: 1rem;
+    /* padding: 1rem; */
     display: flex;
     flex-flow: column;
 }
 
 .form-msg {
     width: 100%;
-    margin: auto;
+    margin-top: auto;
     max-width: 600px;
     display: flex;
     flex-flow: row nowrap;
@@ -30,7 +44,7 @@ body {
 
 .form-join {
     width: 100%;
-    margin: auto;
+    margin-bottom: auto;
     max-width: 600px;
     display: flex;
     flex-flow: row nowrap;
@@ -45,6 +59,7 @@ body {
 
 .button-chat {
     width: 20%;
+    background-color: var(--light-red);
 }
 
 .input-chat,
@@ -54,7 +69,7 @@ body {
 }
 
 .chat-display {
-    background-color: #333;
+    background-color: var(--grey);
     list-style-type: none;
     width: 100%;
     max-width: 600px;
@@ -69,7 +84,7 @@ body {
 }
 
 .post {
-    background-color: #eee;
+    background-color: var(--pinkish-white);
     border-radius: 10px;
     padding: 0 0 .25rem;
     margin: .5rem;
@@ -88,7 +103,7 @@ body {
 }
 
 .post__header {
-    color: #fff;
+    color: var(--pinkish-white);
     padding: .25rem .5rem;
     display: flex;
     justify-content: space-between;
@@ -97,11 +112,11 @@ body {
 }
 
 .post__header--user {
-    background-color: blue;
+    background-color: var(--light-red);
 }
 
 .post__header--reply {
-    background-color: purple;
+    background-color: var(--dark-red);
 }
 
 .post__header--name {

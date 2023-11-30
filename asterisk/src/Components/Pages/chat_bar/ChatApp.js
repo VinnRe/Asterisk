@@ -19,7 +19,7 @@ function ChatApp() {
     socket.on('message', (data) => {
       setMessages((prevMessages) => [...prevMessages, data]);
       // Scroll to the bottom of the chat display
-      chatDisplay.scrollTop = chatDisplay.scrollHeight;
+      //chatDisplay.scrollTop = chatDisplay.scrollHeight;
     });
 
     // Listen for user activity
@@ -64,63 +64,68 @@ function ChatApp() {
   };
 
   return (
-    <main className="main-chat">
-      <form className="form-join" onSubmit={enterRoom}>
-        <input
-          type="text"
-          id="name"
-          className='input-chat'
-          maxLength="8"
-          placeholder="Your name"
-          size="5"
-          required
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <input
-          type="text"
-          id="room"
-          className='input-chat'
-          placeholder="Chat room"
-          size="5"
-          required
-          value={room}
-          onChange={(e) => setRoom(e.target.value)}
-        />
-        <button type="submit" className='button-chat'>Join</button>
-      </form>
+    <div className='chat--system'>
+      <main className="main-chat">
+          <body className='body-chat'>
+            <form className="form-join" onSubmit={enterRoom}>
+              <input
+                type="text"
+                id="name"
+                className='input-chat'
+                maxLength="8"
+                placeholder="Your name"
+                size="5"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+              <input
+                type="text"
+                id="room"
+                className='input-chat'
+                placeholder="Chat room"
+                size="5"
+                required
+                value={room}
+                onChange={(e) => setRoom(e.target.value)}
+              />
+              <button type="submit" className='button-chat'>Join</button>
+              </form>
 
-      <ul className="chat-display" id="chatDisplay">
-        {messages.map((msg, index) => (
-          <li key={index} className={`post ${msg.name === name ? 'post--left' : 'post--right'}`}>
-            <div className={`post__header ${msg.name === name ? 'post__header--user' : 'post__header--reply'}`}>
-              <span className="post__header--name">{msg.name}</span>
-              <span className="post__header--time">{msg.time}</span>
-            </div>
-            <div className="post__text">{msg.text}</div>
-          </li>
-        ))}
-      </ul>
+              <ul className="chat-display" id="chatDisplay">
+                {messages.map((msg, index) => (
+                  <li key={index} className={`post ${msg.name === name ? 'post--left' : 'post--right'}`}>
+                    <div className={`post__header ${msg.name === name ? 'post__header--user' : 'post__header--reply'}`}>
+                      <span className="post__header--name">{msg.name}</span>
+                      <span className="post__header--time">{msg.time}</span>
+                    </div>
+                    <div className="post__text">{msg.text}</div>
+                  </li>
+                ))}
+              </ul>
 
-      <p className="user-list">
-        <em>Users in {room}:</em> {users.map((user) => <span key={user.name}>{user.name}, </span>)}
-      </p>
-      <p className="activity">{activity}</p>
+              <p className="user-list">
+                <em>Users in {room}:</em> {users.map((user) => <span key={user.name}>{user.name}, </span>)}
+              </p>
+              <p className="activity">{activity}</p>
 
-      <form className="form-msg" onSubmit={sendMessage}>
-        <input
-          type="text"
-          id="message"
-          className='input-chat'
-          placeholder="Your message"
-          required
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyPress={() => socket.emit('activity', name)}
-        />
-        <button type="submit" className='button-chat'>Send</button>
-      </form>
-    </main>
+              <form className="form-msg" onSubmit={sendMessage}>
+                <input
+                  type="text"
+                  id="message"
+                  className='input-chat'
+                  placeholder="Your message"
+                  required
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  onKeyPress={() => socket.emit('activity', name)}
+                  autoComplete="off"
+                />
+                <button type="submit" className='button-chat'>Send</button>
+              </form>
+          </body>
+      </main>
+    </div>
   );
 }
 
