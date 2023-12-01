@@ -10,7 +10,7 @@ import { useState, useEffect } from 'react';
 function App() {
   const [userName, setUserName] = useState("");
   const [audioVolume, setAudioVolume] = useState(50);
-  //const [roomNumber, setRoomNumber] = useState("");
+  const [roomNumber, setRoomNumber] = useState("");
 
   const handleVolumeChange = (newVolume) => {
     setAudioVolume(newVolume);
@@ -23,7 +23,7 @@ function App() {
     const storedLastName = localStorage.getItem('lastName');
     const storedNameExtension = localStorage.getItem('nameExtension');
     const storedAudioVolume = localStorage.getItem('audioVolume');
-    //const storedRoomNumber = localStorage.getItem('roomNumber');
+    const storedRoomNumber = localStorage.getItem('roomNumber');
 
     console.log(storedFirstName, storedLastName, storedNameExtension)
     if (storedFirstName && storedLastName || storedNameExtension) {
