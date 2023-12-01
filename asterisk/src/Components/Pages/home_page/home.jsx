@@ -3,8 +3,18 @@ import { Link, useNavigate } from "react-router-dom";
 import '../../Styles/home_styles.css';
 import Cookies from "js-cookie";
 
-export const HomePage = ({ userName, audioVolume, setAudioVolume }) => {
+export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, setRoomNumber }) => {
 
+    const generateRoomNumber = () => {
+        // Generate a random number
+        const randomRoomNumber = Math.floor(Math.random() * 1000) + 1;
+        setRoomNumber(randomRoomNumber);
+    };
+
+    const handleJoinClick = () => {
+        // Redirect to the generated room number
+        navigate(`/room/${roomNumber}`);
+    };
     const navigate = useNavigate();
     const handleLogout = () => {
         // Clear the authentication token from cookies
@@ -53,6 +63,7 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume }) => {
         toggleOverlay(backButton, formOverlay, "hidden", "0");
         toggleOverlay(accountButton, accountOverlay, "visible", "1");
         toggleOverlay(accountExitButton, accountOverlay, "hidden", "0");
+        generateRoomNumber();
     }, []);
 
     return (
@@ -79,11 +90,9 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume }) => {
                                 <p>Join Conference</p>
                             </a>
 
-                            <a href="">
-                                <Link to="/room">
+                            <a onClick={handleJoinClick}>
                                 <span className="material-icons">add</span>
                                 <p>Create Conference</p>
-                                </Link>
                             </a>
                         </div>
                     </section>
@@ -178,9 +187,15 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume }) => {
                     <div className="form-overlay">
                         <h2>Enter Meeting Code</h2>
                         <div className="form-buttons">
-                            <input className="form__input" type="text" name="join-conference" autoFocus />
+                            <input 
+                                className="form__input" 
+                                type="text" 
+                                name="join-conference" 
+                                value={roomNumber}
+                                onChange={(e) => {setRoomNumber(e.target.value)}}
+                                autoFocus />
                             <a href="" className="join">
-                                <span>Join</span>
+                                <span onClick={handleJoinClick}>Join</span>
                             </a>
                             <a href="" className="back-button">
                                 <span>Back</span>
