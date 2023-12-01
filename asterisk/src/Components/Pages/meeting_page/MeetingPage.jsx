@@ -593,10 +593,10 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
           <button className="toggle-button" onClick={toggleMic}>
             <div className="button-content">
               {micStatus === 'Mute Mic' ? (
-                <span className="material-icons">mic_none</span>
+                <span className="material-icons control-buttons">mic_none</span>
                 // <img src={meetIcons.micOnIcon} alt='micOn' style={imageSize} />
               ) : (
-                <span className="material-icons">mic_off</span>
+                <span className="material-icons control-buttons">mic_off</span>
                 // <img src={meetIcons.micOffIcon} alt='micOff' style={imageSize} />
               )} 
               {/* <span>{micStatus}</span> */}
@@ -606,10 +606,10 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
           <button className="toggle-button" onClick={toggleCamera}>
             <div className="button-content">
               {camStatus === 'Hide Cam' ? (
-                <span className="material-icons">videocam</span>
+                <span className="material-icons control-buttons">videocam</span>
                 // <img src={meetIcons.camOnIcon} alt='camOn' style={imageSize} />
               ) : (
-                <span className="material-icons">videocam_off</span>
+                <span className="material-icons control-buttons">videocam_off</span>
                 // <img src={meetIcons.camOffIcon} alt='camOff' style={imageSize} />
               )} 
               {/* <span>{camStatus}</span> */}
@@ -619,10 +619,10 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
           <button className="toggle-button" onClick={toggleScreenShare}>
             <div className="button-content">
               {screenStatus === 'Share Screen' ? (
-                <span className="material-icons">screen_share</span>
+                <span className="material-icons control-buttons">screen_share</span>
                 // <img src={meetIcons.shareScreenOnIcon} alt='shareScreenOn' style={imageSize} />
               ) : (
-                <span className="material-icons">stop_screen_share</span>
+                <span className="material-icons control-buttons">stop_screen_share</span>
                 // <img src={meetIcons.shareScreenOffIcon} alt='shareScreenOff' style={imageSize} />
               )} 
               {/* <span>{screenStatus}</span> */}
@@ -631,7 +631,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
 
           <button className="toggle-button" onClick>
             <div className="button-content">
-              <span className="material-icons">back_hand</span>
+              <span className="material-icons control-buttons">back_hand</span>
               {/* <img src={meetIcons.raiseHandIcon} alt="raiseHandIcon" style={imageSize} /> */}
               {/* <span>Raise Hand</span> */}
             </div>
@@ -639,7 +639,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
           
           <button className="toggle-button" onClick={toggleChat}>
               <div className="button-content">
-                <span className="material-icons">chat</span>
+                <span className="material-icons control-buttons">chat</span>
                 {/* <img src={meetIcons.chatIcon} alt="chatIcon" style={imageSize} /> */}
                 {/* <span>{isChatOpen ? 'Close Chat' : 'Open Chat'}</span> */}
               </div>
@@ -647,7 +647,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
 
           <button className="toggle-button" onClick>
             <div className="button-content">
-              <span className="material-icons">more_horiz</span>
+              <span className="material-icons control-buttons">more_horiz</span>
               {/* <img src={meetIcons.threeDotsIcon} alt="moreIcon" style={imageSize} /> */}
               {/* <span>More</span> */}
             </div>
@@ -660,7 +660,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
           <Link className="text-decoration--none" to="/">
             <button className="toggle-button" onClick={endCall}>
                 <div className="button-content">
-                  <span className="material-icons">phone_disabled</span>
+                  <span className="material-icons control-buttons">phone_disabled</span>
                   {/* <img src={meetIcons.endCallIcon} alt="callEndIcon" style={imageSize} /> */}
                   {/* <span>End Call</span> */}
                 </div>
