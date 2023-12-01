@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import '../../Styles/home_styles.css';
 import Cookies from "js-cookie";
+import logo from '../../Assets/asterisk-logo.png'
 
 export const HomePage = ({ userName, audioVolume, setAudioVolume}) => {
     const [roomNumber, setRoomNumber] = useState("");
@@ -109,7 +110,7 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume}) => {
 
                 <aside className="sidebar">
                     <div className="logo">
-                        <span className="material-icons | logo-icon">emergency</span>
+                        <img src={logo} alt="asterisk" className="logo-icon"/>
                         <h2>Asterisk</h2>
                     </div>
 
