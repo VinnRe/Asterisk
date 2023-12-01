@@ -152,22 +152,37 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume}) => {
                     <div className="settings-overlay">
                         <h2>Settings</h2>
 
-                        <a href="">
+                        <a>
                             <span className="material-icons">speaker</span>
-                            <span>Audio</span>
+                            <span>Audio Volume</span>
+                            <input
+                                type="range"
+                                min="0"
+                                max="100"
+                                value={audioVolume}
+                                onChange={(e) => setAudioVolume(e.target.value)}
+                                className="volume-slider"
+                            />
                         </a>
-                        <input
-                            type="range"
-                            min="0"
-                            max="100"
-                            value={audioVolume}
-                            onChange={(e) => setAudioVolume(e.target.value)}
-                            className="volume-slider"
-                        />
-
-                        <a href="">
+                        <a className="checkbox-toggles">
                             <span className="material-icons">videocam</span>
-                            <span>Video</span>
+                            <span className="videoSpan-s">Hide cam when joining a room</span>
+                            <label className="checkbox-label">
+                                <input type="checkbox" className="checkbox-s" />
+                                <span className="checkbox-overlay">
+                                    <span className="material-icons">done</span>
+                                </span>
+                            </label>
+                        </a>
+                        <a className="checkbox-toggles">
+                            <span className="material-icons">mic</span>
+                            <span className="micSpan-s">Mute mic when joining a room</span>
+                            <label className="checkbox-label">
+                                <input type="checkbox" className="checkbox-s" />
+                                <span className="checkbox-overlay">
+                                    <span className="material-icons">done</span>
+                                </span>
+                            </label>
                         </a>
                         <div className="settings-exit-button | exit-button">
                             <span className="material-icons">close</span>

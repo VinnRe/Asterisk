@@ -173,6 +173,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    text-align: center;
 }
 
 .settings-overlay h2 {
@@ -182,8 +183,8 @@
 }
  
 .settings-overlay a {
-    padding: 1.5rem;
-    width: 20%;
+    padding: 1rem;
+    width: 50%;
     text-decoration: none;
     color: var(--dark-red);
     transition: 0.2s;
@@ -297,5 +298,70 @@
 }
 
 .volume-slider {
-    color: var(--dark-red);
+    -webkit-appearance: none;
+    -moz-apperance: none;
+    appearance: none;
+    background-color: var(--light-red);
+    height: 5px;
+    border-radius: 1rem;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: var(--dark-red);
+    height: 15px;
+    width: 15px;
+    border-radius: 1rem;
+}
+
+.videoSpan-s, 
+.micSpan-s {
+    white-space: nowrap;
+    margin: 0;
+}
+
+.videoSpan-s {
+    margin-right: -3px;
+}
+
+.checkbox-toggles input[type="checkbox"] {
+    display: none;
+    margin: 0;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.checkbox-label .checkbox-overlay {
+    position: absolute;
+    height: 24px;
+    width: 24px;
+    background-color: var(--light-red);
+    border: 8px;
+    border: 2px solid var(--dark-red);
+    transform: rotate(-90deg);
+    transition: all 0.3s;
+}
+
+.checkbox-label .checkbox-overlay .material-icons {
+    display: none;
+    font-size: 1.5rem !important;
+    color: var(--light-red);
+}
+
+.checkbox-label input:checked ~ .checkbox-overlay {
+    background-color: var(--dark-red);
+    border-radius: 8px;
+    transform: rotate(0deg);
+    opacity: 1;
+    border: 2px solid var(--dark-red);
+}
+
+.checkbox-label input:checked ~ .checkbox-overlay .material-icons {
+    display: block;
 }
