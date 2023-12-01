@@ -6,22 +6,26 @@
     --grey: rgba(100, 100, 100, 0.52);
 }
 
-.body--h {
+.html--h, .body--h {
     box-sizing: border-box;
     margin: 0;
     min-height: 100vh;
     background-color: var(--white);
     font-family: "Poppins";
     font-size: 0.85rem;
+    user-select: none;
 }
 
 .header--h {
-    height: 18.8vh;
     display: flex;
     justify-content: center;
     color: var(--light-red);
     font-size: 2.5rem;
-    padding-top: 0.5rem;
+}
+
+.header--h h1 {
+    margin: 0;
+    padding-top: 1rem;
 }
 
 .sidebar {
@@ -30,11 +34,11 @@
     left: 0;
     background-color: var(--pinkish-white);
     height: 100%;
-    width: 2.8rem;
+    width: 4rem;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     white-space: nowrap;
-    transition: 0.5s;
+    transition: all 0.5s;
     overflow-x: hidden;
 }
 
@@ -63,7 +67,7 @@
 }
 
 .material-icons {
-    font-size: 45px;
+    font-size: 45px !important;
 }
 
 .material-icons.profile-icon {
@@ -96,11 +100,6 @@
     padding: 0.7rem;
 }
 
-.main--h {
-    min-height: 80vh;
-    margin-left: 2.8rem;
-}
-
 .main-section {
     height: 40vh;
     display: flex;
@@ -112,7 +111,7 @@
 .feature-container {
     display: flex;
     justify-content: center;
-    gap: 1.5rem;
+    gap: 2.5rem;
 }
 
 .controls-container a {
@@ -251,34 +250,40 @@
     color: var(--light-red);
 }
 
+.conference-buttons {
+    font-size: 8rem !important;
+}
+
 .form-overlay {
     background-color: var(--white);
-    width: 20rem;
-    height: 16rem;
+    width: 25rem;
+    height: 18rem;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     gap: 1.25rem;
 }
 
 .form-overlay h2 {
+    padding-top: 2.5rem;
+    padding-bottom: 0.75rem;
     font-size: 1.5rem;
     color: var(--light-red);
 }
 
 .form-buttons {
     display: flex;
+    align-items: center;
     gap: 0.625rem;
 }
 
 .form__input {
-    border-radius: calc(10px - 0.25rem);
-    padding: 0.25rem;
-    width: 8rem;
-    background-color: var(--white);
-    border-color: var(--grey);
+    border-radius: calc(10px - 0.25rem) !important;
+    padding: 0.25rem !;
+    width: 8rem !important;
+    background-color: var(--pinkish-white) !important;
 }
 
 .form-overlay a {
