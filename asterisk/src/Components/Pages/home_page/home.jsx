@@ -3,8 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import '../../Styles/home_styles.css';
 import Cookies from "js-cookie";
 
-export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, setRoomNumber }) => {
-
+export const HomePage = ({ userName, audioVolume, setAudioVolume}) => {
+    const [roomNumber, setRoomNumber] = useState("");
+    
     const generateRoomNumber = () => {
         // Generate a random number
         const randomRoomNumber = Math.floor(Math.random() * 1000) + 1;
