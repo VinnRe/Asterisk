@@ -40,7 +40,7 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
         function toggleSidebar(mouseEvent, isExpanded) {
             sidebar.addEventListener(mouseEvent, (event) => {
                 event.preventDefault();
-                sidebar.style.width = isExpanded ? "10rem" : "2.8rem";
+                sidebar.style.width = isExpanded ? "10rem" : "4rem";
             });
         }
 
@@ -69,7 +69,7 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
     return (
 
         // REWORK THE BUTTONS TO BE BETTER
-        <html lang="en">
+        <html className="html--h" lang="en">
             <head>
                 <meta charset="UTF-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -77,6 +77,7 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
                 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
                 <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet' />
             </head>
+
             <body className="body--h">
                 <header className="header--h">
                     <h1>Asterisk</h1>
@@ -86,12 +87,12 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
                     <section className="main-section">
                         <div className="controls-container">
                             <a className="join-button" href="">
-                                <span className="material-icons">groups</span>
+                                <span className="material-icons conference-buttons">groups</span>
                                 <p>Join Conference</p>
                             </a>
 
                             <a onClick={handleJoinClick}>
-                                <span className="material-icons">add</span>
+                                <span className="material-icons conference-buttons">add</span>
                                 <p>Create Conference</p>
                             </a>
                         </div>
@@ -101,7 +102,6 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
                         <div className="feature-container">
                             <div className="feature-button">Feature 1</div>
                             <div className="feature-button">Feature 2</div>
-                            <div className="feature-button">Feature 3</div>
                         </div>
                     </section>
                 </main>
@@ -114,13 +114,6 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
 
                     <nav className="nav--h">
                         <ul>
-                            <li>
-                                <a className="dashboard-button" href="">
-                                    <i className="material-icons">space_dashboard</i>
-                                    <span className="icon-text">Dashboard</span>
-                                </a>
-                            </li>
-
                             <li>
                                 <a className="account-button" href="">
                                     <i className="material-icons">account_circle</i>
@@ -139,10 +132,6 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
                 </aside>
 
                 <section className="opaque-background">
-                    <div className="dashboard-overlay">
-                        <h2>Dashboard</h2>
-                    </div>
-
                     <div className="account-overlay">
                         <div className="profile">
                             <div className="profile-icon | material-icons">face</div>

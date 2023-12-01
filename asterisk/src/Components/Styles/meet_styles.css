@@ -48,6 +48,10 @@
     padding-bottom: 1rem;
 }
 
+.control-buttons{
+    font-size: 1.75rem !important;
+}
+
 .clock-content {
     position: absolute;
     left: 2rem;
