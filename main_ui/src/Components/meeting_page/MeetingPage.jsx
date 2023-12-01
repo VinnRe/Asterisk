@@ -20,32 +20,34 @@ import * as mediasoupClient from "mediasoup-client";
 import { io } from "socket.io-client";
 
 
-  let socket = io.connect('https://127.0.0.1:8000/mediasoup');
+const socket = io.connect('https://127.0.0.1:8000/mediasoup');
+
 export const MeetingPage = () => {
 
-  const userID = window.crypto.randomUUID();
+  // const userID = window.crypto.randomUUID();
 
   // create channel link "?room=asdfafafgbn"
   const roomName = window.location.pathname.split('/')[2];
 
-  console.log(roomName);
+  // console.log(roomName);
 
 
   const localVideoRef = useRef(null);
   const localAudioRef = useRef(null);
 
-  const remoteVideoRef = useRef(null);
-  const remoteAudioRef = useRef(null);
+  // const remoteVideoRef = useRef(null);
+  // const remoteAudioRef = useRef(null);
 
   const [stream, setStream] = useState(null);
+  const [ddevice, setDevice] = useState(null);
   const [camStatus, setCamStatus] = useState('Hide Cam');
   const [micStatus, setMicStatus] = useState('Mute Mic');
-  const [screenStatus, setScreenStatus] = useState('Share Screen');
-  const [screenShareStream, setScreenShareStream] = useState(null);
-  const [ddevice, setDevice] = useState(null);
+  const [raiseHandStyle, setRaiseHandStyle] = useState(null);
   const [screenVidParams, setScreenVidParams] = useState(null);
   const [screenAudParams, setScreenAudParams] = useState(null);
-  // const [socket, setSocket] = useState(io.connect('https://127.0.0.1:8000/mediasoup'))
+  const [screenStatus, setScreenStatus] = useState('Share Screen');
+  const [screenShareStream, setScreenShareStream] = useState(null);
+  const [raiseHand, setRaiseHand] = useState(false);
   // const [endCall, setEndCall] = useState(false);
 
   let localStream;
@@ -56,7 +58,7 @@ export const MeetingPage = () => {
   let consumerTransports = []
   let audioProducer
   let videoProducer
-  let screenshareAudioProducer
+  let screenshareAudProducer
   let screenshareVidProducer
   let consumer;
   let isProducer = false
@@ -124,6 +126,11 @@ export const MeetingPage = () => {
     height: '2rem',
   };
 
+  const screenImageSize = {
+    width: '1.8rem',
+    height: '1.8rem',
+  }
+
   async function endStream() {
     setScreenShareStream(null);
     setScreenStatus("Share Screen");
@@ -179,6 +186,9 @@ export const MeetingPage = () => {
           ...screenshareAudParams
         }
 
+        console.log(screenshareVidParams)
+        console.log(screenshareAudParams)
+
         setScreenVidParams(screenshareVidParams);
         setScreenAudParams(screenshareAudParams);
 
@@ -199,6 +209,20 @@ export const MeetingPage = () => {
     screenShareStream.getVideoTracks()[0].addEventListener('ended', async () => {
       endStream();  
     });
+  }
+
+  async function toggleRaiseHand() {
+    if (!raiseHand) {
+      setRaiseHand(true);
+
+      // tempo
+      // dont know what to do with thiss
+      setRaiseHandStyle({backgroundColor:"green"});
+    } else {
+      setRaiseHand(false);
+
+      setRaiseHandStyle(null);
+    }
   }
 
   function endCall() {
@@ -227,14 +251,15 @@ export const MeetingPage = () => {
     }
   }
 
-  useEffect(() => {  
+
+  useEffect(() => {
+    console.log("rerendered!")
   
     function connectSocket() {
 
       socket.on('connect', () => {
         console.log('Connected!');
 
-        // send yung roomName sa server-side
       })
       socket.on('connection-success', ({ socketId }) => {
         console.log(socketId);
@@ -497,7 +522,7 @@ export const MeetingPage = () => {
         consumerType: consumerType
       }, async ({ params }) => {
         if (params.error) {
-          console.log("Cannot Consumer")
+          console.log("Cannot Consume")
           return
         }
 
@@ -555,7 +580,6 @@ export const MeetingPage = () => {
         const remoteCurrentVid = {current: videoElement}
         const remoteCurrentAud = {current: audioElement}
 
-        console.log(remoteCurrentVid)
 
         resizeVideoElements(remoteCurrentVid)
         resizeVideoElements(remoteCurrentAud)
@@ -589,6 +613,17 @@ export const MeetingPage = () => {
       vid_con.removeChild(document.getElementById(remoteProducerId))
     })
 
+    // Get the user count FOR OTHER PURPOSE
+    const fetchUserCount = async () => {
+      let url = "https://127.0.0.1:8000/get_users/" + roomName
+      const response = await fetch(url); // CHANGE THE API ENDPOINT FOR USERCOUNT
+      const data = await response.json();
+      console.log(data)
+      // setUserCount(data.userCount);
+    }
+
+    fetchUserCount(); // 
+
 
     // Call the resize function when the window is resized
     window.addEventListener('resize', resizeVideoElements);
@@ -606,6 +641,25 @@ export const MeetingPage = () => {
     };
 
   }, []);
+
+
+  useEffect(() => {
+    if (camStatus === "Hide Cam") {
+      socket.emit("camOn")
+    } else {
+      socket.emit("camOff")
+    }
+  }, [camStatus])
+
+
+  useEffect(() => {
+    if (micStatus === "Mute Mic") {
+      socket.emit("micOn")
+    } else {
+      socket.emit("micOff")
+    }
+  }, [micStatus])
+
 
   useEffect(() => {
     if (screenShareStream){
@@ -629,7 +683,6 @@ export const MeetingPage = () => {
 
           screenProducerTransport.on('connect', async ({ dtlsParameters }, callback, errback) => {
             try {
-              console.log('producer on connect')
               // send local DTLS parameters to the server side transport
               await socket.emit('transportConnect', {
                 transportId: screenProducerTransport.id,
@@ -646,9 +699,6 @@ export const MeetingPage = () => {
 
           screenProducerTransport.on('produce', async (parameters, callback, errback) => {
             try {
-
-              console.log('producer on produce')
-
               // // tell the server to create a Producer
               await socket.emit('transportProduce', {
                 kind: parameters.kind,
@@ -672,25 +722,26 @@ export const MeetingPage = () => {
       }
 
       async function connectSendTransport() {
-        // console.log(screenVidParams);
-        // console.log(screenAudParams);
+        // console.log(screenVidParams.track);
+        // console.log(screenAudParams.track);
 
-        if (screenshareVidParams != undefined) {
-          console.log('vid not undefined')
+        if (screenVidParams.track != undefined) {
           screenshareVidProducer = await screenProducerTransport.produce(screenVidParams)
+          console.log('vid on')
         }
 
-        if (screenshareAudParams != undefined) {
-          console.log('audio not undefined')
-          screenshareAudioProducer = await screenProducerTransport.produce(screenAudParams)
+        if (screenAudParams.track != undefined) {
+          console.log('audio on')
 
-          screenshareAudioProducer.on('trackended', () => {
+          screenshareAudProducer = await screenProducerTransport.produce(screenAudParams)
+
+          screenshareAudProducer.on('trackended', () => {
             console.log('audio track ended')
 
             // close audio track
           })
 
-          screenshareAudioProducer.on('transportclose', () => {
+          screenshareAudProducer.on('transportclose', () => {
             console.log('audio transport ended')
 
             // close audio track
@@ -712,8 +763,6 @@ export const MeetingPage = () => {
 
 
       screenCreateSendTransport();
-
-
     } else {
       console.log("not sharing screen")
 
@@ -723,15 +772,54 @@ export const MeetingPage = () => {
     }
   }, [screenShareStream]);
 
+
+  useEffect(() => {
+    if (raiseHand === true) {
+      socket.emit("handsUp")
+    } else {
+      socket.emit("handsDown")
+    }
+  }, [raiseHand]);
+
+
+
+
   return (
     <div className="container">
       <header className="meeting-header">
         <h1>Asterisk - Video Meeting App</h1>
         <div id="video-container" className="video-container">
           {/* Add video elements here */}
+
+         { <div className="icon-status">
+            {camStatus === 'Hide Cam' ? (
+              <img src={meetIcons.camOnIcon} alt='camOn' style={screenImageSize} />
+            ) : (
+              <img src={meetIcons.camOffIcon} alt='camOff' style={screenImageSize} />
+            )}
+
+            {micStatus === 'Mute Mic' ? (
+              <img src={meetIcons.micOnIcon} alt='shareScreenOff' style={screenImageSize} />
+            ) : (
+              <img src={meetIcons.micOffIcon} alt='shareScreenOff' style={screenImageSize} />
+            )}
+
+            {screenStatus === 'Share Screen' ? (
+              null
+            ) : (
+              <img src={meetIcons.shareScreenOnIcon} alt='shareScreenOn' style={screenImageSize} />
+            )}
+
+            {raiseHand === true ? (
+              <img src={meetIcons.raiseHandIcon} alt="raiseHandIcon" style={screenImageSize} />
+            ) : (
+              null
+            )}
+
+          </div>}
+
           <video ref={localVideoRef} muted autoPlay playsInline className="video-element"></video>
           <audio ref={localAudioRef} muted autoPlay playsInline className="audio-element"></audio>
-
         </div>
         <div className="button__control-panel">
             <div className="clock-content">
@@ -767,7 +855,7 @@ export const MeetingPage = () => {
                 <span>{screenStatus}</span>
               </div>
             </button>
-            <button className="toggle-button">
+            <button className="toggle-button" onClick={toggleRaiseHand} style={raiseHandStyle}>
               <div className="button-content">
                 <img src={meetIcons.raiseHandIcon} alt="raiseHandIcon" style={imageSize} />
                 <span>Raise Hand</span>
