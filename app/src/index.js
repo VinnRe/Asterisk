@@ -55,6 +55,12 @@ app.get("/get_consumers/:room", (request, response) => {
 	response.send(consumers)
 })
 
+app.get("/get_producers/:room", (request, response) => {
+	let roomName = request.params.room
+	let producers = socket.getProducers(roomName)
+	response.send(producers)
+})
+
 
 
 server.listen(port, () => {

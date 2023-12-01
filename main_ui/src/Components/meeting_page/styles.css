@@ -28,17 +28,23 @@ h1 {
 }
 
 .video-container {
+    position: relative;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #000; /* JUST TO CHECK THE CAM SPACE */
-
+    justify-content: flex-start;
+    align-items: flex-end;
+    background-color: #000;  /*JUST TO CHECK THE CAM SPACE*/ 
 }
 
 .video-element, .audio-element {
     max-width: 100%;
     max-height: 100%;
     object-fit: cover;
+}
+
+.icon-status {
+    left: 0.3rem;
+    position: absolute;
+    z-index: 1;
 }
 
 .button__control-panel {
