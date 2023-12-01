@@ -191,11 +191,13 @@ async function ioConnection(io) {
 
 
 		socket.on('transportConnect', ({ dtlsParameters, transportId }) => {
-
 			getTransport(socket.id, transportId).connect({ dtlsParameters })
 		})
 
 		function getTransport(socketId, transportId) {
+
+			// console.log(transports[0].transport.id)
+			// console.log(transportId)
 
 			const [ producerTransport ] = transports.filter(transport =>
 				transport.transport.internal.transportId === transportId && !transport.consumer
@@ -287,7 +289,7 @@ async function ioConnection(io) {
 
 		socket.on('closingScreenShare', () => {
 			// close screen share transports
-			console.log("SCREEN SHARE CLOSING ", socket.id)
+			// console.log("SCREEN SHARE CLOSING ", socket.id)
 
 			// socket.emit('producerClosed', { remoteProducerId })
 
@@ -295,9 +297,9 @@ async function ioConnection(io) {
 			producers = removeScreenItem(producers, socket.id, "screenShareProducer")
 			consumers = removeScreenItem(consumers, socket.id, "screenShareConsumer")
 
-			console.log("transports", transports)
-			console.log("producers", producers)
-			console.log("consumers", consumers)
+			// console.log("transports", transports)
+			// console.log("producers", producers)
+			// console.log("consumers", consumers)
 		})
 
 		function removeScreenItem(items, socketId, type) {
@@ -306,15 +308,15 @@ async function ioConnection(io) {
 				if (item.socketId === socketId && item.type === type) {
 					if (item['transport']) {
 						item['transport'].close()
-						console.log("TRANSPORTTT")
+						// console.log("TRANSPORTTT")
 					}
 					if (item['producer']) {
 						item['producer'].close()
-						console.log("PRODUCERRRR")
+						// console.log("PRODUCERRRR")
 					}
 					if (item['consumer']) {
 						item['consumer'].close()
-						console.log("CONSUMERRRR")
+						// console.log("CONSUMERRRR")
 					}
 					itemToRemove = item
 				}
@@ -361,7 +363,7 @@ async function ioConnection(io) {
 						consumer.close()
 
 						consumers = consumers.filter(consumer => consumer.consumer.id !== consumerId)
-						console.log("consumersssss", consumers)
+						// console.log("consumersssss", consumers)
 					})
 
 					addConsumer(consumer, roomName, consumerType)
@@ -452,7 +454,34 @@ async function ioConnection(io) {
 			callback(producerList);
 		})
 
+
+		socket.on('handsUp', () => {
+			console.log(socket.id, "hands up")
+			console.log(transports)
+		})
+
+		socket.on('handsDown', () => {
+			console.log(socket.id, "hands down")
+			console.log(producers)
+		})
+
+		socket.on('micOn', () => {
+			console.log(socket.id, "Mic is on")
+		})
+
+		socket.on('micOff', () => {
+			console.log(socket.id, "Mic is off")
+		})
+
+		socket.on('camOn', () => {
+			console.log(socket.id, "Cam is on")
+		})
+
+		socket.on('camOff', () => {
+			console.log(socket.id, "Cam is off")
+		})
 	})
+
 
 	async function createWebRtcTransport(router) {
 		return new Promise(async (resolve, reject) => {
@@ -483,6 +512,7 @@ async function ioConnection(io) {
 }
 
 function getUsers(roomName) {
+	console.log(rooms)
 	// const roomName = peers[socket.id].roomName
 	let users = rooms[roomName].peers.length
 	return users
@@ -498,7 +528,11 @@ function getConsumers(roomName) {
 	return consumers
 }
 
+function getProducers(roomName) {
+	return producers
+}
+
 
 export {
-	ioConnection, getUsers, getTransports, getConsumers
+	ioConnection, getUsers, getTransports, getConsumers, getProducers
 };
