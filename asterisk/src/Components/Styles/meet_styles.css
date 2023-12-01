@@ -1,16 +1,14 @@
 :root {
+    --color-primary: #F46566;
+    --color-primary-dark: #B84C4D;
     --dark-red: rgb(113, 53, 54);
     --light-red: rgb(175, 51, 51);
     --white: #d2cccc;
     --pinkish-white: rgb(222, 216, 216);
-    --grey: rgba(100, 100, 100, 0.52);
+    --grey: rgba(100, 100, 100, 0.25);
 }
 
 .body--m, .html--m {
-
-    --color-primary: #F46566;
-    --color-primary-dark: #B84C4D;
-
     margin: 0;
     display: flex;
     flex-direction: column;
@@ -20,22 +18,8 @@
     background-color: var(--white);
     background-size: cover;
     font-family: "Poppins";
-    /* padding-bottom: 50px; */
-  }
-
-.h1--m {
-    position: fixed;
-    top: 0;
-    left: 0;
-    margin: 10px;
-    color: var(--light-red);
-}
-
-.meeting-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px;
+    user-select: none;
+    overflow: hidden;
 }
 
 .video-container {
@@ -55,47 +39,45 @@
 
 .button__control-panel {
     display: flex;
-    flex-direction: row;
     justify-content: center;
-    align-items: flex-end;
+    align-items: center;
     position: fixed;
     bottom: 0;
     width: 100%;
-    padding: 10px;
-    gap: 10px;
+    gap: 1rem;
+    padding-bottom: 1rem;
 }
 
 .clock-content {
     position: absolute;
-    left: 20px;
-    bottom: 10px;
+    left: 2rem;
+    bottom: 1.75rem;
+    color: var(--dark-red);
 }
 
 .toggle-button {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
-    width: 100px;
-    white-space: nowrap;
-    border-radius: 1rem;
-    background-color: var(--light-red);
-    border: 2px solid var(--color-primary-dark);
-    transition: background-color 0.3s ease, transform 0.3s ease;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: var(--pinkish-white);
+    border: none;
+    transition: all 0.3s ease;
+    color: var(--dark-red)
 }
 
 .toggle-button:hover {
-    background-color: var(--dark-red);
-    transform: scale(1.05);
+    color: var(--light-red);
+    background-color: var(--grey);
 }
   
 .button-content {
     display: flex;
     flex-direction: column;
     align-items: center;
-}
-
-.button-content img {
-    margin-bottom: 5px; 
 }
 
 .chat-sidebar {
@@ -106,10 +88,13 @@
     right: -245px;
     background-color: #fff;
     border-left: 1px solid #ddd;
-    /* transform: translateX(100%); */
     transition: transform 0.3s ease-in-out;
 }
 
 .chat-sidebar-open {
     right: 0;
+}
+
+.text-decoration--none {
+    text-decoration: none;
 }

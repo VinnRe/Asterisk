@@ -123,13 +123,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
         setMicStatus('Mute Mic');
       }
     }
-  }
-
-  // Resize of button images
-  const imageSize = {
-    width: '2rem',
-    height: '2rem',
-  };
+  } 
 
   async function endStream() {
     setScreenShareStream(null);
@@ -568,16 +562,16 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
   }, []);
 
   return (
-    <html className='html--m'>
+    <html className='html--m' lang='en'>
+      <head>
+          <meta charset="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <title>Asterisk</title>
+          <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+          <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet' />
+      </head>
+      
       <body className='body--m'>
-        <div className="container--m">
-          <header className="meeting-header">
-            <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet' />
-            <h1 className='h1--m'>Asterisk - Video Meeting App</h1>
-          </header>
-        </div>
-
-          
         <div id="video-container" className="video-container">
           {/* Add video elements here */}
           <video ref={localVideoRef} autoPlay playsInline className="video-element"></video>
@@ -595,68 +589,85 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
           <div className="clock-content">
             <Clock />
           </div>
-          <button className="toggle-button" onClick={toggleCamera}>
-            <div className="button-content">
-              {camStatus === 'Hide Cam' ? (
-                <img src={meetIcons.camOnIcon} alt='camOn' style={imageSize} />
-              ) : (
-                <img src={meetIcons.camOffIcon} alt='camOff' style={imageSize} />
-              )} 
-              <span>{camStatus}</span>
-            </div>
-          </button>
+
           <button className="toggle-button" onClick={toggleMic}>
             <div className="button-content">
               {micStatus === 'Mute Mic' ? (
-                <img src={meetIcons.micOnIcon} alt='micOn' style={imageSize} />
+                <span className="material-icons">mic_none</span>
+                // <img src={meetIcons.micOnIcon} alt='micOn' style={imageSize} />
               ) : (
-                <img src={meetIcons.micOffIcon} alt='micOff' style={imageSize} />
+                <span className="material-icons">mic_off</span>
+                // <img src={meetIcons.micOffIcon} alt='micOff' style={imageSize} />
               )} 
-              <span>{micStatus}</span>
+              {/* <span>{micStatus}</span> */}
             </div>
           </button>
+
+          <button className="toggle-button" onClick={toggleCamera}>
+            <div className="button-content">
+              {camStatus === 'Hide Cam' ? (
+                <span className="material-icons">videocam</span>
+                // <img src={meetIcons.camOnIcon} alt='camOn' style={imageSize} />
+              ) : (
+                <span className="material-icons">videocam_off</span>
+                // <img src={meetIcons.camOffIcon} alt='camOff' style={imageSize} />
+              )} 
+              {/* <span>{camStatus}</span> */}
+            </div>
+          </button>
+          
           <button className="toggle-button" onClick={toggleScreenShare}>
             <div className="button-content">
               {screenStatus === 'Share Screen' ? (
-                <img src={meetIcons.shareScreenOnIcon} alt='shareScreenOn' style={imageSize} />
+                <span className="material-icons">screen_share</span>
+                // <img src={meetIcons.shareScreenOnIcon} alt='shareScreenOn' style={imageSize} />
               ) : (
-                <img src={meetIcons.shareScreenOffIcon} alt='shareScreenOff' style={imageSize} />
+                <span className="material-icons">stop_screen_share</span>
+                // <img src={meetIcons.shareScreenOffIcon} alt='shareScreenOff' style={imageSize} />
               )} 
-              <span>{screenStatus}</span>
+              {/* <span>{screenStatus}</span> */}
             </div>
           </button>
+
           <button className="toggle-button" onClick>
             <div className="button-content">
-              <img src={meetIcons.raiseHandIcon} alt="raiseHandIcon" style={imageSize} />
-              <span>Raise Hand</span>
+              <span className="material-icons">back_hand</span>
+              {/* <img src={meetIcons.raiseHandIcon} alt="raiseHandIcon" style={imageSize} /> */}
+              {/* <span>Raise Hand</span> */}
             </div>
           </button>
+          
           <button className="toggle-button" onClick={toggleChat}>
               <div className="button-content">
-                <img src={meetIcons.chatIcon} alt="chatIcon" style={imageSize} />
-                <span>{isChatOpen ? 'Close Chat' : 'Open Chat'}</span>
+                <span className="material-icons">chat</span>
+                {/* <img src={meetIcons.chatIcon} alt="chatIcon" style={imageSize} /> */}
+                {/* <span>{isChatOpen ? 'Close Chat' : 'Open Chat'}</span> */}
               </div>
-            </button>
-          <Link to="/">
-            <button className="toggle-button" onClick={endCall}>
-                <div className="button-content">
-                  <img src={meetIcons.endCallIcon} alt="callEndIcon" style={imageSize} />
-                  <span>End Call</span>
-                </div>
-            </button>
-          </Link>
+          </button>
+
           <button className="toggle-button" onClick>
             <div className="button-content">
-              <img src={meetIcons.threeDotsIcon} alt="moreIcon" style={imageSize} />
-              <span>More</span>
+              <span className="material-icons">more_horiz</span>
+              {/* <img src={meetIcons.threeDotsIcon} alt="moreIcon" style={imageSize} /> */}
+              {/* <span>More</span> */}
             </div>
           </button>
+
           <div className={`chat-sidebar ${isChatOpen ? 'chat-sidebar-open' : ''}`}>
             <ChatApp />
           </div>
+
+          <Link className="text-decoration--none" to="/">
+            <button className="toggle-button" onClick={endCall}>
+                <div className="button-content">
+                  <span className="material-icons">phone_disabled</span>
+                  {/* <img src={meetIcons.endCallIcon} alt="callEndIcon" style={imageSize} /> */}
+                  {/* <span>End Call</span> */}
+                </div>
+            </button>
+          </Link>
       </div>
       </body>
-
     </html>
   );
 };
