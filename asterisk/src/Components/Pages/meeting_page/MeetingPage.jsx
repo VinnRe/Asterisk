@@ -1,16 +1,3 @@
-// move other functions to join Conference jsx
-// matitira here is yung functions needed sa pagcreate lang ng new room
-
-
-// run index.js
-// /app/src/npm run start:dev
-
-// create conference
-// yung btn na create conference need maggenerate ng random pathName
-// http://localhost:3000/room/{anyy} -- use this sa create conference
-
-// edit the config.js file   announcedIp: '192.168.0.116' // replace by public IP address
-
 
 import React, { useEffect, useState, useRef } from 'react';
 import '../../Styles/meet_styles.css';
@@ -23,15 +10,9 @@ import { resizeVideoElements } from './videoFunctions';
 import ChatApp from '../chat_bar/ChatApp';
 
 
-
-// const socket = io.connect('https://127.0.0.1:8000/mediasoup');
-
 export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber }) => {
 
   const roomName = window.location.pathname.split('/')[2];
-
-  // console.log(roomName);
-  // console.log(audioVolume);
 
   const [ssocket, setSocket] = useState(null);
 
@@ -223,8 +204,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber 
     if (!raiseHand) {
       setRaiseHand(true);
 
-      // tempo
-      // dont know what to do with thiss
       setRaiseHandStyle({backgroundColor: "rgb(158, 44, 44)"});
     } else {
       setRaiseHand(false);
@@ -357,9 +336,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber 
           console.log("producer transport create error", params.error);
           return;
         }
-        // console.log(params);
 
-        // create send transport
         producerTransport = device.createSendTransport(params);
 
         producerTransport.on('connect', async ({ dtlsParameters }, callback, errback) => {
@@ -379,7 +356,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber 
         })
 
         producerTransport.on('produce', async (parameters, callback, errback) => {
-          // console.log(parameters);
 
           try {
             // tell the server to create a Producer
@@ -456,7 +432,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber 
           console.log("consumer transport create error", params.error);
           return;
         }
-        // console.log(params);
 
         let consumerTransport;
 
@@ -483,7 +458,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber 
             errback(error);
           }
         })
-        // params.id is the server side consumer transport id
+
         connectRecvTransport(consumerTransport, remoteProducerId, params.id, consumerType, remoteProducerSocketId);
       });
     }
@@ -503,8 +478,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber 
           console.log("Cannot Consume")
           return
         }
-
-        // console.log(params)
 
         // consume with the local consumer transport which creates a consumer
 
@@ -526,8 +499,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber 
         ]
 
         let vid_con1;
-
-        // console.log("IM HEREEEE")
 
         if (!document.getElementById(remoteProducerSocketId)) {
           vid_con1 = document.createElement("div");
@@ -671,7 +642,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber 
       }
     }
 
-    // when someone raised their hand
     socket.on("userRaisedHand", (data) => {
       set_icon_on(data.userSocketId, "back_hand")
     })
@@ -737,8 +707,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber 
             console.log("producer transport create error", params.error);
             return;
           }
-
-          // console.log(params);
 
           // create new producer transport to send media
           screenProducerTransport = ddevice.createSendTransport(params);
@@ -846,7 +814,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber 
   }, [raiseHand]);
 
 
-  // need muna itoggle once bago gumana
   useEffect(() => {
     if (ssocket !== null) {
       if (micStatus) {
@@ -918,12 +885,9 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber 
             <div className="button-content">
               {micStatus ? (
                 <span className="material-icons control-buttons">mic_none</span>
-                // <img src={meetIcons.micOnIcon} alt='micOn' style={imageSize} />
               ) : (
                 <span className="material-icons control-buttons">mic_off</span>
-                // <img src={meetIcons.micOffIcon} alt='micOff' style={imageSize} />
               )} 
-              {/* <span>{micStatus}</span> */}
             </div>
           </button>
 
@@ -931,12 +895,9 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber 
             <div className="button-content">
               {camStatus ? (
                 <span className="material-icons control-buttons">videocam</span>
-                // <img src={meetIcons.camOnIcon} alt='camOn' style={imageSize} />
               ) : (
                 <span className="material-icons control-buttons">videocam_off</span>
-                // <img src={meetIcons.camOffIcon} alt='camOff' style={imageSize} />
               )} 
-              {/* <span>{camStatus}</span> */}
             </div>
           </button>
           
@@ -944,20 +905,15 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber 
             <div className="button-content">
               {screenStatus === 'Share Screen' ? (
                 <span className="material-icons control-buttons">screen_share</span>
-                // <img src={meetIcons.shareScreenOnIcon} alt='shareScreenOn' style={imageSize} />
               ) : (
                 <span className="material-icons control-buttons">stop_screen_share</span>
-                // <img src={meetIcons.shareScreenOffIcon} alt='shareScreenOff' style={imageSize} />
               )} 
-              {/* <span>{screenStatus}</span> */}
             </div>
           </button>
 
           <button className="toggle-button" onClick={toggleRaiseHand} style={raiseHandStyle}>
             <div className="button-content">
               <span className="material-icons control-buttons">back_hand</span>
-              {/* <img src={meetIcons.raiseHandIcon} alt="raiseHandIcon" style={imageSize} /> */}
-              {/* <span>Raise Hand</span> */}
             </div>
           </button>
           
@@ -972,8 +928,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber 
           <button className="toggle-button" onClick>
             <div className="button-content">
               <span className="material-icons control-buttons">more_horiz</span>
-              {/* <img src={meetIcons.threeDotsIcon} alt="moreIcon" style={imageSize} /> */}
-              {/* <span>More</span> */}
             </div>
           </button>
 
@@ -985,8 +939,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber 
             <button className="toggle-button" onClick={endCall}>
                 <div className="button-content">
                   <span className="material-icons control-buttons">phone_disabled</span>
-                  {/* <img src={meetIcons.endCallIcon} alt="callEndIcon" style={imageSize} /> */}
-                  {/* <span>End Call</span> */}
                 </div>
             </button>
           </Link>
