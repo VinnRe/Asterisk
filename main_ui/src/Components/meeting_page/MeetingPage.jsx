@@ -618,7 +618,7 @@ export const MeetingPage = () => {
       let url = "https://127.0.0.1:8000/get_users/" + roomName
       const response = await fetch(url); // CHANGE THE API ENDPOINT FOR USERCOUNT
       const data = await response.json();
-      console.log(data)
+      console.log(data["users"])
       // setUserCount(data.userCount);
     }
 
@@ -791,7 +791,7 @@ export const MeetingPage = () => {
         <div id="video-container" className="video-container">
           {/* Add video elements here */}
 
-         { <div className="icon-status">
+          <div className="icon-status">
             {camStatus === 'Hide Cam' ? (
               <img src={meetIcons.camOnIcon} alt='camOn' style={screenImageSize} />
             ) : (
@@ -816,7 +816,7 @@ export const MeetingPage = () => {
               null
             )}
 
-          </div>}
+          </div>
 
           <video ref={localVideoRef} muted autoPlay playsInline className="video-element"></video>
           <audio ref={localAudioRef} muted autoPlay playsInline className="audio-element"></audio>

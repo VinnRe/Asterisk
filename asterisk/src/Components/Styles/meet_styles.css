@@ -31,10 +31,24 @@
     place-items: center;
 }
 
+.vid-con1 {
+    position: relative;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+    background-color: #000;  /*JUST TO CHECK THE CAM SPACE*/ 
+}
+
 .video-element, .audio-element {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+.icon-status {
+    left: 0.3rem;
+    position: absolute;
+    z-index: 1;
 }
 
 .button__control-panel {

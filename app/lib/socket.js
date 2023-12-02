@@ -134,6 +134,8 @@ async function ioConnection(io) {
 				peers: [...peers, socketId]
 			}
 
+			// console.log(rooms)
+
 			return router1;
 		}
 
@@ -250,6 +252,7 @@ async function ioConnection(io) {
 		}
 
 		socket.on('transportProduce', async ({ kind, rtpParameters, appData, transportId, type }, callback) => {
+
 			const producer = await getTransport(socket.id, transportId).produce({ 
 				kind,
 				rtpParameters,
@@ -407,22 +410,26 @@ async function ioConnection(io) {
 				}
 			})
 
+			// two times nacacall
 			producers.forEach(producer => {
 
 				// check if producer is in the same room with the clients
 				if (producer.socketId !== socketId && producer.roomName === roomName) {
 					const producerSocket = peers[producer.socketId].socket
-					
+				
+
 					// use socket to send producer id to other producer (user) to consume its media
 					if (userSharing) {
 						producerSocket.emit('newProducer', { 
 							producerId: producerId,
-							producerType: "screenShareProducer"
+							producerType: "screenShareProducer",
+							producerSocketId: socketId
 						})
 					} else {
 						producerSocket.emit('newProducer', { 
 							producerId: producerId,
-							producerType: producer.type
+							producerType: producer.type,
+							producerSocketId: socketId
 						})
 					}
 				}
@@ -442,7 +449,8 @@ async function ioConnection(io) {
 						...producerList,
 						{
 							producerId: producer.producer.id,
-							producerType: producer.type
+							producerType: producer.type,
+							producerSocketId: producer.socketId
 						}
 					]
 				}
@@ -455,14 +463,31 @@ async function ioConnection(io) {
 		})
 
 
-		socket.on('handsUp', () => {
+		function sendToOtherPeers(roomName, event) {
+			Object.values(peers).forEach(peer => {
+				if (peer.roomName === roomName && peer.socket.id !== socket.id) {
+					switch (event) {
+						case "raiseHand":
+							peer.socket.emit("userRaisedHand", {userSocketId: socket.id})
+							break
+						case "lowerHand":
+							peer.socket.emit("userLowerHand", {userSocketId: socket.id})
+						// case ""
+					}
+					console.log(peer.socket.id)
+				}
+			})
+		}
+
+		socket.on('handsUp', (data) => {
+			// send sa other sockets
 			console.log(socket.id, "hands up")
-			console.log(transports)
+			sendToOtherPeers(data.roomName, "raiseHand")
 		})
 
-		socket.on('handsDown', () => {
+		socket.on('handsDown', (data) => {
 			console.log(socket.id, "hands down")
-			console.log(producers)
+			sendToOtherPeers(data.roomName, "lowerHand")
 		})
 
 		socket.on('micOn', () => {
@@ -471,14 +496,6 @@ async function ioConnection(io) {
 
 		socket.on('micOff', () => {
 			console.log(socket.id, "Mic is off")
-		})
-
-		socket.on('camOn', () => {
-			console.log(socket.id, "Cam is on")
-		})
-
-		socket.on('camOff', () => {
-			console.log(socket.id, "Cam is off")
 		})
 	})
 
@@ -512,8 +529,6 @@ async function ioConnection(io) {
 }
 
 function getUsers(roomName) {
-	console.log(rooms)
-	// const roomName = peers[socket.id].roomName
 	let users = rooms[roomName].peers.length
 	return users
 }

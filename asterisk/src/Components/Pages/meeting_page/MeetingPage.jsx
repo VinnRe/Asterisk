@@ -23,14 +23,18 @@ import { resizeVideoElements } from './videoFunctions';
 import ChatApp from '../chat_bar/ChatApp';
 
 
-const socket = io.connect('https://127.0.0.1:8000/mediasoup');
+
+// const socket = io.connect('https://127.0.0.1:8000/mediasoup');
 
 export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
 
   const roomName = window.location.pathname.split('/')[2];
 
-  console.log(roomName);
-  console.log(audioVolume);
+  // console.log(roomName);
+  // console.log(audioVolume);
+
+  const [ssocket, setSocket] = useState(null);
+
 
   const localVideoRef = useRef(null);
   const localAudioRef = useRef(null);
@@ -106,19 +110,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
 
   let consumingTransports = [];
 
-  // Function to toggle the camera stream
-  function toggleCamera() {
-    if (stream) {
-      const videoTrack = stream.getTracks().find(track => track.kind === 'video');
-      if (videoTrack.enabled) {
-        videoTrack.enabled = false;
-        setCamStatus('Show Cam');
-      } else {
-        videoTrack.enabled = true;
-        setCamStatus('Hide Cam');
-      }
-    }
-  }
 
   // Function to toggle the microphone stream
   function toggleMic() {
@@ -133,6 +124,22 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
       }
     }
   } 
+
+
+  // Function to toggle the camera stream
+  function toggleCamera() {
+    if (stream) {
+      const videoTrack = stream.getTracks().find(track => track.kind === 'video');
+      if (videoTrack.enabled) {
+        videoTrack.enabled = false;
+        setCamStatus('Show Cam');
+      } else {
+        videoTrack.enabled = true;
+        setCamStatus('Hide Cam');
+      }
+    }
+  }
+
 
   async function endStream() {
     setScreenShareStream(null);
@@ -181,12 +188,12 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
         resizeVideoElements(cur_screen_aud_con);
 
         screenshareVidParams = {
-          track: userScreen.getAudioTracks()[0],
+          track: userScreen.getVideoTracks()[0],
           ...screenshareVidParams
         }
 
         screenshareAudParams = {
-          track: userScreen.getVideoTracks()[0],
+          track: userScreen.getAudioTracks()[0],
           ...screenshareAudParams
         }
 
@@ -229,8 +236,12 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
 
 
   useEffect(() => {
-    
+    const socket = io.connect('https://127.0.0.1:8000/mediasoup')
+    setSocket(socket)
+
+
     function connectSocket() {
+      console.log("here")
       socket.on('connect', () => {
         console.log('Connected!');
 
@@ -238,6 +249,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
       socket.on('connection-success', ({ socketId }) => {
         console.log(socketId);
         startStream();
+
       });
     }
 
@@ -315,8 +327,12 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
     }
 
     // server informs the client that a new producer (user) just joined
-    socket.on('newProducer', ({ producerId, producerType }) => {
-      createNewConsumerTransport(producerId, producerType);
+
+    // 4 TIMES NA NACACALL TOOO 
+    // NEED TO CHECK THE BACKEND
+    // LATERRRR
+    socket.on('newProducer', ({ producerId, producerType, producerSocketId }) => {
+      createNewConsumerTransport(producerId, producerType, producerSocketId);
     })
 
     // ask the server to get the producer's ids
@@ -324,12 +340,13 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
       socket.emit('getProducers', remoteProducers => {
         //  for each producer create consumer
         remoteProducers.forEach(remoteProducer => {
-          createNewConsumerTransport(remoteProducer.producerId, remoteProducer.producerType);
+          createNewConsumerTransport(remoteProducer.producerId, remoteProducer.producerType, remoteProducer.producerSocketId);
         })
       })
     }
 
     function createSendTransport() {
+
       //  when we join, we join as a producer
       socket.emit('createWebRtcTransport', { consumer:false, type:"userProducer" }, ({ params }) => {
       
@@ -416,9 +433,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
       })
     }
 
-    async function createNewConsumerTransport(remoteProducerId, remoteProducerType) {
-      console.log(remoteProducerId);
-      console.log(remoteProducerType);
+    async function createNewConsumerTransport(remoteProducerId, remoteProducerType, remoteProducerSocketId) {
 
       let consumerType;
 
@@ -467,11 +482,11 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
           }
         })
         // params.id is the server side consumer transport id
-        connectRecvTransport(consumerTransport, remoteProducerId, params.id, consumerType);
+        connectRecvTransport(consumerTransport, remoteProducerId, params.id, consumerType, remoteProducerSocketId);
       });
     }
 
-    async function connectRecvTransport(consumerTransport, remoteProducerId, serverConsumerTransportId, consumerType) {
+    async function connectRecvTransport(consumerTransport, remoteProducerId, serverConsumerTransportId, consumerType, remoteProducerSocketId) {
       //  tell the server to create a consumer based on the rtp capabilities
       //  if the router can consume, server side will send back params
       await socket.emit('consume', {
@@ -506,10 +521,22 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
           }
         ]
 
-        // get audio/video track
-        // create a new div element for the new consumer media
-        // append sa video-container
-        
+        let vid_con1;
+
+        if (!document.getElementById(remoteProducerSocketId)) {
+          vid_con1 = document.createElement("div");
+          vid_con1.className = "vid-con1"
+          vid_con1.setAttribute('id', remoteProducerSocketId)
+
+          let icon_status = document.createElement("div");
+          icon_status.className = "icon-status remote-icon-status"
+
+          vid_con1.appendChild(icon_status)
+
+        } else {
+          vid_con1 = document.getElementById(remoteProducerSocketId)
+        }
+      
         let vid_con = document.getElementById("video-container");
         let audioElement;
         let videoElement;
@@ -517,20 +544,11 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
         if (params.kind == 'audio') {
           audioElement = document.createElement('audio');
           audioElement.setAttribute('id', remoteProducerId);
-          audioElement.setAttribute('playsInLine', true);
           audioElement.setAttribute('autoPlay', true);
+          audioElement.setAttribute('playsInLine', true);
           audioElement.className = "audio-element";
 
-          vid_con.appendChild(audioElement);
-
-            // ref={localAudioRef} 
-            // muted
-            // autoPlay 
-            // playsInline 
-            // className="audio-element" 
-            // volume={audioVolume / 100} 
-            // onVolumeChange={(e) => setAudioVolume(e.target.volume * 100)}>
-
+          vid_con1.appendChild(audioElement);
 
         } else {
           videoElement = document.createElement('video');
@@ -538,8 +556,10 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
           videoElement.setAttribute('playsInline', true);
           videoElement.setAttribute('autoPlay', true);
           videoElement.className = "video-element";
-          vid_con.appendChild(videoElement);
+          vid_con1.appendChild(videoElement);
         }
+
+        vid_con.appendChild(vid_con1)
         
         const { track } = consumer;
         const remoteElem = document.getElementById(remoteProducerId);
@@ -610,22 +630,12 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
 
   }, []);
 
-  useEffect(() => {
-    if (camStatus === "Hide Cam") {
-      socket.emit("camOn")
-    } else {
-      socket.emit("camOff")
-    }
-  }, [camStatus])
 
-
+  // di pa taposss
   useEffect(() => {
-    if (micStatus === "Mute Mic") {
-      socket.emit("micOn")
-    } else {
-      socket.emit("micOff")
-    }
-  }, [micStatus])
+    console.log(audioVolume)
+  }, [audioVolume])
+
 
   useEffect(() => {
     if (screenShareStream){
@@ -634,7 +644,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
       // create new transport and 2 producers
       function screenCreateSendTransport() {
         // create new producer for screen sharing
-        socket.emit('createWebRtcTransport', { consumer:false, type:"screenShareProducer" }, ({ params }) => {
+        ssocket.emit('createWebRtcTransport', { consumer:false, type:"screenShareProducer" }, ({ params }) => {
         // get producers transport parameters from the server side
         // webrtctransport created!!
           if (params.error) {
@@ -650,7 +660,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
           screenProducerTransport.on('connect', async ({ dtlsParameters }, callback, errback) => {
             try {
               // send local DTLS parameters to the server side transport
-              await socket.emit('transportConnect', {
+              await ssocket.emit('transportConnect', {
                 transportId: screenProducerTransport.id,
                 dtlsParameters: dtlsParameters
               })
@@ -666,7 +676,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
           screenProducerTransport.on('produce', async (parameters, callback, errback) => {
             try {
               // // tell the server to create a Producer
-              await socket.emit('transportProduce', {
+              await ssocket.emit('transportProduce', {
                 kind: parameters.kind,
                 rtpParameters: parameters.rtpParameters,
                 appData: parameters.appData,
@@ -688,15 +698,15 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
       }
 
       async function connectSendTransport() {
-        // console.log(screenVidParams.track);
-        // console.log(screenAudParams.track);
+        console.log(screenVidParams.track);
+        console.log(screenAudParams.track);
 
-        if (screenVidParams.track != undefined) {
+        if (screenVidParams.track !== undefined) {
           screenshareVidProducer = await screenProducerTransport.produce(screenVidParams)
           console.log('vid on')
         }
 
-        if (screenAudParams.track != undefined) {
+        if (screenAudParams.track !== undefined) {
           console.log('audio on')
 
           screenshareAudProducer = await screenProducerTransport.produce(screenAudParams)
@@ -732,19 +742,43 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
     } else {
       console.log("not sharing screen")
 
-      if (socket.connected) {
-        socket.emit("closingScreenShare")
+      if (ssocket !== null) {
+        ssocket.emit("closingScreenShare")
       }
     }
   }, [screenShareStream]);
 
 
   useEffect(() => {
-    if (raiseHand === true) {
-      socket.emit("handsUp")
-    } else {
-      socket.emit("handsDown")
+
+    if (ssocket !== null) {
+      if (raiseHand === true) {
+        ssocket.emit("handsUp", {roomName: roomName})
+      } else {
+        ssocket.emit("handsDown", {roomName: roomName})
+      }
+
+      // when someone raised their hand
+      ssocket.on("userRaisedHand", (data) => {
+        console.log(data.userSocketId, "raised their hand")
+        if (document.getElementById(data.userSocketId)) {
+          let icon_status = document.getElementsByClassName("icon-status remote-icon-status")
+          for (let i = 0; i < icon_status.length; i++) {
+            let span = document.createElement('span')
+            span.className = "material-icons control-buttons"
+            span.innerHTML = "back_hand"
+
+            icon_status[i].appendChild(span)
+          }
+        }
+      })
+
+      ssocket.on("userLowerHand", (data) => {
+        console.log(data)
+      })
     }
+
+
   }, [raiseHand]);
 
 
@@ -762,23 +796,41 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
       <body className='body--m'>
         <div id="video-container" className="video-container">
           {/* Add video elements here */}
-          <video 
-            ref={localVideoRef}
-            muted
-            autoPlay 
-            playsInline 
-            className="video-element">
-          </video>
 
-          <audio 
-            ref={localAudioRef} 
-            muted
-            autoPlay 
-            playsInline 
-            className="audio-element" 
-            volume={audioVolume / 100} 
-            onVolumeChange={(e) => setAudioVolume(e.target.volume * 100)}>
-          </audio>
+          <div className="vid-con1">
+            <div className="icon-status">
+              {micStatus === 'Mute Mic' ? (
+                <span className="material-icons control-buttons">mic_none</span>
+              ) : (
+                null
+              )}
+
+              {raiseHand === true ? (
+                <span className="material-icons control-buttons">back_hand</span>
+              ) : (
+                null
+              )}
+            </div>
+
+            <video 
+              ref={localVideoRef}
+              muted
+              autoPlay 
+              playsInline 
+              className="video-element">
+            </video>
+
+            <audio 
+              ref={localAudioRef} 
+              muted
+              autoPlay 
+              playsInline 
+              className="audio-element" 
+              // volume={audioVolume / 100} 
+              // onVolumeChange={(e) => setAudioVolume(e.target.volume * 100)}>
+            >
+            </audio>
+          </div>
         </div>
 
         <div className="button__control-panel">
