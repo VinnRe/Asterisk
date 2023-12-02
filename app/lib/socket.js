@@ -134,6 +134,8 @@ async function ioConnection(io) {
 				peers: [...peers, socketId]
 			}
 
+			// console.log(rooms)
+
 			return router1;
 		}
 
@@ -250,6 +252,7 @@ async function ioConnection(io) {
 		}
 
 		socket.on('transportProduce', async ({ kind, rtpParameters, appData, transportId, type }, callback) => {
+
 			const producer = await getTransport(socket.id, transportId).produce({ 
 				kind,
 				rtpParameters,
@@ -407,22 +410,26 @@ async function ioConnection(io) {
 				}
 			})
 
+			// two times nacacall
 			producers.forEach(producer => {
 
 				// check if producer is in the same room with the clients
 				if (producer.socketId !== socketId && producer.roomName === roomName) {
 					const producerSocket = peers[producer.socketId].socket
-					
+				
+
 					// use socket to send producer id to other producer (user) to consume its media
 					if (userSharing) {
 						producerSocket.emit('newProducer', { 
 							producerId: producerId,
-							producerType: "screenShareProducer"
+							producerType: "screenShareProducer",
+							producerSocketId: socketId
 						})
 					} else {
 						producerSocket.emit('newProducer', { 
 							producerId: producerId,
-							producerType: producer.type
+							producerType: producer.type,
+							producerSocketId: socketId
 						})
 					}
 				}
@@ -442,7 +449,8 @@ async function ioConnection(io) {
 						...producerList,
 						{
 							producerId: producer.producer.id,
-							producerType: producer.type
+							producerType: producer.type,
+							producerSocketId: producer.socketId
 						}
 					]
 				}
@@ -455,14 +463,28 @@ async function ioConnection(io) {
 		})
 
 
-		socket.on('handsUp', () => {
+		function sendToOtherPeers(roomName, btn) {
+			// console.log(Object.values(peers))
+			Object.values(peers).forEach(peer => {
+				if (peer.roomName === roomName && peer.socket.id !== socket.id) {
+					peer.socket.emit("userRaisedHand", {userSocketId: socket.id})
+					console.log(peer.socket.id)
+				}
+			})
+			// let { otherPeers } = peers.filter(peer => peer.roomName === roomName)
+			// console.log(otherPeers)
+		}
+
+
+		socket.on('handsUp', (data) => {
+			// send sa other sockets
 			console.log(socket.id, "hands up")
-			console.log(transports)
+			sendToOtherPeers(data.roomName, "raiseHand")
 		})
 
-		socket.on('handsDown', () => {
+		socket.on('handsDown', (data) => {
 			console.log(socket.id, "hands down")
-			console.log(producers)
+			sendToOtherPeers(data.roomName, "lowerHand")
 		})
 
 		socket.on('micOn', () => {
@@ -512,8 +534,6 @@ async function ioConnection(io) {
 }
 
 function getUsers(roomName) {
-	console.log(rooms)
-	// const roomName = peers[socket.id].roomName
 	let users = rooms[roomName].peers.length
 	return users
 }

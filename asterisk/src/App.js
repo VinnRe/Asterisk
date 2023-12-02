@@ -39,14 +39,9 @@ function App() {
         <Route path='/login-signup' element={<LoginSignup setUserName={setUserName} />} />
 
         {/* Protected Routes */}
-        <Route
-          path='/'
-          element={<AuthRoute />}
-        >
           <Route index element={<Navigate to="/home" />} />
           <Route path='/home' element={<HomePage userName={userName} audioVolume={audioVolume} setAudioVolume={handleVolumeChange} />} />
           <Route path='/room/:roomName' element={<MeetingPage userName={userName} audioVolume={audioVolume} setAudioVolume={handleVolumeChange} />} />
-        </Route>
       </Routes>
     </Router>
   );
