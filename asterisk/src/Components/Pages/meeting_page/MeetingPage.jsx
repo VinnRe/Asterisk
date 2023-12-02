@@ -26,7 +26,7 @@ import ChatApp from '../chat_bar/ChatApp';
 
 // const socket = io.connect('https://127.0.0.1:8000/mediasoup');
 
-export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
+export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber }) => {
 
   const roomName = window.location.pathname.split('/')[2];
 
@@ -225,7 +225,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
 
       // tempo
       // dont know what to do with thiss
-      setRaiseHandStyle({backgroundColor:"green"});
+      setRaiseHandStyle({backgroundColor: "rgb(158, 44, 44)"});
     } else {
       setRaiseHand(false);
 
@@ -978,7 +978,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume }) => {
           </button>
 
           <div className={`chat-sidebar ${isChatOpen ? 'chat-sidebar-open' : ''}`}>
-            <ChatApp />
+            <ChatApp userName={userName} roomNumber={roomNumber} />
           </div>
 
           <Link className="text-decoration--none" to="/">

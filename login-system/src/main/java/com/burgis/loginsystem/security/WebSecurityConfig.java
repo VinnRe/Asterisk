@@ -64,6 +64,8 @@ public class WebSecurityConfig {
         .authorizeHttpRequests(auth -> 
           auth.requestMatchers("/api/auth/signin").permitAll()
               .requestMatchers("/api/auth/signup").permitAll()
+              .requestMatchers("/api/auth/meeting_links").permitAll()
+              .requestMatchers("/api/auth/meeting_links/*").permitAll()
               .anyRequest().authenticated()
         );
     

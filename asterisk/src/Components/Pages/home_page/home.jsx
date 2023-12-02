@@ -1,23 +1,83 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import '../../Styles/home_styles.css';
 import Cookies from "js-cookie";
 import logo from '../../Assets/asterisk-logo.png'
 
-export const HomePage = ({ userName, audioVolume, setAudioVolume}) => {
-    const [roomNumber, setRoomNumber] = useState("");
+export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, setRoomNumber}) => {
+    const navigate = useNavigate();
     
     const generateRoomNumber = () => {
-        // Generate a random number
-        const randomRoomNumber = Math.floor(Math.random() * 1000) + 1;
-        setRoomNumber(randomRoomNumber);
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
+        let randomRoomNumber = '';
+        
+        const roomNumberLength = 10;
+        for (let i = 0; i < roomNumberLength; i++) {
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            randomRoomNumber += characters.charAt(randomIndex);
+        }
+    
+        setRoomNumber(() => {
+            navigate(`/room/${randomRoomNumber}`);
+            storeLink(userName, randomRoomNumber);
+            return randomRoomNumber;
+        });
+
     };
 
-    const handleJoinClick = () => {
-        // Redirect to the generated room number
-        navigate(`/room/${roomNumber}`);
+    const storeLink = async (userName, randomRoomNumber) => {
+        try {
+            const response = await fetch('http://localhost:8080/api/auth/meeting_links', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    userName : userName,
+                    meetingLink : randomRoomNumber
+                }),
+            });
+    } catch (error) {
+        console.error('Error during signup:', error);
+    }}
+
+    const checkLink = async (randomRoomNumber) => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/auth/meeting_links/${randomRoomNumber}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+    
+            if (!response.ok) {
+                console.error('Error:', response.status, response.statusText);
+                throw new Error('Failed to retrieve meeting link');
+            }
+    
+            const data = await response.json();
+
+            if (data.exists) {
+                navigate(`/room/${roomNumber}`)
+            } else {
+                console.log('Meeting link does not exist:', data);
+            }
+        } catch (error) {
+            console.error('Error during GET request:', error);
+        }
+    }
+    
+    
+    const joinConferenceClick = (e) => {
+        e.preventDefault();
+        checkLink(roomNumber);
+     }
+     
+
+      const handleJoinClick = () => {
+
+        generateRoomNumber();
     };
-    const navigate = useNavigate();
     const handleLogout = () => {
         // Clear the authentication token from cookies
         Cookies.remove('accessToken');
@@ -65,7 +125,6 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume}) => {
         toggleOverlay(backButton, formOverlay, "hidden", "0");
         toggleOverlay(accountButton, accountOverlay, "visible", "1");
         toggleOverlay(accountExitButton, accountOverlay, "hidden", "0");
-        generateRoomNumber();
     }, []);
 
     return (
@@ -192,25 +251,25 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume}) => {
 
                     <div className="form-overlay">
                         <h2>Enter Meeting Code</h2>
-                        <div className="form-buttons">
-                            <input 
-                                className="form__input" 
-                                type="text" 
-                                name="join-conference" 
-                                value={roomNumber}
-                                onChange={(e) => {setRoomNumber(e.target.value)}}
-                                autoFocus />
-                            <a href="" className="join">
-                                <span onClick={handleJoinClick}>Join</span>
-                            </a>
-                            <a href="" className="back-button">
-                                <span>Back</span>
-                            </a>
-                        </div>
+                        <form className="form-buttons" onSubmit={joinConferenceClick}>
+                        <input 
+                            className="form__input" 
+                            type="text" 
+                            name="join-conference" 
+                            value={roomNumber}
+                            onChange={(e) => {setRoomNumber(e.target.value)}}
+                            autoFocus 
+                        />
+                        <button type="submit" className="join">
+                            Join
+                        </button>
+                        <a href="" className="back-button">
+                            <span>Back</span>
+                        </a>
+                        </form>
                     </div>
                 </section>
             </body>
         </html>
     );      
 };
-
