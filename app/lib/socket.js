@@ -329,7 +329,7 @@ async function ioConnection(io) {
 			return items
 		}
 
-		socket.on('consume', async ({ rtpCapabilities, remoteProducerId, serverConsumerTransportId, consumerType }, callback) => {
+		socket.on('consume', async ({ rtpCapabilities, remoteProducerId, serverConsumerTransportId, consumerType, remoteProducerSocketId }, callback) => {
 			try {
 
 				const { roomName } = peers[socket.id]
@@ -358,7 +358,7 @@ async function ioConnection(io) {
 
 					consumer.on('producerclose', () => {
 						console.log('producer of consumer closed')
-						socket.emit('producerClosed', { remoteProducerId })
+						socket.emit('producerClosed', { remoteProducerId, remoteProducerSocketId })
 
 						// remove
 						consumerTransport.close([])
@@ -468,11 +468,17 @@ async function ioConnection(io) {
 				if (peer.roomName === roomName && peer.socket.id !== socket.id) {
 					switch (event) {
 						case "raiseHand":
-							peer.socket.emit("userRaisedHand", {userSocketId: socket.id})
-							break
+							peer.socket.emit("userRaisedHand", {userSocketId: socket.id});
+							break;
 						case "lowerHand":
-							peer.socket.emit("userLowerHand", {userSocketId: socket.id})
-						// case ""
+							peer.socket.emit("userLowerHand", {userSocketId: socket.id});
+							break;
+						case "micOn":
+							peer.socket.emit("userMicOn", {userSocketId: socket.id});
+							break;
+						case "micOff":
+							peer.socket.emit("userMicOff", {userSocketId: socket.id});
+							break;
 					}
 					console.log(peer.socket.id)
 				}
@@ -490,12 +496,14 @@ async function ioConnection(io) {
 			sendToOtherPeers(data.roomName, "lowerHand")
 		})
 
-		socket.on('micOn', () => {
+		socket.on('micOn', (data) => {
 			console.log(socket.id, "Mic is on")
+			sendToOtherPeers(data.roomName, "micOn")
 		})
 
-		socket.on('micOff', () => {
+		socket.on('micOff', (data) => {
 			console.log(socket.id, "Mic is off")
+			sendToOtherPeers(data.roomName, "micOff")
 		})
 	})
 
