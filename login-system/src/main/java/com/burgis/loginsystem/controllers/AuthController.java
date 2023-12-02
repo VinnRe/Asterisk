@@ -2,6 +2,9 @@ package com.burgis.loginsystem.controllers;
 
 import jakarta.validation.Valid;
 
+import java.util.Map;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -13,18 +16,23 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.burgis.loginsystem.models.MeetingLink;
 import com.burgis.loginsystem.models.User;
 import com.burgis.loginsystem.payload.request.EditRequest;
 import com.burgis.loginsystem.payload.request.LoginRequest;
+import com.burgis.loginsystem.payload.request.MeetingLinkRequest;
 import com.burgis.loginsystem.payload.request.SignupRequest;
 import com.burgis.loginsystem.payload.response.UserInfoResponse;
 import com.burgis.loginsystem.payload.response.MessageResponse;
+import com.burgis.loginsystem.repository.MeetingLinkRepository;
 import com.burgis.loginsystem.repository.UserRepository;
 import com.burgis.loginsystem.security.jwt.JwtUtils;
 import com.burgis.loginsystem.security.services.UserDetailsImpl;
@@ -44,6 +52,44 @@ public class AuthController {
 
   @Autowired
   JwtUtils jwtUtils;
+
+  @Autowired
+    private MeetingLinkRepository meetingLinkRepository;
+
+    @GetMapping("/meeting_links/{meetingLink}")
+public ResponseEntity<?> checkRoomExists(@PathVariable String meetingLink) {
+    boolean exists = meetingLinkRepository.existsByMeetingLink(meetingLink);
+    return ResponseEntity.ok(Map.of("exists", exists));
+}
+
+    @PostMapping("/meeting_links")
+    public ResponseEntity<?> createMeetingLink(@RequestBody MeetingLinkRequest request) {
+        String userName = request.getUserName();
+        String meetingLink = request.getMeetingLink();
+
+
+        createTableIfNotExists();
+
+
+        Optional<MeetingLink> existingLink = meetingLinkRepository.findById(userName);
+
+        if (existingLink.isPresent()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "User already has a meeting link"));
+        }
+
+        // Save the new meeting link in the repository
+        MeetingLink newMeetingLink = new MeetingLink();
+        newMeetingLink.setUserName(userName);
+        newMeetingLink.setMeetingLink(meetingLink);
+        meetingLinkRepository.save(newMeetingLink);
+
+        return ResponseEntity.ok(Map.of("success", true));
+    }
+
+    private void createTableIfNotExists() {
+        // Use Hibernate's ddl-auto property to create the table if not exists
+        meetingLinkRepository.findAll();
+    }
 
   @PostMapping("/signin")
   public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
