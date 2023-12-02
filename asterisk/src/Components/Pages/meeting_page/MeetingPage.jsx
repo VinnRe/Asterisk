@@ -26,7 +26,7 @@ import ChatApp from '../chat_bar/ChatApp';
 
 // const socket = io.connect('https://127.0.0.1:8000/mediasoup');
 
-export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber }) => {
+export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber, camStatus, setCamStatus, micStatus, setMicStatus }) => {
 
   const roomName = window.location.pathname.split('/')[2];
 
@@ -41,9 +41,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber 
 
   const [stream, setStream] = useState(null);
   const [ddevice, setDevice] = useState(null);
-
-  const [camStatus, setCamStatus] = useState('Hide Cam');
-  const [micStatus, setMicStatus] = useState('Mute Mic');
 
   const [raiseHandStyle, setRaiseHandStyle] = useState(null);
   const [raiseHand, setRaiseHand] = useState(false);
@@ -115,7 +112,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber 
   function toggleMic() {
     if (stream) {
       const audioTrack = stream.getTracks().find(track => track.kind === 'audio');
-      if (audioTrack.enabled) {
+      if (micStatus === 'Mute Mic') {
         audioTrack.enabled = false;
         setMicStatus('Unmute Mic');
       } else {
@@ -130,7 +127,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber 
   function toggleCamera() {
     if (stream) {
       const videoTrack = stream.getTracks().find(track => track.kind === 'video');
-      if (videoTrack.enabled) {
+      if (camStatus === 'Hide Cam') {
         videoTrack.enabled = false;
         setCamStatus('Show Cam');
       } else {
@@ -140,6 +137,8 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber 
     }
   }
 
+  console.log("camStatus: ", camStatus);
+  console.log("micStatus: ", micStatus);
 
   async function endStream() {
     setScreenShareStream(null);

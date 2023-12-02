@@ -4,9 +4,33 @@ import '../../Styles/home_styles.css';
 import Cookies from "js-cookie";
 import logo from '../../Assets/asterisk-logo.png'
 
-export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, setRoomNumber}) => {
+export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, setRoomNumber, camStatus, setCamStatus, micStatus, setMicStatus, tC, tM}) => {
     const navigate = useNavigate();
-    
+
+    const handleToggleCam = () => {
+        if (camStatus === 'Hide Cam') {
+            setCamStatus('Show Cam');
+            console.log(camStatus);
+            // tC();
+        } else {
+            setCamStatus('Hide Cam');
+            console.log(camStatus);
+            // tC();
+        }
+    }
+
+    const handleToggleMic = () => {
+        if (micStatus === 'Mute Mic') {
+            setMicStatus('Unmute Mic');
+            console.log(micStatus);
+            // tM();
+        } else {
+            setMicStatus('Mute Mic');
+            console.log(micStatus); 
+            // tM();
+        }
+    }
+
     const generateRoomNumber = () => {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
         let randomRoomNumber = '';
@@ -152,7 +176,7 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
                                 <p>Join Conference</p>
                             </a>
 
-                            <a onClick={handleJoinClick}>
+                            <a href="" onClick={handleJoinClick}>
                                 <span className="material-icons conference-buttons">add</span>
                                 <p>Create Conference</p>
                             </a>
@@ -228,7 +252,7 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
                             <span className="material-icons">videocam</span>
                             <span className="videoSpan-s">Hide cam when joining a room</span>
                             <label className="checkbox-label">
-                                <input type="checkbox" className="checkbox-s" />
+                                <input type="checkbox" className="checkbox-s" onClick={handleToggleCam} />
                                 <span className="checkbox-overlay">
                                     <span className="material-icons">done</span>
                                 </span>
@@ -238,7 +262,7 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
                             <span className="material-icons">mic</span>
                             <span className="micSpan-s">Mute mic when joining a room</span>
                             <label className="checkbox-label">
-                                <input type="checkbox" className="checkbox-s" />
+                                <input type="checkbox" className="checkbox-s" onClick={handleToggleMic}/>
                                 <span className="checkbox-overlay">
                                     <span className="material-icons">done</span>
                                 </span>

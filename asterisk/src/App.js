@@ -11,6 +11,8 @@ function App() {
   const [userName, setUserName] = useState("");
   const [audioVolume, setAudioVolume] = useState(50);
   const [roomNumber, setRoomNumber] = useState("");
+  const [camStatus, setCamStatus] = useState('Hide Cam');
+  const [micStatus, setMicStatus] = useState('Mute Mic');
 
   const handleVolumeChange = (newVolume) => {
     setAudioVolume(newVolume);
@@ -39,8 +41,8 @@ function App() {
 
         {/* Protected Routes */}
           <Route index element={<Navigate to="/home" />} />
-          <Route path='/home' element={<HomePage userName={userName} audioVolume={audioVolume} setAudioVolume={handleVolumeChange} roomNumber={roomNumber} setRoomNumber={setRoomNumber} />} />
-          <Route path='/room/:roomName' element={<MeetingPage userName={userName} audioVolume={audioVolume} setAudioVolume={handleVolumeChange} roomNumber={roomNumber} setRoomNumber={setRoomNumber} />} />
+          <Route path='/home' element={<HomePage userName={userName} audioVolume={audioVolume} setAudioVolume={handleVolumeChange} roomNumber={roomNumber} setRoomNumber={setRoomNumber} camStatus={camStatus} setCamStatus={setCamStatus} micStatus={micStatus} setMicStatus={setMicStatus} />} />
+          <Route path='/room/:roomName' element={<MeetingPage userName={userName} audioVolume={audioVolume} setAudioVolume={handleVolumeChange} roomNumber={roomNumber} setRoomNumber={setRoomNumber} camStatus={camStatus} setCamStatus={setCamStatus} micStatus={micStatus} setMicStatus={setMicStatus} />} />
       </Routes>
     </Router>
   );
