@@ -181,13 +181,12 @@
 }
 
 .settings-overlay h2 {
-    padding: 2rem;
     font-size: 2.75rem;
     color: var(--light-red);
 }
  
 .settings-overlay a {
-    padding: 1rem;
+    margin: 1rem;
     width: 50%;
     text-decoration: none;
     color: var(--dark-red);
@@ -224,7 +223,7 @@
 }
 
 .account-overlay a {
-    padding: 0.5rem;
+    margin: 0.5rem;
     width: 40%;
     text-decoration: none;
     color: var(--dark-red);
@@ -240,19 +239,18 @@
 }
 
 .profile {
-    margin-bottom: 1rem;
     text-align: center;
 }
 
 .profile-icon {
-    font-size: 2rem;
-    color: var(--light-red);
+    font-size: 12rem !important;
+    color: var(--dark-red);
 }
 
 .profile-name {
     text-align: center;
     font-size: 1.5rem;
-    color: var(--light-red);
+    color: var(--dark-red);
 }
 
 .conference-buttons {
