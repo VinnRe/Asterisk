@@ -1,16 +1,3 @@
-// move other functions to join Conference jsx
-// matitira here is yung functions needed sa pagcreate lang ng new room
-
-
-// run index.js
-// /app/src/npm run start:dev
-
-// create conference
-// yung btn na create conference need maggenerate ng random pathName
-// http://localhost:3000/room/{anyy} -- use this sa create conference
-
-// edit the config.js file   announcedIp: '192.168.0.116' // replace by public IP address
-
 
 import React, { useEffect, useState, useRef } from 'react';
 import '../../Styles/meet_styles.css';
@@ -30,11 +17,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
 
   const roomName = window.location.pathname.split('/')[2];
 
-  // console.log(roomName);
-  // console.log(audioVolume);
-
   const [ssocket, setSocket] = useState(null);
-
 
   const localVideoRef = useRef(null);
   const localAudioRef = useRef(null);
@@ -114,10 +97,10 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
       const audioTrack = stream.getTracks().find(track => track.kind === 'audio');
       if (micStatus === 'Mute Mic') {
         audioTrack.enabled = false;
-        setMicStatus('Unmute Mic');
+        setMicStatus(false);
       } else {
         audioTrack.enabled = true;
-        setMicStatus('Mute Mic');
+        setMicStatus(true);
       }
     }
   } 
@@ -129,10 +112,10 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
       const videoTrack = stream.getTracks().find(track => track.kind === 'video');
       if (camStatus === 'Hide Cam') {
         videoTrack.enabled = false;
-        setCamStatus('Show Cam');
+        setCamStatus(false);
       } else {
         videoTrack.enabled = true;
-        setCamStatus('Hide Cam');
+        setCamStatus(true);
       }
     }
   }
@@ -165,7 +148,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
         await setScreenShareStream(userScreen);
         await setScreenStatus("Stop Sharing");
 
-        let vid_con = document.getElementById("video-container");
+        let local_vid_con1 = document.getElementsByClassName("local-vid-con1")[0];
         let screen_vid_con = document.createElement("video");
         let screen_aud_con = document.createElement("audio");
 
@@ -177,8 +160,8 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
         screen_vid_con.className = "video-element";
         screen_vid_con.srcObject = userScreen;
         
-        vid_con.appendChild(screen_vid_con);
-        vid_con.appendChild(screen_aud_con);
+        local_vid_con1.appendChild(screen_vid_con);
+        local_vid_con1.appendChild(screen_aud_con);
 
         const cur_screen_vid_con = {current: screen_vid_con}
         const cur_screen_aud_con = {current: screen_aud_con}
@@ -223,8 +206,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
     if (!raiseHand) {
       setRaiseHand(true);
 
-      // tempo
-      // dont know what to do with thiss
       setRaiseHandStyle({backgroundColor: "rgb(158, 44, 44)"});
     } else {
       setRaiseHand(false);
@@ -247,6 +228,10 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
       })
       socket.on('connection-success', ({ socketId }) => {
         console.log(socketId);
+
+        let local_vid_con1 = document.getElementsByClassName("local-vid-con1")[0];
+        local_vid_con1.setAttribute("id", socketId)
+
         startStream();
 
       });
@@ -299,7 +284,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
         createDevice()
       })
     }
-
 
     async function createDevice() {
       try {
@@ -354,9 +338,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
           console.log("producer transport create error", params.error);
           return;
         }
-        // console.log(params);
 
-        // create send transport
         producerTransport = device.createSendTransport(params);
 
         producerTransport.on('connect', async ({ dtlsParameters }, callback, errback) => {
@@ -376,7 +358,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
         })
 
         producerTransport.on('produce', async (parameters, callback, errback) => {
-          // console.log(parameters);
 
           try {
             // tell the server to create a Producer
@@ -453,7 +434,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
           console.log("consumer transport create error", params.error);
           return;
         }
-        // console.log(params);
 
         let consumerTransport;
 
@@ -480,7 +460,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
             errback(error);
           }
         })
-        // params.id is the server side consumer transport id
+
         connectRecvTransport(consumerTransport, remoteProducerId, params.id, consumerType, remoteProducerSocketId);
       });
     }
@@ -488,18 +468,18 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
     async function connectRecvTransport(consumerTransport, remoteProducerId, serverConsumerTransportId, consumerType, remoteProducerSocketId) {
       //  tell the server to create a consumer based on the rtp capabilities
       //  if the router can consume, server side will send back params
+
       await socket.emit('consume', {
         rtpCapabilities: device.rtpCapabilities,
         remoteProducerId,
         serverConsumerTransportId,
-        consumerType: consumerType
+        consumerType: consumerType,
+        remoteProducerSocketId: remoteProducerSocketId
       }, async ({ params }) => {
         if (params.error) {
           console.log("Cannot Consume")
           return
         }
-
-        // console.log(params)
 
         // consume with the local consumer transport which creates a consumer
 
@@ -528,7 +508,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
           vid_con1.setAttribute('id', remoteProducerSocketId)
 
           let icon_status = document.createElement("div");
-          icon_status.className = "icon-status remote-icon-status"
+          icon_status.className = "icon-status"
 
           vid_con1.appendChild(icon_status)
 
@@ -571,12 +551,18 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
         resizeVideoElements(remoteCurrentVid)
         resizeVideoElements(remoteCurrentAud)
 
+        if (micStatus) {
+          socket.emit("micOn", {roomName: roomName})
+        } else {
+          socket.emit("micOff", {roomName: roomName})
+        }
+
         // let the server know which consumerid to resume
         socket.emit('consumerResume', { serverConsumerId: params.serverConsumerId})
       })
     }
 
-    socket.on('producerClosed', ({ remoteProducerId }) => {
+    socket.on('producerClosed', ({ remoteProducerId, remoteProducerSocketId }) => {
       // server will let us know when a user left
       // filter the remoteProducerId in thconsumertransport array 
 
@@ -594,18 +580,17 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
 
       // remove the video element
       let vid_con = document.getElementById("video-container");
-      vid_con.removeChild(document.getElementById(remoteProducerId))
+      let vid_con1 = document.getElementById(remoteProducerSocketId);
+      let elementToRemove = document.getElementById(remoteProducerId) 
+      vid_con1.removeChild(elementToRemove)
+
+      console.log(vid_con1.childElementCount)
+      if (vid_con1.childElementCount === 1) {
+        vid_con.removeChild(vid_con1)
+      }
     })
 
-    // Get the user count FOR OTHER PURPOSE
-    const fetchUserCount = async () => {
-      const response = await fetch('api/user-count'); // CHANGE THE API ENDPOINT FOR USERCOUNT
-      const data = await response.json();
 
-      setUserCount(data.userCount);
-    }
-
-    fetchUserCount(); // 
 
     // Call the resize function when the window is resized
     window.addEventListener('resize', resizeVideoElements);
@@ -615,6 +600,80 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
     resizeVideoElements(localAudioRef)
 
     connectSocket();
+
+    function set_icon_on(userSocketId, icon) {
+      let on = false
+      if (document.getElementById(userSocketId)) {
+        console.log("mic on", userSocketId)
+
+        document.getElementById(userSocketId)
+          .querySelectorAll('span')
+          .forEach(element => {
+            if (element.innerHTML === icon) {
+              on = true
+              console.log(userSocketId, "meron na")
+            }
+          }
+        )
+
+        if (!on) {
+          let icon_status = document.getElementById(userSocketId).firstChild
+          let span = document.createElement('span')
+          span.className = "material-icons control-buttons"
+          span.innerHTML = icon
+
+          if (icon === "mic_none") {
+            icon_status.prepend(span)
+          } else {
+            icon_status.appendChild(span)
+          }
+        }
+      }
+    }
+
+    function set_icon_off(userSocketId, icon) {
+      if (document.getElementById(userSocketId)) {
+        document.getElementById(userSocketId)
+          .querySelectorAll('span')
+          .forEach(element => {
+            if (element.innerHTML === icon) {
+              element.remove()
+            }
+          }
+        )
+      }
+    }
+
+    socket.on("userRaisedHand", (data) => {
+      set_icon_on(data.userSocketId, "back_hand")
+    })
+
+    socket.on("userLowerHand", (data) => {
+      set_icon_off(data.userSocketId, "back_hand")
+    })
+
+    socket.on("userMicOn", (data) => {
+      set_icon_on(data.userSocketId, "mic_none")
+    })
+
+    socket.on("userMicOff", (data) => {
+      set_icon_off(data.userSocketId, "mic_none")
+    })
+
+
+    // Get the user count FOR OTHER PURPOSE
+    const fetchUserCount = async () => {
+      let url = "https://127.0.0.1:8000/get_users/" + roomName;
+
+
+      const response = await fetch(url); // CHANGE THE API ENDPOINT FOR USERCOUNT
+      const data = await response.json();
+
+      
+      setUserCount(data.users);
+    }
+
+    fetchUserCount(); // 
 
     // Get the audio volume value from localStorage and set it in the state
     const storedAudioVolume = localStorage.getItem('audioVolume');
@@ -650,8 +709,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
             console.log("producer transport create error", params.error);
             return;
           }
-
-          // console.log(params);
 
           // create new producer transport to send media
           screenProducerTransport = ddevice.createSendTransport(params);
@@ -749,36 +806,25 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
 
 
   useEffect(() => {
-
     if (ssocket !== null) {
-      if (raiseHand === true) {
+      if (raiseHand) {
         ssocket.emit("handsUp", {roomName: roomName})
       } else {
         ssocket.emit("handsDown", {roomName: roomName})
       }
-
-      // when someone raised their hand
-      ssocket.on("userRaisedHand", (data) => {
-        console.log(data.userSocketId, "raised their hand")
-        if (document.getElementById(data.userSocketId)) {
-          let icon_status = document.getElementsByClassName("icon-status remote-icon-status")
-          for (let i = 0; i < icon_status.length; i++) {
-            let span = document.createElement('span')
-            span.className = "material-icons control-buttons"
-            span.innerHTML = "back_hand"
-
-            icon_status[i].appendChild(span)
-          }
-        }
-      })
-
-      ssocket.on("userLowerHand", (data) => {
-        console.log(data)
-      })
     }
-
-
   }, [raiseHand]);
+
+
+  useEffect(() => {
+    if (ssocket !== null) {
+      if (micStatus) {
+        ssocket.emit("micOn", {roomName: roomName})
+      } else {
+        ssocket.emit("micOff", {roomName: roomName})
+      }
+    }
+  }, [micStatus])
 
 
 
@@ -796,15 +842,15 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
         <div id="video-container" className="video-container">
           {/* Add video elements here */}
 
-          <div className="vid-con1">
+          <div className="vid-con1 local-vid-con1">
             <div className="icon-status">
-              {micStatus === 'Mute Mic' ? (
+              {micStatus ? (
                 <span className="material-icons control-buttons">mic_none</span>
               ) : (
                 null
               )}
 
-              {raiseHand === true ? (
+              {raiseHand ? (
                 <span className="material-icons control-buttons">back_hand</span>
               ) : (
                 null
@@ -839,27 +885,21 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
 
           <button className="toggle-button" onClick={toggleMic}>
             <div className="button-content">
-              {micStatus === 'Mute Mic' ? (
+              {micStatus ? (
                 <span className="material-icons control-buttons">mic_none</span>
-                // <img src={meetIcons.micOnIcon} alt='micOn' style={imageSize} />
               ) : (
                 <span className="material-icons control-buttons">mic_off</span>
-                // <img src={meetIcons.micOffIcon} alt='micOff' style={imageSize} />
               )} 
-              {/* <span>{micStatus}</span> */}
             </div>
           </button>
 
           <button className="toggle-button" onClick={toggleCamera}>
             <div className="button-content">
-              {camStatus === 'Hide Cam' ? (
+              {camStatus ? (
                 <span className="material-icons control-buttons">videocam</span>
-                // <img src={meetIcons.camOnIcon} alt='camOn' style={imageSize} />
               ) : (
                 <span className="material-icons control-buttons">videocam_off</span>
-                // <img src={meetIcons.camOffIcon} alt='camOff' style={imageSize} />
               )} 
-              {/* <span>{camStatus}</span> */}
             </div>
           </button>
           
@@ -867,20 +907,15 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
             <div className="button-content">
               {screenStatus === 'Share Screen' ? (
                 <span className="material-icons control-buttons">screen_share</span>
-                // <img src={meetIcons.shareScreenOnIcon} alt='shareScreenOn' style={imageSize} />
               ) : (
                 <span className="material-icons control-buttons">stop_screen_share</span>
-                // <img src={meetIcons.shareScreenOffIcon} alt='shareScreenOff' style={imageSize} />
               )} 
-              {/* <span>{screenStatus}</span> */}
             </div>
           </button>
 
           <button className="toggle-button" onClick={toggleRaiseHand} style={raiseHandStyle}>
             <div className="button-content">
               <span className="material-icons control-buttons">back_hand</span>
-              {/* <img src={meetIcons.raiseHandIcon} alt="raiseHandIcon" style={imageSize} /> */}
-              {/* <span>Raise Hand</span> */}
             </div>
           </button>
           
@@ -895,8 +930,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
           <button className="toggle-button" onClick>
             <div className="button-content">
               <span className="material-icons control-buttons">more_horiz</span>
-              {/* <img src={meetIcons.threeDotsIcon} alt="moreIcon" style={imageSize} /> */}
-              {/* <span>More</span> */}
             </div>
           </button>
 
@@ -908,8 +941,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
             <button className="toggle-button" onClick={endCall}>
                 <div className="button-content">
                   <span className="material-icons control-buttons">phone_disabled</span>
-                  {/* <img src={meetIcons.endCallIcon} alt="callEndIcon" style={imageSize} /> */}
-                  {/* <span>End Call</span> */}
                 </div>
             </button>
           </Link>
