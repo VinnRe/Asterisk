@@ -4,8 +4,7 @@ import '../../Styles/home_styles.css';
 import Cookies from "js-cookie";
 import logo from '../../Assets/asterisk-logo.png'
 
-export const HomePage = ({ userName, audioVolume, setAudioVolume}) => {
-    const [roomNumber, setRoomNumber] = useState("");
+export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, setRoomNumber}) => {
     const navigate = useNavigate();
     
     const generateRoomNumber = () => {

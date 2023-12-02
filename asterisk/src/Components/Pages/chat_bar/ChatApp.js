@@ -5,9 +5,11 @@ import '../../Styles/chat_styles.css';
 
 const socket = io('ws://localhost:3500');
 
-function ChatApp() {
-  const [name, setName] = useState('');
-  const [room, setRoom] = useState('');
+function ChatApp({ userName, roomNumber }) {
+  // const [name, setName] = useState('');
+  // const [room, setRoom] = useState('');
+  const name = userName;
+  const room = roomNumber;
   const [message, setMessage] = useState('');
   const [activity, setActivity] = useState('');
   const [messages, setMessages] = useState([]);
@@ -41,7 +43,8 @@ function ChatApp() {
     socket.on('roomList', ({ rooms }) => {
       setRooms(rooms);
     });
-
+    
+    enterRoom()
     // Cleanup on component unmount
     return () => {
       socket.disconnect();
@@ -50,14 +53,17 @@ function ChatApp() {
 
   const sendMessage = (e) => {
     e.preventDefault();
+    console.log("sendMessage called")
     if (name && message && room) {
+      console.log("MESSAGE SENT")
       socket.emit('message', { name, text: message });
       setMessage('');
     }
   };
 
   const enterRoom = (e) => {
-    e.preventDefault();
+    // e.preventDefault();
+    console.log("ROOM ENTERED")
     if (name && room) {
       socket.emit('enterRoom', { name, room });
     }
@@ -67,7 +73,7 @@ function ChatApp() {
     <div className='chat--system'>
       <main className="main-chat">
           <body className='body-chat'>
-            <form className="form-join" onSubmit={enterRoom}>
+            {/* <form className="form-join" onSubmit={enterRoom}>
               <input
                 type="text"
                 id="name"
@@ -90,7 +96,7 @@ function ChatApp() {
                 onChange={(e) => setRoom(e.target.value)}
               />
               <button type="submit" className='button-chat'>Join</button>
-              </form>
+              </form> */}
 
               <ul className="chat-display" id="chatDisplay">
                 {messages.map((msg, index) => (

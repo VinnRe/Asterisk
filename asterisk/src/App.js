@@ -23,7 +23,6 @@ function App() {
     const storedLastName = localStorage.getItem('lastName');
     const storedNameExtension = localStorage.getItem('nameExtension');
     const storedAudioVolume = localStorage.getItem('audioVolume');
-    const storedRoomNumber = localStorage.getItem('roomNumber');
 
     console.log(storedFirstName, storedLastName, storedNameExtension)
     if (storedFirstName && storedLastName || storedNameExtension) {
@@ -40,8 +39,8 @@ function App() {
 
         {/* Protected Routes */}
           <Route index element={<Navigate to="/home" />} />
-          <Route path='/home' element={<HomePage userName={userName} audioVolume={audioVolume} setAudioVolume={handleVolumeChange} />} />
-          <Route path='/room/:roomName' element={<MeetingPage userName={userName} audioVolume={audioVolume} setAudioVolume={handleVolumeChange} />} />
+          <Route path='/home' element={<HomePage userName={userName} audioVolume={audioVolume} setAudioVolume={handleVolumeChange} roomNumber={roomNumber} setRoomNumber={setRoomNumber} />} />
+          <Route path='/room/:roomName' element={<MeetingPage userName={userName} audioVolume={audioVolume} setAudioVolume={handleVolumeChange} roomNumber={roomNumber} setRoomNumber={setRoomNumber} />} />
       </Routes>
     </Router>
   );
