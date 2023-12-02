@@ -14,13 +14,15 @@
     font-family: "Poppins";
     font-size: 0.85rem;
     user-select: none;
+    overflow-y: hidden;
 }
 
 .header--h {
     display: flex;
     justify-content: center;
-    color: var(--light-red);
+    color: var(--dark-red);
     font-size: 2.5rem;
+    height: 20vh;
 }
 
 .header--h h1 {
@@ -62,7 +64,7 @@
 .logo h2 {
     display: inline;
     font-size: 1.3rem;
-    color: var(--light-red)
+    color: var(--dark-red)
 }
 
 .logo-icon, 
@@ -105,14 +107,13 @@
 }
 
 .main-section {
-    height: 40vh;
+    height: 60vh;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.controls-container,
-.feature-container {
+.controls-container {
     display: flex;
     justify-content: center;
     gap: 2.5rem;
@@ -133,19 +134,6 @@
 
 .controls-container a span {
     font-size: 9rem;
-}
-
-.feature-button {
-    background-color: var(--dark-red);
-    color: var(--white);
-    border-radius: 10%;
-    padding: 3rem;
-    transition: 0.2s;
-}
-
-.feature-button:hover {
-    cursor: pointer;
-    background-color: var(--light-red);
 }
 
 .opaque-background {
@@ -182,7 +170,7 @@
 
 .settings-overlay h2 {
     font-size: 2.75rem;
-    color: var(--light-red);
+    color: var(--dark-red);
 }
  
 .settings-overlay a {
@@ -260,26 +248,34 @@
 .form-overlay {
     background-color: var(--white);
     width: 25rem;
-    height: 18rem;
+    height: 16rem;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    gap: 1.25rem;
+    gap: 1rem;
 }
 
 .form-overlay h2 {
     padding-top: 2.5rem;
-    padding-bottom: 0.75rem;
     font-size: 1.5rem;
-    color: var(--light-red);
+    color: var(--dark-red);
 }
 
 .form-buttons {
     display: flex;
     align-items: center;
     gap: 0.625rem;
+}
+
+.join {
+    background: none;
+	color: var(--dark-red);
+	border: none;
+	padding: 0;
+    font-family: 'Poppins';
+    font-size: 1rem;
 }
 
 .form__input {
@@ -295,6 +291,7 @@
     font-size: 1rem;
 }
 
+.join:hover,
 .form-overlay a:hover {
     color: var(--light-red);
 }
@@ -366,4 +363,80 @@
 
 .checkbox-label input:checked ~ .checkbox-overlay .material-icons {
     display: block;
+}
+
+.footer--h {
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: repeat(3, 1fr);
+    place-items: center;
+    height: 20vh;
+}
+
+.footer--h h3 {
+    margin: 0;
+    color: var(--dark-red);
+    font-size: 1.2rem;
+}
+
+.asterisk-container {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.developers-container {
+    margin-left: 5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.developers-container a {
+    text-decoration: none;
+    color: var(--dark-red);
+}
+
+.developers-container a:hover {
+    color: var(--light-red);
+} 
+
+.developers-container a p {
+    margin: 0;
+}
+
+.logo-icon__footer {
+    height: 100px;
+    width: 100px;
+}
+
+.socials-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    color: var(--dark-red);
+}
+
+.socials-icon {
+    font-size: 3rem !important;
+    color: var(--dark-red);
+}
+
+.socials-icon:hover {
+    color: var(--light-red);
+}
+
+@keyframes rotateLogo {
+    from {
+        rotate: 0deg;
+    }
+
+    to {
+        rotate: 360deg;
+    }
+}
+
+.logo-icon__footer {
+    animation: rotateLogo 10s linear infinite;
 }

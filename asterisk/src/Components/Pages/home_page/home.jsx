@@ -137,6 +137,7 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
                 <title>Asterisk</title>
                 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
                 <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet' />
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
             </head>
 
             <body className="body--h">
@@ -156,13 +157,6 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
                                 <span className="material-icons conference-buttons">add</span>
                                 <p>Create Conference</p>
                             </a>
-                        </div>
-                    </section>
-
-                    <section className="main-section">
-                        <div className="feature-container">
-                            <div className="feature-button">Feature 1</div>
-                            <div className="feature-button">Feature 2</div>
                         </div>
                     </section>
                 </main>
@@ -252,23 +246,60 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
                     <div className="form-overlay">
                         <h2>Enter Meeting Code</h2>
                         <form className="form-buttons" onSubmit={joinConferenceClick}>
-                        <input 
-                            className="form__input" 
-                            type="text" 
-                            name="join-conference" 
-                            value={roomNumber}
-                            onChange={(e) => {setRoomNumber(e.target.value)}}
-                            autoFocus 
-                        />
-                        <button type="submit" className="join">
-                            Join
-                        </button>
-                        <a href="" className="back-button">
-                            <span>Back</span>
-                        </a>
+                            <input 
+                                className="form__input" 
+                                type="text" 
+                                name="join-conference" 
+                                value={roomNumber}
+                                onChange={(e) => {setRoomNumber(e.target.value)}}
+                                autoFocus 
+                            />
+                            <button type="submit" className="join">
+                                Join
+                            </button>
+                            <a href="" className="back-button">
+                                <span>Back</span>
+                            </a>
                         </form>
                     </div>
                 </section>
+
+                <footer className="footer--h">
+                    <div className="developers-container">
+                        <h3>Developers</h3>
+
+                        <span>|</span>
+
+                        <a href="https://github.com/mothy-08" target="_blank">
+                            <p>Timothy</p>
+                        </a>
+
+                        <a href="https://github.com/VinnRe" target="_blank">
+                            <p>Kobe</p>
+                        </a>
+
+                        <a href="https://github.com/oocim" target="_blank">
+                            <p>Mico</p>
+                        </a>
+
+                        <a href="https://github.com/herseyy" target="_blank">
+                            <p>Hersey</p>
+                        </a>
+                    </div>
+
+                    <div className="asterisk-container">
+                        <img src={logo} alt="asterisk" className="logo-icon | logo-icon__footer"/>                   
+                        <h3>Asterisk</h3>
+                    </div>
+
+                    <div className="socials-container">
+                        <a href="https://github.com/VinnRe/Asterisk.git" target="_blank">
+                            <i class="socials-icon | fa fa-github"></i>
+                        </a>
+
+                        <span>&copy;All rights reserved.</span>
+                    </div>
+                </footer>
             </body>
         </html>
     );      
