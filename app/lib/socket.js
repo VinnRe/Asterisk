@@ -463,18 +463,21 @@ async function ioConnection(io) {
 		})
 
 
-		function sendToOtherPeers(roomName, btn) {
-			// console.log(Object.values(peers))
+		function sendToOtherPeers(roomName, event) {
 			Object.values(peers).forEach(peer => {
 				if (peer.roomName === roomName && peer.socket.id !== socket.id) {
-					peer.socket.emit("userRaisedHand", {userSocketId: socket.id})
+					switch (event) {
+						case "raiseHand":
+							peer.socket.emit("userRaisedHand", {userSocketId: socket.id})
+							break
+						case "lowerHand":
+							peer.socket.emit("userLowerHand", {userSocketId: socket.id})
+						// case ""
+					}
 					console.log(peer.socket.id)
 				}
 			})
-			// let { otherPeers } = peers.filter(peer => peer.roomName === roomName)
-			// console.log(otherPeers)
 		}
-
 
 		socket.on('handsUp', (data) => {
 			// send sa other sockets
@@ -493,14 +496,6 @@ async function ioConnection(io) {
 
 		socket.on('micOff', () => {
 			console.log(socket.id, "Mic is off")
-		})
-
-		socket.on('camOn', () => {
-			console.log(socket.id, "Cam is on")
-		})
-
-		socket.on('camOff', () => {
-			console.log(socket.id, "Cam is off")
 		})
 	})
 
