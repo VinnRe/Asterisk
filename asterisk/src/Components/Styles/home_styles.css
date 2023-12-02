@@ -278,9 +278,10 @@
     font-size: 1rem;
 }
 
-.form__input {
+.form__input-h {
     border-radius: calc(10px - 0.25rem) !important;
     padding: 0.25rem !;
+    height: 2rem;
     width: 8rem !important;
     background-color: var(--pinkish-white) !important;
 }
