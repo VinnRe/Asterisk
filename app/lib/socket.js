@@ -141,7 +141,7 @@ async function ioConnection(io) {
 
 
 
-		socket.on('createWebRtcTransport', async ({ consumer, type }, callback) => {
+		socket.on('createWebRtcTransport', async ({ consumer, type, userName }, callback) => {
 			// get the room name for this peer
 			const roomName = peers[socket.id].roomName
 
@@ -160,14 +160,14 @@ async function ioConnection(io) {
 						}
 					})
 
-					addTransport(transport, roomName, consumer, type)
+					addTransport(transport, roomName, consumer, type, userName)
 				}, error => {
 					console.log(error);
 				}
 			)
 		})
 
-		function addTransport(transport, roomName, consumer, type) {
+		function addTransport(transport, roomName, consumer, type, userName) {
 			transports = [
 				...transports,
 				{
@@ -175,7 +175,8 @@ async function ioConnection(io) {
 					transport,
 					roomName,
 					consumer,
-					type
+					type,
+					userName
 				}
 			]
 
@@ -210,13 +211,22 @@ async function ioConnection(io) {
 
 
 		function addProducer(producer, roomName, type) {
+			let userName;
+			transports.forEach(transport => {
+				if (transport.socketId === socket.id) {
+					userName = transport.userName
+					return
+				}
+			})
+
 			producers = [
 				...producers,
 				{
 					socketId: socket.id,
 					producer,
 					roomName, 
-					type
+					type,
+					userName
 				}
 			]
 
@@ -412,7 +422,8 @@ async function ioConnection(io) {
 						producerSocket.emit('newProducer', { 
 							producerId: producerId,
 							producerType: producer.type,
-							producerSocketId: socketId
+							producerSocketId: socketId,
+							producerUserName: producer.userName
 						})
 					}
 				} 
@@ -433,7 +444,8 @@ async function ioConnection(io) {
 						{
 							producerId: producer.producer.id,
 							producerType: producer.type,
-							producerSocketId: producer.socketId
+							producerSocketId: producer.socketId,
+							producerUserName: producer.userName
 						}
 					]
 				}
