@@ -6,8 +6,8 @@ import jakarta.persistence.Id;
     @Entity
 public class MeetingLink {
     @Id
-    private String userName;
     private String meetingLink;
+    private String userName;
 
     // Constructors, getters, and setters...
 
