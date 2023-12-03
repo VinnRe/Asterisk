@@ -218,7 +218,7 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
                             <p className="profile-name">{userName}</p>
                         </div>
 
-                        <a onClick={handleLogout}>
+                        <a href="" onClick={handleLogout}>
                             <span className="material-icons">logout</span>
                             <span>Logout</span>
                         </a>
@@ -272,7 +272,7 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
                         <h2>Enter Meeting Code</h2>
                         <form className="form-buttons" onSubmit={joinConferenceClick}>
                             <input 
-                                className="form__input" 
+                                className="form__input-h" 
                                 type="text" 
                                 name="join-conference" 
                                 value={roomNumber}
