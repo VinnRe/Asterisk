@@ -4,32 +4,33 @@ import '../../Styles/home_styles.css';
 import Cookies from "js-cookie";
 import logo from '../../Assets/asterisk-logo.png'
 
+
 export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, setRoomNumber, camStatus, setCamStatus, micStatus, setMicStatus, tC, tM}) => {
     const navigate = useNavigate();
 
     const handleToggleCam = () => {
-        if (camStatus === 'Hide Cam') {
-            setCamStatus('Show Cam');
-            console.log(camStatus);
+        if (camStatus === true) {
+            setCamStatus(false);
             // tC();
         } else {
-            setCamStatus('Hide Cam');
-            console.log(camStatus);
+            setCamStatus(true);
             // tC();
         }
     }
 
+    console.log(camStatus);
+
     const handleToggleMic = () => {
-        if (micStatus === 'Mute Mic') {
-            setMicStatus('Unmute Mic');
-            console.log(micStatus);
+        if (micStatus === true) {
+            setMicStatus(false);
             // tM();
         } else {
-            setMicStatus('Mute Mic');
-            console.log(micStatus); 
+            setMicStatus(true);
             // tM();
         }
     }
+
+    console.log(micStatus); 
 
     const generateRoomNumber = () => {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
