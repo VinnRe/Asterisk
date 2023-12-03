@@ -11,8 +11,6 @@ import ChatApp from '../chat_bar/ChatApp';
 
 
 
-// const socket = io.connect('https://127.0.0.1:8000/mediasoup');
-
 export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber, camStatus, setCamStatus, micStatus, setMicStatus }) => {
 
   // console.log("camStatus: ", camStatus);
@@ -215,7 +213,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
     const response = await fetch(url); // CHANGE THE API ENDPOINT FOR USERCOUNT
     const data = await response.json();
 
-    // console.log(data.users)
+    console.log(data.users)
     setUserCount(data.users);
   }
 
@@ -253,12 +251,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
 
         setStream(localStream);
 
-        // Attach video localStream to the video element
-        if (localVideoRef.current) {
-          localVideoRef.current.srcObject = localStream;
-          localVideoRef.current.muted = true;
-        }
-
         // Attach audio localStream to the audio element
         if (localAudioRef.current) {
           localAudioRef.current.srcObject = localStream;
@@ -266,6 +258,12 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
         }
 
         if (camStatus) {
+          // Attach video localStream to the video element
+          if (localVideoRef.current) {
+            localVideoRef.current.srcObject = localStream;
+            localVideoRef.current.muted = true;
+          }
+
           videoParams = {
             track: localStream.getVideoTracks()[0],
             ...videoParams
@@ -317,7 +315,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
         }
       }
 
-      fetchUserCount(); //
+      // fetchUserCount(); //
     }
 
     // server informs the client that a new producer (user) just joined
@@ -369,7 +367,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
         })
 
         producerTransport.on('produce', async (parameters, callback, errback) => {
-
           try {
             // tell the server to create a Producer
             await socket.emit('transportProduce', {
@@ -388,7 +385,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
                 getProducers();
               }
 
-
             })
           } catch (error) {
             errback(error);
@@ -403,9 +399,11 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
 
     async function connectSendTransport() {
 
+
       setProducerTransport(producerTransport)
       
       audioProducer = await producerTransport.produce(audioParams)
+
       if (camStatus) {
         videoProducer = await producerTransport.produce(videoParams)
 
@@ -417,6 +415,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
           console.log('video transport ended')
         })
       }
+
 
       audioProducer.on('trackended', () => {
         console.log('audio track ended')
@@ -484,7 +483,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
     async function connectRecvTransport(consumerTransport, remoteProducerId, serverConsumerTransportId, consumerType, remoteProducerSocketId) {
       //  tell the server to create a consumer based on the rtp capabilities
       //  if the router can consume, server side will send back params
-
       await socket.emit('consume', {
         rtpCapabilities: device.rtpCapabilities,
         remoteProducerId,
@@ -536,6 +534,8 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
         let audioElement;
         let videoElement;
         
+        let videoTag = vid_con1.querySelector('video')
+
         if (params.kind == 'audio') {
           audioElement = document.createElement('audio');
           audioElement.setAttribute('id', remoteProducerId);
@@ -546,8 +546,20 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
           vid_con1.appendChild(audioElement);
 
         } else {
+          if (videoTag && videoTag.srcObject === null) {
+            videoTag.remove()
+          }
           videoElement = document.createElement('video');
           videoElement.setAttribute('id', remoteProducerId);
+          videoElement.setAttribute('playsInline', true);
+          videoElement.setAttribute('autoPlay', true);
+          videoElement.className = "video-element";
+          vid_con1.appendChild(videoElement);
+        }
+
+        if (!videoTag && !camStatus) {
+          videoElement = document.createElement('video');
+          // videoElement.setAttribute('id', remoteProducerId);
           videoElement.setAttribute('playsInline', true);
           videoElement.setAttribute('autoPlay', true);
           videoElement.className = "video-element";
@@ -598,16 +610,28 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
         transportData.producerId !== remoteProducerId
       )
 
+      console.log(remoteProducerId)
       // remove the video element
       let vid_con = document.getElementById("video-container");
       let vid_con1 = document.getElementById(remoteProducerSocketId);
-      let elementToRemove = document.getElementById(remoteProducerId) 
-      vid_con1.removeChild(elementToRemove)
+      let elementToRemove = document.getElementById(remoteProducerId)
 
-      // console.log(vid_con1.childElementCount)
-      if (vid_con1.childElementCount === 1) {
-        vid_con.removeChild(vid_con1)
+      console.log(elementToRemove)
+      if (elementToRemove !== null) {
+        if (elementToRemove.tagName === "AUDIO") {
+        //   // vid_con1.removeChild(elementToRemove)
+          fetchUserCount()
+          vid_con.removeChild(vid_con1)
+          return
+        } else {
+          elementToRemove.srcObject = null
+        }
       }
+
+
+      // // console.log(vid_con1.childElementCount)
+      // if (vid_con1.childElementCount === 2) {
+      // }
     })
 
 
@@ -839,53 +863,60 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
   }, [micStatus, stream])
 
   useEffect(() => {
-    // console.log(camStatus)
-    // if (stream) {
-    //   if (camStatus) {
-    //     // create new vid producer transport
-    //     async function getLocalCam() {
-    //       let localCam = await navigator.mediaDevices.getUserMedia({
-    //         video: camStatus
-    //       });
+    if (stream && ddevice !== null) {
 
-    //       // Attach video localStream to the video element
-    //       if (localVideoRef.current) {
+      let localVidELem = document.getElementById(ssocket.id).querySelector("video")
 
-    //         localVideoRef.current.srcObject = localCam;
-    //         localVideoRef.current.muted = true;
-    //       }
+      // console.log(localVidELem.srcObject)
 
-    //       videoParams = {
-    //         track: localCam.getVideoTracks()[0],
-    //         ...videoParams
-    //       }
+      if (camStatus && localVidELem.srcObject === null) {
+        // create new vid producer transport
+        async function getLocalCam() {
+          let localCam = await navigator.mediaDevices.getUserMedia({
+            video: camStatus
+          });
 
-    //       connectSendTransport()
-    //     }
+          // Attach video localStream to the video element
+          if (localVideoRef.current) {
 
-    //     async function connectSendTransport() {
-    //       videoProducer = await pproducerTransport.produce(videoParams)
+            localVideoRef.current.srcObject = localCam;
+            localVideoRef.current.muted = true;
+          }
 
-    //       videoProducer.on('trackended', () => {
-    //         console.log('video track ended')
-    //       }) // close video track
+          videoParams = {
+            track: localCam.getVideoTracks()[0],
+            ...videoParams
+          }
 
-    //       videoProducer.on('transportclose', () => {
-    //         console.log('video transport ended')
-    //       })          
-    //     }
+          connectSendTransport()
+        }
 
-    //     getLocalCam()
+        async function connectSendTransport() {
+          videoProducer = await pproducerTransport.produce(videoParams)
+          
 
-    //   } else {
-    //     // remove vid producer transport
+          videoProducer.on('trackended', () => {
+            console.log('video track ended')
+          }) // close video track
 
-    //     if (ssocket !== null) {
-    //       console.log("CAM OFFFFF")
-    //       ssocket.emit("camOff", { producerTransport: pproducerTransport })
-    //     }
-    //   }
-    // }
+          videoProducer.on('transportclose', () => {
+            console.log('video transport ended')
+          })          
+        }
+
+        getLocalCam()
+
+      } else {
+        // remove vid producer transport
+
+        if (ssocket !== null) {
+          console.log("CAM OFFFFF")
+          ssocket.emit("camOff", { producerTransport: pproducerTransport })
+
+          localVidELem.srcObject = null
+        }
+      }
+    }
   }, [stream, camStatus])
 
 

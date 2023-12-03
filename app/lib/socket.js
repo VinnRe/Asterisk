@@ -252,7 +252,6 @@ async function ioConnection(io) {
 		}
 
 		socket.on('transportProduce', async ({ kind, rtpParameters, appData, transportId, type }, callback) => {
-
 			const producer = await getTransport(socket.id, transportId).produce({ 
 				kind,
 				rtpParameters,
@@ -387,6 +386,7 @@ async function ioConnection(io) {
 			// console.log('just joined, id', producerId, roomName, socketId)
 			// a new produced jus joined
 			// all consumer will consume this producer
+
 			producers.forEach(producer => {
 
 				if (producer.type === "screenShareProducer") {
@@ -401,8 +401,6 @@ async function ioConnection(io) {
 				// check if producer is in the same room with the clients
 				if (producer.socketId !== socketId && producer.roomName === roomName) {
 					const producerSocket = peers[producer.socketId].socket
-				
-
 					// use socket to send producer id to other producer (user) to consume its media
 					if (userSharing) {
 						producerSocket.emit('newProducer', { 
@@ -417,7 +415,7 @@ async function ioConnection(io) {
 							producerSocketId: socketId
 						})
 					}
-				}
+				} 
 			})
 		}
 
@@ -441,9 +439,8 @@ async function ioConnection(io) {
 				}
 			})
 
-			// console.log(producerList)
 
-			// return back to client
+			// return to client
 			callback(producerList);
 		})
 
@@ -498,27 +495,28 @@ async function ioConnection(io) {
 			sendToOtherPeers(data.roomName, "micOff")
 		})
 		socket.on('camOff', (data) => {
+			let itemToRemove;
 			console.log(socket.id, "Cam is off")
+			console.log("PRODUCERSS", producers)
 			if (data.producerTransport !== null) {
 				console.log("transport ID", data.producerTransport._id)
 				producers.forEach(producer => {
-					if (producer.producer.kind === "video") {
-						// producer.producer.close()
-
-			// 			items.forEach(item => {
-			// 	if (item.socketId === socket.id) {
-			// 		item[type].close()
-			// 	}
-			// })
-			// items = items.filter(item => item.socketId !== socket.id)
-						// producers = removeScreenItem(producers, socket.id, "screenShareProducer")
+					if (producer.producer.kind === "video" && producer.socketId === socket.id) {
+						console.log(1)
+						console.log("PPPP", producer)
+						producer.producer.close()
+						itemToRemove = producer
 					}
 				})
-				// producers = producers.filter
+
+				// console.log(itemToRemove)
+				producers = producers.filter(producer => 
+					producer !== itemToRemove
+				)
 			}
+			console.log(producers)
 		})
 	})
-
 
 	async function createWebRtcTransport(router) {
 		return new Promise(async (resolve, reject) => {
@@ -566,7 +564,6 @@ function getConsumers(roomName) {
 function getProducers(roomName) {
 	return producers
 }
-
 
 export {
 	ioConnection, getUsers, getTransports, getConsumers, getProducers
