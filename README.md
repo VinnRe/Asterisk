@@ -33,33 +33,33 @@ Here is the demo and explantion of the web application. It is a breif explantion
 To try the app you need to follow these steps:
 ### Create cmds
 - First make a new cmd and write this commands.
-```bash
+```
     cd src/asterisk
     npm install
 ```
 
 - Then make a new cmd and write these commands.
-```bash
+```
     cd src/app
     npm install
 ```
 
 - Create a new cmd and write these commands as well.
-```bash
+```
     cd src/chatapp
     npm install
 ```
 ### Change the IP to your IP
 Write `ipconfig` to your cmd for the `app` and copy your IPv4 Address.
 - Go to `config.js`:
-```bash
+```
     - src
         - app
             - src
                 - config.js
 ```
 - Then edit out the `announcedIp` from the `config.js`.
-```bash
+```
     webRtcTransport: {
 			listenInfos: [
 
@@ -78,18 +78,18 @@ Write `ipconfig` to your cmd for the `app` and copy your IPv4 Address.
 ## Running the apps
 These can be ran in any order
 - Let's run the `app` cmd first, this is the WebRTC API. (cmd should be at the src/app)
-```bash
+```
     npm run start:dev
 ```
 
 - Run the `chatapp` cmd, this is the ChatSystem API. (cmd should be at the src/chatapp)
-```bash
+```
     npm run start
 ```
 
 - Now let's run the login / signup system, this is the Login / Signup API.
     - Find the `login-system` folder then go to this folder:
-    ```bash
+    ```
         - src
             - login-system
                 - src
@@ -103,7 +103,7 @@ These can be ran in any order
     - Now `right-click` the `LoginSystemApplication.java` and select Run java. This will create a new cmd.
 
 - Now let's run the main react app (cmd should be at the src/asterisk).
-```bash
+```
     npm start
 ```
 Now with all that it should run a `localhost` in your browser and you can use it.
