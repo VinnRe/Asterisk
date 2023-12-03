@@ -107,6 +107,11 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
   // Function to toggle the camera stream
   function toggleCamera() {
     if (camStatus === true) {
+      let localVidStream = localVideoRef.current.srcObject
+      let tracks = localVidStream.getTracks();
+      tracks.forEach(track => {
+        track.stop()
+      })
       setCamStatus(false);
     } else {
       setCamStatus(true);
@@ -935,19 +940,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
           {/* Add video elements here */}
 
           <div className="vid-con1 local-vid-con1">
-            <div className="icon-status">
-              {micStatus ? (
-                <span className="material-icons control-buttons">mic_none</span>
-              ) : (
-                null
-              )}
-
-              {raiseHand ? (
-                <span className="material-icons control-buttons">back_hand</span>
-              ) : (
-                null
-              )}
-            </div>
 
             <video 
               ref={localVideoRef}
@@ -967,6 +959,25 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
               // onVolumeChange={(e) => setAudioVolume(e.target.volume * 100)}>
             >
             </audio>
+
+            <div className="vid-con-footer">
+              <span>Usernamee{userName}</span>
+              <div className="icon-status">
+                {micStatus ? (
+                  <span className="material-icons control-buttons">mic_none</span>
+                ) : (
+                  null
+                )}
+
+                {raiseHand ? (
+                  <span className="material-icons control-buttons">back_hand</span>
+                ) : (
+                  null
+                )}
+              </div>
+            </div>
+
+
           </div>
         </div>
 

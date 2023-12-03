@@ -32,11 +32,10 @@
 }
 
 .vid-con1 {
-    position: relative;
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-end;
-    background-color: #000;  /*JUST TO CHECK THE CAM SPACE*/ 
+    display: block;
+    border: 1px solid black;
+    background-color: rgb(113, 53, 54);
+    color: #d2cccc
 }
 
 .video-element, .audio-element {
@@ -46,9 +45,8 @@
 }
 
 .icon-status {
-    left: 0.3rem;
-    position: absolute;
-    z-index: 1;
+    display: inline;
+    height: 15px;
 }
 
 .button__control-panel {
