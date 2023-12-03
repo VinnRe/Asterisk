@@ -11,7 +11,7 @@ import ChatApp from '../chat_bar/ChatApp';
 
 
 
-export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber, camStatus, setCamStatus, micStatus, setMicStatus }) => {
+export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber, homeCamStatus, homeMicStatus }) => {
 
   // console.log("camStatus: ", camStatus);
   // console.log("micStatus: ", micStatus);
@@ -22,6 +22,9 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
 
   const localVideoRef = useRef(null);
   const localAudioRef = useRef(null);
+
+  const [camStatus, setCamStatus] = useState(homeCamStatus);
+  const [micStatus, setMicStatus] = useState(homeMicStatus);
 
   const [stream, setStream] = useState(null);
   const [ddevice, setDevice] = useState(null);
@@ -94,11 +97,9 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
   let consumingTransports = [];
 
 
-  console.log("camStatus from home:", camStatus)
-  console.log("micStatus from home:", micStatus)
-
   // Function to toggle the microphone stream
   function toggleMic() {
+    // console.log(micStatus)
     if (micStatus === true) {
       setMicStatus(false);
     } else {
@@ -109,10 +110,11 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
 
   // Function to toggle the camera stream
   async function toggleCamera() {
+    // console.log(camStatus)
     if (camStatus === true) {
       if (localVideoRef.current.srcObject) {
         let localVidStream = localVideoRef.current.srcObject
-        let tracks = await localVidStream.getTracks();
+        let tracks = localVidStream.getTracks();
         tracks.forEach(track => {
           track.stop()
         })
@@ -227,8 +229,8 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
     setUserCount(data.users);
   }
 
-
   useEffect(() => {
+
     const socket = io.connect('https://127.0.0.1:8000/mediasoup')
     setSocket(socket)
 
@@ -251,12 +253,13 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
 
     async function startStream() {
       try {
+
         console.log(camStatus)
         console.log(micStatus)
 
         localStream = await navigator.mediaDevices.getUserMedia({
           video: camStatus, 
-          audio: micStatus
+          audio: true         // always true -- disable nalang yung track
         });
 
         setStream(localStream);
@@ -635,8 +638,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
           return
         } else {
           elementToRemove.srcObject = null
-
-          elementToRemove.style.visibility = "hidden";
         }
       }
 
@@ -892,7 +893,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
           if (localVideoRef.current) {
 
             localVideoRef.current.srcObject = localCam;
-            localVideoRef.current.style.visibility = "visible"
             localVideoRef.current.muted = true;
           }
 
@@ -927,8 +927,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
           ssocket.emit("camOff", { producerTransport: pproducerTransport })
 
           localVidELem.srcObject = null
-
-          localVidELem.style.visibility = "hidden";
         }
       }
     }
@@ -950,11 +948,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
           {/* Add video elements here */}
 
           <div className="vid-con1 local-vid-con1">
-            {camStatus ? (
-              <span style={{visibility:"hidden"}} className="material-icons control-buttons">videocam_off</span>
-            ) : (
-              <span style={{visibility:"visible"}} className="material-icons control-buttons">videocam_off</span>
-            )}
+
             <video 
               ref={localVideoRef}
               muted
@@ -974,9 +968,8 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
             >
             </audio>
 
-
             <div className="vid-con-footer">
-              <span className="username">Usernamee{userName}</span>
+              <span>Usernamee{userName}</span>
               <div className="icon-status">
                 {micStatus ? (
                   <span className="material-icons control-buttons">mic_none</span>

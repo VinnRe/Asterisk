@@ -19,6 +19,36 @@ function App() {
     localStorage.setItem('audioVolume', newVolume);
   };
 
+  console.log("rerendered")
+  const storedCamStatus = localStorage.getItem('camStatus');
+  const storedMicStatus = localStorage.getItem('micStatus');
+  let boolStoredCamStatus;
+  let boolStoredMicStatus;
+
+
+  if (storedCamStatus !== null) {
+    console.log(storedCamStatus)
+    if (storedCamStatus === "true") {
+      boolStoredCamStatus = true;
+    } else {
+      boolStoredCamStatus = false;
+    }
+    // setCamStatus(storedCamStatus === 'true');
+  }
+  
+  if (storedMicStatus !== null) {
+    console.log(storedMicStatus)
+    if (storedMicStatus === "true") {
+      boolStoredMicStatus = true;
+    } else {
+      boolStoredMicStatus = false;
+    }
+    // setMicStatus(storedMicStatus === 'true');
+  }
+
+  console.log(boolStoredCamStatus)
+  console.log(boolStoredMicStatus)
+
   useEffect(() => {
 
     const storedFirstName = localStorage.getItem('firstName');
@@ -26,8 +56,6 @@ function App() {
     const storedNameExtension = localStorage.getItem('nameExtension');
     const storedAudioVolume = localStorage.getItem('audioVolume');
     const storedRoomNumber = localStorage.getItem('roomNumber')
-    const storedCamStatus = localStorage.getItem('camStatus');
-    const storedMicStatus = localStorage.getItem('micStatus');
 
     console.log(storedFirstName, storedLastName, storedNameExtension)
     if (storedFirstName && storedLastName || storedNameExtension) {
@@ -38,6 +66,7 @@ function App() {
     setRoomNumber(storedRoomNumber);
 
     if (storedCamStatus !== null) {
+      console.log(storedCamStatus)
       setCamStatus(storedCamStatus === 'true');
     }
     
@@ -56,7 +85,7 @@ function App() {
         {/* Protected Routes */}
           <Route index element={<Navigate to="/home" />} />
           <Route path='/home' element={<HomePage userName={userName} audioVolume={audioVolume} setAudioVolume={handleVolumeChange} roomNumber={roomNumber} setRoomNumber={setRoomNumber} camStatus={camStatus} setCamStatus={setCamStatus} micStatus={micStatus} setMicStatus={setMicStatus} />} />
-          <Route path='/room/:roomName' element={<MeetingPage userName={userName} audioVolume={audioVolume} setAudioVolume={handleVolumeChange} roomNumber={roomNumber} setRoomNumber={setRoomNumber} camStatus={camStatus} setCamStatus={setCamStatus} micStatus={micStatus} setMicStatus={setMicStatus} />} />
+          <Route path='/room/:roomName' element={<MeetingPage userName={userName} audioVolume={audioVolume} setAudioVolume={handleVolumeChange} roomNumber={roomNumber} setRoomNumber={setRoomNumber} homeCamStatus={boolStoredCamStatus} homeMicStatus={boolStoredMicStatus} />} />
       </Routes>
     </Router>
   );
