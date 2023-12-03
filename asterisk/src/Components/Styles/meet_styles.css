@@ -32,21 +32,25 @@
 }
 
 .vid-con1 {
-    display: block;
+    display: relative;
     border: 1px solid black;
     background-color: rgb(113, 53, 54);
     color: #d2cccc
 }
 
 .video-element, .audio-element {
+    /*position: absolute;*/
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
+.vid-con1:span {
+    position: absolute;
+}
+
 .icon-status {
     display: inline;
-    height: 15px;
 }
 
 .button__control-panel {

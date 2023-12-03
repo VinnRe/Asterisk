@@ -105,14 +105,16 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
 
 
   // Function to toggle the camera stream
-  function toggleCamera() {
+  async function toggleCamera() {
     if (camStatus === true) {
-      let localVidStream = localVideoRef.current.srcObject
-      let tracks = localVidStream.getTracks();
-      tracks.forEach(track => {
-        track.stop()
-      })
-      setCamStatus(false);
+      if (localVideoRef.current.srcObject) {
+        let localVidStream = localVideoRef.current.srcObject
+        let tracks = await localVidStream.getTracks();
+        tracks.forEach(track => {
+          track.stop()
+        })
+        setCamStatus(false);
+      }
     } else {
       setCamStatus(true);
     }
@@ -630,6 +632,8 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
           return
         } else {
           elementToRemove.srcObject = null
+
+          elementToRemove.style.visibility = "hidden";
         }
       }
 
@@ -885,6 +889,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
           if (localVideoRef.current) {
 
             localVideoRef.current.srcObject = localCam;
+            localVideoRef.current.style.visibility = "visible"
             localVideoRef.current.muted = true;
           }
 
@@ -919,6 +924,8 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
           ssocket.emit("camOff", { producerTransport: pproducerTransport })
 
           localVidELem.srcObject = null
+
+          localVidELem.style.visibility = "hidden";
         }
       }
     }
@@ -940,7 +947,11 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
           {/* Add video elements here */}
 
           <div className="vid-con1 local-vid-con1">
-
+            {camStatus ? (
+              <span style={{visibility:"hidden"}} className="material-icons control-buttons">videocam_off</span>
+            ) : (
+              <span style={{visibility:"visible"}} className="material-icons control-buttons">videocam_off</span>
+            )}
             <video 
               ref={localVideoRef}
               muted
@@ -960,8 +971,9 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
             >
             </audio>
 
+
             <div className="vid-con-footer">
-              <span>Usernamee{userName}</span>
+              <span className="username">Usernamee{userName}</span>
               <div className="icon-status">
                 {micStatus ? (
                   <span className="material-icons control-buttons">mic_none</span>
