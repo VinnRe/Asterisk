@@ -583,21 +583,29 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
         span_username.innerHTML = RemoteProducerUserName
         icon_status.className = "icon-status"
 
-        if (micStatus) {
-          let mic_span_icon = document.createElement("span")
-          mic_span_icon.className = "material-icons control-buttons"
-          mic_span_icon.innerHTML = "mic_none"
+        let mic_span_icon = document.createElement("span")
+        mic_span_icon.className = "material-icons control-buttons"
+        mic_span_icon.innerHTML = "mic_none"
 
-          icon_status.appendChild(mic_span_icon)
+        if (micStatus) {
+          mic_span_icon.style.visibility = "visible"
+        } else {
+          mic_span_icon.style.visibility = "hidden"
         }
+
+        icon_status.appendChild(mic_span_icon)
+
+        let hand_span_icon = document.createElement("span")
+        hand_span_icon.className = "material-icons control-buttons"
+        hand_span_icon.innerHTML = "back_hand"
 
         if (raiseHand) {
-          let hand_span_icon = document.createElement("span")
-          hand_span_icon.className = "material-icons control-buttons"
-          hand_span_icon.innerHTML = "back_hand"
-
-          icon_status.appendChild(hand_span_icon)
+          hand_span_icon.style.visibility = "visible"
+        } else {
+          hand_span_icon.style.visibility = "hidden"
         }
+
+        icon_status.appendChild(hand_span_icon)
 
         vid_con_footer.appendChild(span_username)
         vid_con_footer.appendChild(icon_status)
@@ -695,24 +703,27 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
           .querySelectorAll('span')
           .forEach(element => {
             if (element.innerHTML === icon) {
-              on = true
+              element.style.visibility = "visible"
               // console.log(userSocketId, "meron na")
             }
           }
         )
 
-        if (!on) {
-          let icon_status = document.getElementById(userSocketId).firstChild
-          let span = document.createElement('span')
-          span.className = "material-icons control-buttons"
-          span.innerHTML = icon
+        // if (!on) {
+        //   let vid_con_footer = document.getElementById(userSocketId).lastChild
+        //   let icon_status = vid_con_footer.getElementsByClassName("icon-status")[0]
+        //   console.log(icon_status)
+        //   let span = document.createElement('span')
+        //   span.className = "material-icons control-buttons"
+        //   span.style.visibility = "visible"
+        //   span.innerHTML = icon
 
-          if (icon === "mic_none") {
-            icon_status.prepend(span)
-          } else {
-            icon_status.appendChild(span)
-          }
-        }
+        //   if (icon === "mic_none") {
+        //     icon_status.prepend(span)
+        //   } else {
+        //     icon_status.appendChild(span)
+        //   }
+        // }
       }
     }
 
@@ -722,7 +733,8 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
           .querySelectorAll('span')
           .forEach(element => {
             if (element.innerHTML === icon) {
-              element.remove()
+              // element.remove()
+              element.style.visibility = "hidden"
             }
           }
         )
@@ -730,18 +742,22 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
     }
 
     socket.on("userRaisedHand", (data) => {
+      console.log(data.userSocketId, "HANDS ON")
       set_icon_on(data.userSocketId, "back_hand")
     })
 
     socket.on("userLowerHand", (data) => {
+      console.log(data.userSocketId, "HANDS OFF")
       set_icon_off(data.userSocketId, "back_hand")
     })
 
     socket.on("userMicOn", (data) => {
+      console.log(data.userSocketId, "MIC ON")
       set_icon_on(data.userSocketId, "mic_none")
     })
 
     socket.on("userMicOff", (data) => {
+      console.log(data.userSocketId, "MIC OFFFF")
       set_icon_off(data.userSocketId, "mic_none")
     })
 
