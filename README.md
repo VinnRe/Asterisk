@@ -1,18 +1,109 @@
-<div align="center">
-<h1 align="center">INSERT NAME</h1>
 
-  <h3 align="center">
-    An all-in-one video conference web application.
-  </h3>
-  <p align="center">
-    <b>CS-1202</b> <br>
-    <a href="https://github.com/mothy-08?fbclid=IwAR2cK8wVt5oou6og-kCeB-hqDbI7Ha21lHPWqXyb7mih1aSYc0xtWJ4T1rw">Alimagno, Timothy</a> <br>
-    <a href="https://github.com/VinnRe">Capinpin, Kobe Andrew</a> <br>
-    <a href="https://github.com/oocim">Cuarto, Mico Raphael</a> <br>
-    <a href="https://github.com/herseyy">Odasco, Hersey</a> <br>
-  </p>
-  <br>
-</div>
+# Asterisk
 
-# vid-conf-wa
-video-conference-web-app using Java, JavaScript, and Kurento
+A Video Conference Web Application using JavaScript, NodeJS, and Java.
+
+
+## Authors
+Students from CS - 2102
+- [Alimagno, Timothy Dave](https://github.com/mothy-08)
+- [Capinpin, Kobe Andrew](https://github.com/VinnRe)
+- [Cuarto, Mico Raphael](https://github.com/oocim)
+- [Odasco, Hersey](https://github.com/herseyy)
+
+
+## Demo
+
+Here is the demo and explantion of the web application. It is a breif explantion about how we used the 4 principles of OOP in this web application.
+
+[Asterisk - Video Conference Web Application]()
+
+
+## Features
+
+- Login / Signup
+- Working Database
+- Chat messaging with the users in the video conference
+- Video Conference many-to-many
+
+
+
+## Installation
+**Assuming that you are using VSCode** \
+To try the app you need to follow these steps:
+### Create cmds
+- First make a new cmd and write this commands.
+```bash
+    cd src/asterisk
+    npm install
+```
+
+- Then make a new cmd and write these commands.
+```bash
+    cd src/app
+    npm install
+```
+
+- Create a new cmd and write these commands as well.
+```bash
+    cd src/chatapp
+    npm install
+```
+### Change the IP to your IP
+Write `ipconfig` to your cmd for the `app` and copy your IPv4 Address.
+- Go to `config.js`:
+```bash
+    - src
+        - app
+            - src
+                - config.js
+```
+- Then edit out the `announcedIp` from the `config.js`.
+```bash
+    webRtcTransport: {
+			listenInfos: [
+
+				{
+					protocol: "udp", 
+					ip: '0.0.0.0',
+					announcedIp: '192.168.0.110' // Replace by public IP address
+				}
+			],
+			enableUdp: true,
+			enableTcp: true,
+			preferUdp: true
+		},
+```
+
+## Running the apps
+These can be ran in any order
+- Let's run the `app` cmd first, this is the WebRTC API. (cmd should be at the src/app)
+```bash
+    npm run start:dev
+```
+
+- Run the `chatapp` cmd, this is the ChatSystem API. (cmd should be at the src/chatapp)
+```bash
+    npm run start
+```
+
+- Now let's run the login / signup system, this is the Login / Signup API.
+    - Find the `login-system` folder then go to this folder:
+    ```bash
+        - src
+            - login-system
+                - src
+                    - main
+                        - java
+                            - com
+                                - burgis
+                                    - loginsystem
+                                        - LoginSystemApplication.java
+    ```
+    - Now `right-click` the `LoginSystemApplication.java` and select Run java. This will create a new cmd.
+
+- Now let's run the main react app (cmd should be at the src/asterisk).
+```bash
+    npm start
+```
+Now with all that it should run a `localhost` in your browser and you can use it.
