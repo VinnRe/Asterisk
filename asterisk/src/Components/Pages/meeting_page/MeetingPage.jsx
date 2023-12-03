@@ -169,7 +169,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
         const cur_screen_vid_con = {current: screen_vid_con}
         const cur_screen_aud_con = {current: screen_aud_con}
 
-        resizeVideoElements(cur_screen_vid_con);
+        resizeVideoElements(cur_screen_vid_con, 16/9, 300, 200);
         resizeVideoElements(cur_screen_aud_con);
 
         screenshareVidParams = {
@@ -617,7 +617,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
         const remoteCurrentAud = {current: audioElement}
 
 
-        resizeVideoElements(remoteCurrentVid)
+        resizeVideoElements(remoteCurrentVid, 16/9, 300, 200)
         resizeVideoElements(remoteCurrentAud)
 
         fetchUserCount(); //
@@ -681,7 +681,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
     window.addEventListener('resize', resizeVideoElements);
 
     // Call the resize function on initial render
-    resizeVideoElements(localVideoRef)
+    resizeVideoElements(localVideoRef, 16/9, 300, 200)
     resizeVideoElements(localAudioRef)
 
     connectSocket();
@@ -997,7 +997,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
             </audio>
 
             <div className="vid-con-footer">
-              <span>Usernamee{userName}</span>
+              <span className='userName-meet'>{userName}</span>
               <div className="icon-status">
                 {micStatus ? (
                   <span className="material-icons control-buttons">mic_none</span>
