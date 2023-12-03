@@ -104,23 +104,26 @@ function ChatApp({ userName, roomNumber }) {
             {renderMessages()}
           </ul>
 
-              <p className="activity">{activity}</p>
+          <p className="activity">{activity}</p>
 
-              <form className="form-msg" onSubmit={sendMessage}>
-                <input
-                  type="text"
-                  id="message"
-                  className='input-chat'
-                  placeholder="Your message"
-                  required
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  onKeyPress={() => socket.emit('activity', name)}
-                  autoComplete="off"
-                />
-                <button type="submit" className='button-chat'>Send</button>
-              </form>
-          </body>
+          <form className="form-msg" onSubmit={sendMessage}>
+            <input
+              type="text"
+              id="message"
+              className='input-chat'
+              placeholder="Your message"
+              required
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyPress={() => socket.emit('activity', name)}
+              autoComplete="off"
+            />
+            
+            <button type="submit" className='button-chat'>
+              <span class="material-icons | send-message__button ">send</span>
+            </button>
+          </form>
+        </body>
       </main>
     </div>
   );

@@ -1,17 +1,20 @@
-export function resizeVideoElements(videoRef) {
+export function resizeVideoElements(videoRef, aspectRatio = 4 / 3, desiredWidth = null, desiredHeight = null) {
     if (videoRef.current) {
         const videoContainerWidth = videoRef.current.offsetWidth;
         const videoContainerHeight = videoRef.current.offsetHeight;
-        const aspectRatio = 4 / 3; // You can adjust this based on your desired aspect ratio
+
+        // Use the specified dimensions or default to the container dimensions
+        const containerWidth = desiredWidth || videoContainerWidth;
+        const containerHeight = desiredHeight || videoContainerHeight;
 
         // Calculate the width and height for the video elements
-        let videoWidth = videoContainerWidth;
-        let videoHeight = videoContainerWidth / aspectRatio;
+        let videoWidth = containerWidth;
+        let videoHeight = containerWidth / aspectRatio;
 
         // Check if the calculated video height exceeds the container height
-        if (videoHeight > videoContainerHeight) {
-            videoHeight = videoContainerHeight;
-            videoWidth = videoContainerHeight * aspectRatio;
+        if (videoHeight > containerHeight) {
+            videoHeight = containerHeight;
+            videoWidth = containerHeight * aspectRatio;
         }
 
         // Set the width and height for video elements
