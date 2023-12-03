@@ -290,21 +290,6 @@ async function ioConnection(io) {
 			await consumerTransport.connect({ dtlsParameters })
 		})
 
-		socket.on('closingScreenShare', () => {
-			// close screen share transports
-			// console.log("SCREEN SHARE CLOSING ", socket.id)
-
-			// socket.emit('producerClosed', { remoteProducerId })
-
-			transports = removeScreenItem(transports, socket.id, "screenShareProducer")
-			producers = removeScreenItem(producers, socket.id, "screenShareProducer")
-			consumers = removeScreenItem(consumers, socket.id, "screenShareConsumer")
-
-			// console.log("transports", transports)
-			// console.log("producers", producers)
-			// console.log("consumers", consumers)
-		})
-
 		function removeScreenItem(items, socketId, type) {
 			let itemToRemove
 			items.forEach(item => {
@@ -485,6 +470,13 @@ async function ioConnection(io) {
 			})
 		}
 
+		socket.on('closingScreenShare', () => {
+			// close screen share transports
+			transports = removeScreenItem(transports, socket.id, "screenShareProducer")
+			producers = removeScreenItem(producers, socket.id, "screenShareProducer")
+			consumers = removeScreenItem(consumers, socket.id, "screenShareConsumer")
+		})
+
 		socket.on('handsUp', (data) => {
 			// send sa other sockets
 			console.log(socket.id, "hands up")
@@ -504,6 +496,26 @@ async function ioConnection(io) {
 		socket.on('micOff', (data) => {
 			console.log(socket.id, "Mic is off")
 			sendToOtherPeers(data.roomName, "micOff")
+		})
+		socket.on('camOff', (data) => {
+			console.log(socket.id, "Cam is off")
+			if (data.producerTransport !== null) {
+				console.log("transport ID", data.producerTransport._id)
+				producers.forEach(producer => {
+					if (producer.producer.kind === "video") {
+						// producer.producer.close()
+
+			// 			items.forEach(item => {
+			// 	if (item.socketId === socket.id) {
+			// 		item[type].close()
+			// 	}
+			// })
+			// items = items.filter(item => item.socketId !== socket.id)
+						// producers = removeScreenItem(producers, socket.id, "screenShareProducer")
+					}
+				})
+				// producers = producers.filter
+			}
 		})
 	})
 

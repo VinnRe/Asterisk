@@ -11,8 +11,8 @@ function App() {
   const [userName, setUserName] = useState("");
   const [audioVolume, setAudioVolume] = useState(50);
   const [roomNumber, setRoomNumber] = useState("");
-  const [camStatus, setCamStatus] = useState('Hide Cam');
-  const [micStatus, setMicStatus] = useState('Mute Mic');
+  const [camStatus, setCamStatus] = useState(true);
+  const [micStatus, setMicStatus] = useState(true);
 
   const handleVolumeChange = (newVolume) => {
     setAudioVolume(newVolume);
@@ -32,7 +32,11 @@ function App() {
     }
 
     setAudioVolume(storedAudioVolume ? Number(storedAudioVolume) : 50);
+
   }, [])
+
+
+
 
   return (
     <Router>
