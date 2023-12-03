@@ -146,3 +146,10 @@
 .activity {
     font-style: italic;
 }
+
+.admin-message {
+    color: white;
+    text-align: center;
+    padding-bottom: .2rem;
+  }
+  

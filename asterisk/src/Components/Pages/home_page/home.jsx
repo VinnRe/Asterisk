@@ -103,7 +103,6 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
      
 
       const handleJoinClick = () => {
-
         generateRoomNumber();
     };
     const handleLogout = () => {
