@@ -45,7 +45,8 @@ html {
 .container--ls {
     width: 400px;
     max-width: 400px;
-    padding: 2rem;
+    max-height: 350px;
+    padding: 2.25rem;
     box-shadow: 0 0 40px var(--grey);
     border-radius: 20px;
     background-color: var(--pinkish-white);
@@ -62,9 +63,13 @@ html {
 }
 
 .form--ls {
-    margin-top: 1rem;
-    max-height: 400px; /* Set a maximum height for the form */
+    margin-top: 0.5rem;
+    max-height: 350px; /* Set a maximum height for the form */
     overflow-y: auto; /* Add a vertical scrollbar when content exceeds the height */
+}
+
+.form--ls::-webkit-scrollbar {
+    display: none;
 }
 
 .form > *:first-child {
