@@ -199,7 +199,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
     if (!raiseHand) {
       setRaiseHand(true);
 
-      setRaiseHandStyle({backgroundColor: "rgb(158, 44, 44)"});
+      setRaiseHandStyle({backgroundColor: "rgb(113, 53, 54)", color: "#d2cccc"});
     } else {
       setRaiseHand(false);
 
