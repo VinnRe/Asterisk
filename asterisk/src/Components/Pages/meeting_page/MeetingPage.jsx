@@ -94,6 +94,9 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
   let consumingTransports = [];
 
 
+  console.log("camStatus from home:", camStatus)
+  console.log("micStatus from home:", micStatus)
+
   // Function to toggle the microphone stream
   function toggleMic() {
     if (micStatus === true) {

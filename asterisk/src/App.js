@@ -25,6 +25,9 @@ function App() {
     const storedLastName = localStorage.getItem('lastName');
     const storedNameExtension = localStorage.getItem('nameExtension');
     const storedAudioVolume = localStorage.getItem('audioVolume');
+    const storedRoomNumber = localStorage.getItem('roomNumber')
+    const storedCamStatus = localStorage.getItem('camStatus');
+    const storedMicStatus = localStorage.getItem('micStatus');
 
     console.log(storedFirstName, storedLastName, storedNameExtension)
     if (storedFirstName && storedLastName || storedNameExtension) {
@@ -32,6 +35,15 @@ function App() {
     }
 
     setAudioVolume(storedAudioVolume ? Number(storedAudioVolume) : 50);
+    setRoomNumber(storedRoomNumber);
+
+    if (storedCamStatus !== null) {
+      setCamStatus(storedCamStatus === 'true');
+    }
+    
+    if (storedMicStatus !== null) {
+      setMicStatus(storedMicStatus === 'true');
+    }
 
   }, [])
 

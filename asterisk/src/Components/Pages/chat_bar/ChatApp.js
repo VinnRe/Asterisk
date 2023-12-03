@@ -10,6 +10,7 @@ function ChatApp({ userName, roomNumber }) {
   // const [room, setRoom] = useState('');
   const name = userName;
   const room = roomNumber;
+  console.log(room);
   const [message, setMessage] = useState('');
   const [activity, setActivity] = useState('');
   const [messages, setMessages] = useState([]);
@@ -63,7 +64,7 @@ function ChatApp({ userName, roomNumber }) {
 
   const enterRoom = (e) => {
     // e.preventDefault();
-    console.log("ROOM ENTERED")
+    // console.log("ROOM ENTERED")
     if (name && room) {
       socket.emit('enterRoom', { name, room });
     }
