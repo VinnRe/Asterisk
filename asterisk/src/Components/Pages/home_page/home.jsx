@@ -5,21 +5,21 @@ import Cookies from "js-cookie";
 import logo from '../../Assets/asterisk-logo.png'
 
 
-export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, setRoomNumber, camStatus, setCamStatus, micStatus, setMicStatus, tC, tM}) => {
+export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, setRoomNumber, camStatus, setCamStatus, micStatus, setMicStatus }) => {
     const navigate = useNavigate();
 
     const handleToggleCam = () => {
         if (camStatus === true) {
             setCamStatus(false);
-            // tC();
         } else {
             setCamStatus(true);
             // tC();
         }
+        localStorage.setItem('camStatus', !camStatus)
     }
-
+    
     console.log(camStatus);
-
+    
     const handleToggleMic = () => {
         if (micStatus === true) {
             setMicStatus(false);
@@ -28,6 +28,7 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
             setMicStatus(true);
             // tM();
         }
+        localStorage.setItem('micStatus', !micStatus)
     }
 
     console.log(micStatus); 
@@ -255,7 +256,7 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
                             <span className="material-icons">videocam</span>
                             <span className="videoSpan-s">Hide cam when joining a room</span>
                             <label className="checkbox-label">
-                                <input type="checkbox" className="checkbox-s" onClick={handleToggleCam} />
+                                <input type="checkbox" className="checkbox-s" onClick={handleToggleCam} checked={!camStatus} />
                                 <span className="checkbox-overlay">
                                     <span className="material-icons">done</span>
                                 </span>
@@ -265,7 +266,7 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
                             <span className="material-icons">mic</span>
                             <span className="micSpan-s">Mute mic when joining a room</span>
                             <label className="checkbox-label">
-                                <input type="checkbox" className="checkbox-s" onClick={handleToggleMic}/>
+                                <input type="checkbox" className="checkbox-s" onClick={handleToggleMic} checked={!micStatus} />
                                 <span className="checkbox-overlay">
                                     <span className="material-icons">done</span>
                                 </span>
