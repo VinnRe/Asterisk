@@ -35,6 +35,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
   const [screenAudParams, setScreenAudParams] = useState(null);
   const [screenStatus, setScreenStatus] = useState('Share Screen');
   const [screenShareStream, setScreenShareStream] = useState(null);
+  const [pproducerTransport, setProducerTransport] = useState(null);
 
 
   
@@ -97,26 +98,21 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
 
   // Function to toggle the microphone stream
   function toggleMic() {
-    // if (stream) {
-      // const audioTrack = stream.getTracks().find(track => track.kind === 'audio');
-      if (micStatus === true) {
-        // audioTrack.enabled = false;
-        setMicStatus(false);
-      } else {
-        // audioTrack.enabled = true;
-        setMicStatus(true);
-      }
-    // }
+    if (micStatus === true) {
+      setMicStatus(false);
+    } else {
+      setMicStatus(true);
+    }
   } 
 
 
   // Function to toggle the camera stream
   function toggleCamera() {
-      if (camStatus === true) {
-        setCamStatus(false);
-      } else {
-        setCamStatus(true);
-      }
+    if (camStatus === true) {
+      setCamStatus(false);
+    } else {
+      setCamStatus(true);
+    }
   }
 
 
@@ -247,9 +243,12 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
 
     async function startStream() {
       try {
+        console.log(camStatus)
+        console.log(micStatus)
+
         localStream = await navigator.mediaDevices.getUserMedia({
-          video: true, 
-          audio: true
+          video: camStatus, 
+          audio: micStatus
         });
 
         setStream(localStream);
@@ -266,9 +265,11 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
           localAudioRef.current.muted = true;
         }
 
-        videoParams = {
-          track: localStream.getVideoTracks()[0],
-          ...videoParams
+        if (camStatus) {
+          videoParams = {
+            track: localStream.getVideoTracks()[0],
+            ...videoParams
+          }
         }
 
         audioParams = {
@@ -401,9 +402,21 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
     }
 
     async function connectSendTransport() {
+
+      setProducerTransport(producerTransport)
       
       audioProducer = await producerTransport.produce(audioParams)
-      videoProducer = await producerTransport.produce(videoParams)
+      if (camStatus) {
+        videoProducer = await producerTransport.produce(videoParams)
+
+        videoProducer.on('trackended', () => {
+          console.log('video track ended')
+        }) // close video track
+
+        videoProducer.on('transportclose', () => {
+          console.log('video transport ended')
+        })
+      }
 
       audioProducer.on('trackended', () => {
         console.log('audio track ended')
@@ -414,13 +427,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
         console.log('audio transport ended')
       })
       
-      videoProducer.on('trackended', () => {
-        console.log('video track ended')
-      }) // close video track
-
-      videoProducer.on('transportclose', () => {
-        console.log('video transport ended')
-      })
     }
 
     async function createNewConsumerTransport(remoteProducerId, remoteProducerType, remoteProducerSocketId) {
@@ -557,6 +563,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
 
         const remoteCurrentVid = {current: videoElement}
         const remoteCurrentAud = {current: audioElement}
+
 
         resizeVideoElements(remoteCurrentVid)
         resizeVideoElements(remoteCurrentAud)
@@ -832,15 +839,53 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
   }, [micStatus, stream])
 
   useEffect(() => {
-    console.log()
-    if (stream) {
-      const videoTrack = stream.getTracks().find(track => track.kind === 'video');
-      if (camStatus) {
-        videoTrack.enabled = true;
-      } else {
-        videoTrack.enabled = false;
-      }
-    }
+    // console.log(camStatus)
+    // if (stream) {
+    //   if (camStatus) {
+    //     // create new vid producer transport
+    //     async function getLocalCam() {
+    //       let localCam = await navigator.mediaDevices.getUserMedia({
+    //         video: camStatus
+    //       });
+
+    //       // Attach video localStream to the video element
+    //       if (localVideoRef.current) {
+
+    //         localVideoRef.current.srcObject = localCam;
+    //         localVideoRef.current.muted = true;
+    //       }
+
+    //       videoParams = {
+    //         track: localCam.getVideoTracks()[0],
+    //         ...videoParams
+    //       }
+
+    //       connectSendTransport()
+    //     }
+
+    //     async function connectSendTransport() {
+    //       videoProducer = await pproducerTransport.produce(videoParams)
+
+    //       videoProducer.on('trackended', () => {
+    //         console.log('video track ended')
+    //       }) // close video track
+
+    //       videoProducer.on('transportclose', () => {
+    //         console.log('video transport ended')
+    //       })          
+    //     }
+
+    //     getLocalCam()
+
+    //   } else {
+    //     // remove vid producer transport
+
+    //     if (ssocket !== null) {
+    //       console.log("CAM OFFFFF")
+    //       ssocket.emit("camOff", { producerTransport: pproducerTransport })
+    //     }
+    //   }
+    // }
   }, [stream, camStatus])
 
 
