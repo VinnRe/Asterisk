@@ -42,9 +42,12 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
             randomRoomNumber += characters.charAt(randomIndex);
         }
     
+        const updatedRoomNumber = randomRoomNumber;
+
         setRoomNumber(() => {
             navigate(`/room/${randomRoomNumber}`);
-            storeLink(userName, randomRoomNumber);
+            storeLink(userName, updatedRoomNumber);
+            localStorage.setItem('roomNumber', updatedRoomNumber)
             return randomRoomNumber;
         });
 
@@ -123,6 +126,11 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
         const accountButton = document.querySelector(".account-button");
         const accountOverlay = document.querySelector(".account-overlay");
         const accountExitButton = document.querySelector(".account-exit-button");
+
+        const storedRoomNumber = localStorage.getItem('roomNumber');
+        if (storedRoomNumber) {
+            setRoomNumber(storedRoomNumber);
+        }
 
         function toggleSidebar(mouseEvent, isExpanded) {
             sidebar.addEventListener(mouseEvent, (event) => {
