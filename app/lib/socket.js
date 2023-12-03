@@ -497,13 +497,13 @@ async function ioConnection(io) {
 		socket.on('camOff', (data) => {
 			let itemToRemove;
 			console.log(socket.id, "Cam is off")
-			console.log("PRODUCERSS", producers)
+			// console.log("PRODUCERSS", producers)
 			if (data.producerTransport !== null) {
-				console.log("transport ID", data.producerTransport._id)
+				// console.log("transport ID", data.producerTransport._id)
 				producers.forEach(producer => {
 					if (producer.producer.kind === "video" && producer.socketId === socket.id) {
-						console.log(1)
-						console.log("PPPP", producer)
+						// console.log(1)
+						// console.log("PPPP", producer)
 						producer.producer.close()
 						itemToRemove = producer
 					}
@@ -514,7 +514,7 @@ async function ioConnection(io) {
 					producer !== itemToRemove
 				)
 			}
-			console.log(producers)
+			// console.log(producers)
 		})
 	})
 

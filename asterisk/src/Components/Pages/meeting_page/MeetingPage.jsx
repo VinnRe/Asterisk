@@ -11,7 +11,7 @@ import ChatApp from '../chat_bar/ChatApp';
 
 
 
-export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber, camStatus, setCamStatus, micStatus, setMicStatus }) => {
+export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber, homeCamStatus, homeMicStatus }) => {
 
   // console.log("camStatus: ", camStatus);
   // console.log("micStatus: ", micStatus);
@@ -22,6 +22,9 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
 
   const localVideoRef = useRef(null);
   const localAudioRef = useRef(null);
+
+  const [camStatus, setCamStatus] = useState(homeCamStatus);
+  const [micStatus, setMicStatus] = useState(homeMicStatus);
 
   const [stream, setStream] = useState(null);
   const [ddevice, setDevice] = useState(null);
@@ -94,11 +97,9 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
   let consumingTransports = [];
 
 
-  console.log("camStatus from home:", camStatus)
-  console.log("micStatus from home:", micStatus)
-
   // Function to toggle the microphone stream
   function toggleMic() {
+    // console.log(micStatus)
     if (micStatus === true) {
       setMicStatus(false);
     } else {
@@ -109,6 +110,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
 
   // Function to toggle the camera stream
   async function toggleCamera() {
+    // console.log(camStatus)
     if (camStatus === true) {
       if (localVideoRef.current.srcObject) {
         let localVidStream = localVideoRef.current.srcObject
@@ -227,8 +229,8 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
     setUserCount(data.users);
   }
 
-
   useEffect(() => {
+
     const socket = io.connect('https://127.0.0.1:8000/mediasoup')
     setSocket(socket)
 
@@ -251,12 +253,13 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
 
     async function startStream() {
       try {
+
         console.log(camStatus)
         console.log(micStatus)
 
         localStream = await navigator.mediaDevices.getUserMedia({
           video: camStatus, 
-          audio: micStatus
+          audio: true         // always true -- disable nalang yung track
         });
 
         setStream(localStream);

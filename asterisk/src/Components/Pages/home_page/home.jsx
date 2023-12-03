@@ -18,7 +18,7 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
         localStorage.setItem('camStatus', !camStatus)
     }
     
-    console.log(camStatus);
+    // console.log(camStatus);
     
     const handleToggleMic = () => {
         if (micStatus === true) {
@@ -31,7 +31,7 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
         localStorage.setItem('micStatus', !micStatus)
     }
 
-    console.log(micStatus); 
+    // console.log(micStatus); 
 
     const generateRoomNumber = () => {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
@@ -104,7 +104,6 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
      
 
       const handleJoinClick = () => {
-
         generateRoomNumber();
     };
     const handleLogout = () => {
