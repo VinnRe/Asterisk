@@ -5,6 +5,7 @@ import '../../Styles/login-signup_styles.css';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import validator from 'validator';
+import logo from '../../Assets/asterisk-logo.png'
 
 export const LoginSignup = ( {setUserName} ) => {
     // Switching
@@ -168,6 +169,11 @@ export const LoginSignup = ( {setUserName} ) => {
     
     return (
         <body className='body--ls'>
+            <header className='header-ls'>
+                <img src={logo} alt="asterisk" className="logo-icon | logo-icon__footer | logo-icon__header"/>                   
+                <h1>Asterisk</h1>
+            </header>
+
             <div className="container--ls">
                 {isLoginForm ? (
                     <form className="form--ls" id="login" onSubmit={handleLoginSubmit}>
@@ -229,7 +235,6 @@ export const LoginSignup = ( {setUserName} ) => {
                             <input 
                                 type="text"
                                 className="form__input"
-                                autoFocus
                                 placeholder='Middle Name'
                                 value={signupMN}
                                 onChange={(e) => {
@@ -243,7 +248,6 @@ export const LoginSignup = ( {setUserName} ) => {
                             <input 
                                 type="text"
                                 className="form__input"
-                                autoFocus
                                 placeholder='Last Name'
                                 value={signupLN}
                                 onChange={(e) => {
@@ -257,7 +261,6 @@ export const LoginSignup = ( {setUserName} ) => {
                             <input 
                                 type="text"
                                 className="form__input"
-                                autoFocus
                                 placeholder='Name Extension'
                                 value={signupNE}
                                 onChange={(e) => {
@@ -299,7 +302,6 @@ export const LoginSignup = ( {setUserName} ) => {
                             <input
                                 type="text"
                                 className="form__input"
-                                autoFocus
                                 placeholder="Email"
                                 value={signupEmail}
                                 onChange={(e) => {
@@ -313,7 +315,6 @@ export const LoginSignup = ( {setUserName} ) => {
                             <input
                                 type="password"
                                 className="form__input"
-                                autoFocus
                                 placeholder="Password"
                                 value={signupPassword}
                                 onChange={(e) => {
@@ -328,7 +329,6 @@ export const LoginSignup = ( {setUserName} ) => {
                             <input
                                 type="password"
                                 className="form__input"
-                                autoFocus
                                 placeholder="Confirm Password"
                                 value={confirmPassword}
                                 onChange={(e) => {
