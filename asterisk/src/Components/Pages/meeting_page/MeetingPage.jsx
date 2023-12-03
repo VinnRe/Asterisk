@@ -336,8 +336,9 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
     // 4 TIMES NA NACACALL TOOO 
     // NEED TO CHECK THE BACKEND
     // LATERRRR
-    socket.on('newProducer', ({ producerId, producerType, producerSocketId }) => {
-      createNewConsumerTransport(producerId, producerType, producerSocketId);
+    socket.on('newProducer', ({ producerId, producerType, producerSocketId, producerUserName }) => {
+      console.log(producerUserName)
+      createNewConsumerTransport(producerId, producerType, producerSocketId, producerUserName);
     })
 
     // ask the server to get the producer's ids
@@ -345,7 +346,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
       socket.emit('getProducers', remoteProducers => {
         //  for each producer create consumer
         remoteProducers.forEach(remoteProducer => {
-          createNewConsumerTransport(remoteProducer.producerId, remoteProducer.producerType, remoteProducer.producerSocketId);
+          createNewConsumerTransport(remoteProducer.producerId, remoteProducer.producerType, remoteProducer.producerSocketId, remoteProducer.producerUserName);
         })
       })
     }
@@ -353,7 +354,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
     function createSendTransport() {
 
       //  when we join, we join as a producer
-      socket.emit('createWebRtcTransport', { consumer:false, type:"userProducer" }, ({ params }) => {
+      socket.emit('createWebRtcTransport', { consumer:false, type:"userProducer", userName: userName }, ({ params }) => {
       
       // get producers transport parameters from the server side
         if (params.error) {
@@ -441,7 +442,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
       
     }
 
-    async function createNewConsumerTransport(remoteProducerId, remoteProducerType, remoteProducerSocketId) {
+    async function createNewConsumerTransport(remoteProducerId, remoteProducerType, remoteProducerSocketId, RemoteProducerUserName) {
 
       let consumerType;
 
@@ -489,11 +490,11 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
           }
         })
 
-        connectRecvTransport(consumerTransport, remoteProducerId, params.id, consumerType, remoteProducerSocketId);
+        connectRecvTransport(consumerTransport, remoteProducerId, params.id, consumerType, remoteProducerSocketId, RemoteProducerUserName);
       });
     }
 
-    async function connectRecvTransport(consumerTransport, remoteProducerId, serverConsumerTransportId, consumerType, remoteProducerSocketId) {
+    async function connectRecvTransport(consumerTransport, remoteProducerId, serverConsumerTransportId, consumerType, remoteProducerSocketId, RemoteProducerUserName) {
       //  tell the server to create a consumer based on the rtp capabilities
       //  if the router can consume, server side will send back params
       await socket.emit('consume', {
@@ -534,11 +535,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
           vid_con1.className = "vid-con1"
           vid_con1.setAttribute('id', remoteProducerSocketId)
 
-          let icon_status = document.createElement("div");
-          icon_status.className = "icon-status"
-
-          vid_con1.appendChild(icon_status)
-
         } else {
           vid_con1 = document.getElementById(remoteProducerSocketId)
         }
@@ -567,7 +563,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
           videoElement.setAttribute('playsInline', true);
           videoElement.setAttribute('autoPlay', true);
           videoElement.className = "video-element";
-          vid_con1.appendChild(videoElement);
+          vid_con1.prepend(videoElement);
         }
 
         if (!videoTag && !camStatus) {
@@ -576,7 +572,38 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
           videoElement.setAttribute('playsInline', true);
           videoElement.setAttribute('autoPlay', true);
           videoElement.className = "video-element";
-          vid_con1.appendChild(videoElement);
+          vid_con1.prepend(videoElement);
+        }
+
+        let vid_con_footer = document.createElement("div")
+        let span_username = document.createElement("span")
+        let icon_status = document.createElement("div")
+
+        vid_con_footer.className = "vid-con-footer"
+        span_username.innerHTML = RemoteProducerUserName
+        icon_status.className = "icon-status"
+
+        if (micStatus) {
+          let mic_span_icon = document.createElement("span")
+          mic_span_icon.className = "material-icons control-buttons"
+          mic_span_icon.innerHTML = "mic_none"
+
+          icon_status.appendChild(mic_span_icon)
+        }
+
+        if (raiseHand) {
+          let hand_span_icon = document.createElement("span")
+          hand_span_icon.className = "material-icons control-buttons"
+          hand_span_icon.innerHTML = "back_hand"
+
+          icon_status.appendChild(hand_span_icon)
+        }
+
+        vid_con_footer.appendChild(span_username)
+        vid_con_footer.appendChild(icon_status)
+
+        if(vid_con1.getElementsByClassName("vid-con-footer").length < 1) {
+          vid_con1.appendChild(vid_con_footer)
         }
 
         vid_con.appendChild(vid_con1)
@@ -600,6 +627,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
         } else {
           socket.emit("micOff", {roomName: roomName})
         }
+
 
         // let the server know which consumerid to resume
         socket.emit('consumerResume', { serverConsumerId: params.serverConsumerId})
