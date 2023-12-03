@@ -542,8 +542,10 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
         let vid_con = document.getElementById("video-container");
         let audioElement;
         let videoElement;
+        let vidOff;
         
         let videoTag = vid_con1.querySelector('video')
+        let spanTag = vid_con1.querySelector("span")
 
         if (params.kind == 'audio') {
           audioElement = document.createElement('audio');
@@ -558,22 +560,44 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
           if (videoTag && videoTag.srcObject === null) {
             videoTag.remove()
           }
+          if (spanTag) {
+            spanTag.remove()
+          }
           videoElement = document.createElement('video');
           videoElement.setAttribute('id', remoteProducerId);
           videoElement.setAttribute('playsInline', true);
           videoElement.setAttribute('autoPlay', true);
           videoElement.className = "video-element";
           vid_con1.prepend(videoElement);
+
+          let vidOff = document.createElement("span")
+          vidOff.className = "vid-off material-icons control-buttons"
+          vidOff.style.visibility = "hidden"
+          vidOff.innerHTML = "videocam_off"
+          vid_con1.prepend(vidOff)
         }
 
-        if (!videoTag && !camStatus) {
+        console.log(videoTag)
+        console.log(camStatus)
+
+        if (videoTag === null) {
+          if (spanTag) {
+            spanTag.remove()
+          }
           videoElement = document.createElement('video');
           // videoElement.setAttribute('id', remoteProducerId);
           videoElement.setAttribute('playsInline', true);
           videoElement.setAttribute('autoPlay', true);
           videoElement.className = "video-element";
           vid_con1.prepend(videoElement);
+
+          let vidOff = document.createElement("span")
+          vidOff.className = "vid-off material-icons control-buttons"
+          vidOff.style.visibility = "visible"
+          vidOff.innerHTML = "videocam_off"
+          vid_con1.prepend(vidOff)
         }
+
 
         let vid_con_footer = document.createElement("div")
         let span_username = document.createElement("span")
@@ -585,12 +609,11 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
 
         let mic_span_icon = document.createElement("span")
         mic_span_icon.className = "material-icons control-buttons"
-        mic_span_icon.innerHTML = "mic_none"
 
         if (micStatus) {
-          mic_span_icon.style.visibility = "visible"
+          mic_span_icon.innerHTML = "mic_none"
         } else {
-          mic_span_icon.style.visibility = "hidden"
+          mic_span_icon.innerHTML = "mic_off"
         }
 
         icon_status.appendChild(mic_span_icon)
@@ -674,13 +697,10 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
           return
         } else {
           elementToRemove.srcObject = null
+
+          vid_con1.querySelector("span").style.visibility = "visible"
         }
       }
-
-
-      // // console.log(vid_con1.childElementCount)
-      // if (vid_con1.childElementCount === 2) {
-      // }
     })
 
 
@@ -694,47 +714,31 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
 
     connectSocket();
 
-    function set_icon_on(userSocketId, icon) {
-      let on = false
+    function set_icon_mic(userSocketId, micIcon) {
       if (document.getElementById(userSocketId)) {
-        // console.log("mic on", userSocketId)
-
         document.getElementById(userSocketId)
           .querySelectorAll('span')
           .forEach(element => {
-            if (element.innerHTML === icon) {
-              element.style.visibility = "visible"
-              // console.log(userSocketId, "meron na")
+            if (element.innerHTML === "mic_none" || element.innerHTML === "mic_off") {
+              element.innerHTML = micIcon
             }
           }
         )
-
-        // if (!on) {
-        //   let vid_con_footer = document.getElementById(userSocketId).lastChild
-        //   let icon_status = vid_con_footer.getElementsByClassName("icon-status")[0]
-        //   console.log(icon_status)
-        //   let span = document.createElement('span')
-        //   span.className = "material-icons control-buttons"
-        //   span.style.visibility = "visible"
-        //   span.innerHTML = icon
-
-        //   if (icon === "mic_none") {
-        //     icon_status.prepend(span)
-        //   } else {
-        //     icon_status.appendChild(span)
-        //   }
-        // }
       }
     }
 
-    function set_icon_off(userSocketId, icon) {
+    function set_icon(userSocketId, icon, status) {
       if (document.getElementById(userSocketId)) {
         document.getElementById(userSocketId)
           .querySelectorAll('span')
           .forEach(element => {
             if (element.innerHTML === icon) {
               // element.remove()
-              element.style.visibility = "hidden"
+              if (status) {
+                element.style.visibility = "visible"
+              } else {
+                element.style.visibility = "hidden"
+              }
             }
           }
         )
@@ -743,22 +747,22 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
 
     socket.on("userRaisedHand", (data) => {
       console.log(data.userSocketId, "HANDS ON")
-      set_icon_on(data.userSocketId, "back_hand")
+      set_icon(data.userSocketId, "back_hand", true)
     })
 
     socket.on("userLowerHand", (data) => {
       console.log(data.userSocketId, "HANDS OFF")
-      set_icon_off(data.userSocketId, "back_hand")
+      set_icon(data.userSocketId, "back_hand", false)
     })
 
     socket.on("userMicOn", (data) => {
       console.log(data.userSocketId, "MIC ON")
-      set_icon_on(data.userSocketId, "mic_none")
+      set_icon_mic(data.userSocketId, "mic_none")
     })
 
     socket.on("userMicOff", (data) => {
       console.log(data.userSocketId, "MIC OFFFF")
-      set_icon_off(data.userSocketId, "mic_none")
+      set_icon_mic(data.userSocketId, "mic_off")
     })
 
 
@@ -992,7 +996,11 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
           {/* Add video elements here */}
 
           <div className="vid-con1 local-vid-con1">
-
+            {camStatus ? (
+              <span style={{visibility: "hidden"}} className="vid-off material-icons control-buttons">videocam_off</span>
+            ) : (
+              <span style={{visibility: "visible"}} className="vid-off material-icons control-buttons">videocam_off</span>
+            )}
             <video 
               ref={localVideoRef}
               muted
@@ -1013,18 +1021,18 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
             </audio>
 
             <div className="vid-con-footer">
-              <span className='userName-meet'>{userName}</span>
+              <span className='userName-meet'>USERNAME{userName}</span>
               <div className="icon-status">
                 {micStatus ? (
                   <span className="material-icons control-buttons">mic_none</span>
                 ) : (
-                  null
+                  <span className="material-icons control-buttons">mic_off</span>
                 )}
 
                 {raiseHand ? (
-                  <span className="material-icons control-buttons">back_hand</span>
+                  <span style={{visibility: "visible"}} className="material-icons control-buttons">back_hand</span>
                 ) : (
-                  null
+                  <span style={{visibility: "hidden"}} className="material-icons control-buttons">back_hand</span>
                 )}
               </div>
             </div>
@@ -1036,6 +1044,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
         <div className="button__control-panel">
           <div className="clock-content">
             <Clock />
+            <span className="roomName">{roomName}</span>
           </div>
 
           <button className="toggle-button" onClick={toggleMic}>

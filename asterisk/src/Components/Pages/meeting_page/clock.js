@@ -14,9 +14,9 @@ const Clock = () => {
     }, []);
 
     return (
-        <div className='clock'>
+        <span className='clock'>
             {currentTime.toLocaleTimeString({ hour: '2-digit', minute: '2-digit' })}
-        </div>
+        </span>
     );
 };
 

@@ -31,11 +31,23 @@
     place-items: center;
 }
 
+
 .vid-con1 {
-    display: relative;
+    position: relative;
     border: 1px solid black;
     background-color: rgb(113, 53, 54);
     color: #d2cccc
+}
+
+span.vid-off {
+    font-size: 100px !important;
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    top: 25%;
+    text-align: center;
 }
 
 .video-element, .audio-element {
@@ -45,13 +57,25 @@
     object-fit: cover;
 }
 
-.vid-con1:span {
-    /*position: absolute;*/
+
+.vid-con-footer {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end; 
 }
 
-.icon-status {
-    display: inline;
+.userName-meet {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
 }
+
+
+.icon-status {
+    margin-right: 10px; 
+}
+
 
 .button__control-panel {
     display: flex;
@@ -67,6 +91,18 @@
 .control-buttons{
     font-size: 1.75rem !important;
 }
+
+.roomName, .clock{
+    padding-right: 10px;
+    display: inline;
+}
+
+@media (min-width: 480px) and (max-width: 979px) {
+    .roomName, .clock{
+        display: block;
+    }
+}
+
 
 .clock-content {
     position: absolute;
