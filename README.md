@@ -1,4 +1,4 @@
-<div align="center">
+<div align="center" width="300" height="300">
   <img alt="Alt text" src="src/asterisk/src/Components/Assets/asterisk-logo.png">
 
   <h1>Asterisk</h1>
@@ -8,10 +8,10 @@
   <h2>Authors</h2>
   <p>Students from CS - 2102</p>
   <ul>
-    <li><a href="https://github.com/mothy-08">Alimagno, Timothy Dave</a></li>
-    <li><a href="https://github.com/VinnRe">Capinpin, Kobe Andrew</a></li>
-    <li><a href="https://github.com/oocim">Cuarto, Mico Raphael</a></li>
-    <li><a href="https://github.com/herseyy">Odasco, Hersey</a></li>
+    <a href="https://github.com/mothy-08">Alimagno, Timothy Dave</a>
+    <a href="https://github.com/VinnRe">Capinpin, Kobe Andrew</a>
+    <a href="https://github.com/oocim">Cuarto, Mico Raphael</a>
+    <a href="https://github.com/herseyy">Odasco, Hersey</a>
   </ul>
 </div>
 
