@@ -52,14 +52,14 @@ export const LoginSignup = ( {setUserName} ) => {
         }
     };
 
-    const handleLoginSubmit = async (event) => {
-        window.event.preventDefault();
+    const handleLoginSubmit = async (event, email, password) => {
+        event.preventDefault();
         try {
             const isEmail = validator.isEmail(loginEmail);
 
             const requestBody = {
-                email: loginEmail,
-                password: loginPassword
+                email: email,
+                password: password
             }
                              
             const response = await fetch('http://localhost:8080/api/auth/signin', {
@@ -82,7 +82,7 @@ export const LoginSignup = ( {setUserName} ) => {
                 
                 // Fetch user deets using token
                 setUserName(`
-                    ${data.firstName},
+                    ${data.firstName}
                     ${data.lastName}
                     ${data.nameExtension}
                 `);
@@ -110,8 +110,7 @@ export const LoginSignup = ( {setUserName} ) => {
     };
 
     const handleSignupSubmit = async (event) => {
-        window.event.preventDefault();
-
+        event.preventDefault();
         try {
             const response = await fetch('http://localhost:8080/api/auth/signup', {
                 method: 'POST',
@@ -158,7 +157,8 @@ export const LoginSignup = ( {setUserName} ) => {
             }
 
             if (response.ok) {
-                // Handle successful signup, e.g., show success message
+                // Log in the user after signing up
+                handleLoginSubmit(event, signupEmail, signupPassword);
             } else {
                 // Handle signup failure, show error message
             }
@@ -176,7 +176,7 @@ export const LoginSignup = ( {setUserName} ) => {
 
             <div className="container--ls">
                 {isLoginForm ? (
-                    <form className="form--ls" id="login" onSubmit={handleLoginSubmit}>
+                    <form className="form--ls" id="login" onSubmit={(e) => handleLoginSubmit(e, loginEmail, loginPassword)}>
                         <h1 className="form__title">Login</h1>
                         <div className="form__message form__message--error"></div>
                         <div className="form__input-group">
