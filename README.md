@@ -106,4 +106,4 @@ These can be ran in any order
 ```
     npm start
 ```
-Now with all that it should run a `localhost` in your browser and you can use it.
+Now with all that it should run a `localhost` in your browser and you can use it. 
