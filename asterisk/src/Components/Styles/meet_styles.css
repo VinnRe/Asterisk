@@ -27,7 +27,7 @@
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 10px;
     margin: auto;
-    /* max-width: 800px; */
+    /*max-width: 800px;*/
     place-items: center;
 }
 
@@ -97,18 +97,53 @@ span.vid-off {
     display: inline;
 }
 
-@media (min-width: 480px) and (max-width: 979px) {
-    .roomName, .clock{
-        display: block;
-    }
-}
-
 
 .clock-content {
+    display: flex;
+    display: block;
+    justify-content: center;
     position: absolute;
     left: 2rem;
     bottom: 1.75rem;
     color: var(--dark-red);
+}
+
+.num-user {
+    font-size: 20px;
+    margin-top: 3px;
+    margin-bottom: 0;
+}
+
+.num-con {
+    display: flex;
+    justify-content: left;
+    text-align: center
+}
+
+span.icon-group {
+    display: inline;
+    font-size: 35px !important;
+    margin-right: 10px;
+}
+
+
+@media (min-width: 480px) and (max-width: 979px) {
+    .roomName, .clock{
+        display: block;
+    }
+
+    .num-user {
+        font-size: 18px;
+        margin-top: 2px;
+    }
+
+    span.icon-group {
+        font-size: 30px !important;
+    }
+
+    .num-con {
+        margin-bottom: 3px;
+    }
 }
 
 .toggle-button {

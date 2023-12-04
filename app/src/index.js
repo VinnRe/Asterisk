@@ -35,31 +35,43 @@ app.get("/", (request, response) => {
 	response.send("Go to to create room http://localhost:3000/room/{roomName}");
 })
 
+
+// var instance = new socket.Users()
+
+
+
 // to get the number of users in roomName 
 app.get("/get_users/:room", (request, response) => {
 	let roomName = request.params.room
-	let users = socket.getUsers(roomName)
+	let userInstance = new socket.Users(roomName)
+	let users = userInstance.getUsers()
 	response.send({users})
+	// let users = socket.getUsers(roomName)
+	// response.send({users})
 })
 
 app.get("/get_transports/:room", (request, response) => {
 	let roomName = request.params.room
-	let transports = socket.getTransports(roomName)
+	let userInstance = new socket.Users(roomName)
+	let transports = userInstance.getTransports()
 	response.send(transports)
 })
 
 
 app.get("/get_consumers/:room", (request, response) => {
 	let roomName = request.params.room
-	let consumers = socket.getConsumers(roomName)
+	let userInstance = new socket.Users(roomName)
+	let consumers = userInstance.getConsumers()
 	response.send(consumers)
 })
 
 app.get("/get_producers/:room", (request, response) => {
 	let roomName = request.params.room
-	let producers = socket.getProducers(roomName)
+	let userInstance = new socket.Users(roomName)
+	let producers = userInstance.getProducers()
 	response.send(producers)
 })
+
 
 
 

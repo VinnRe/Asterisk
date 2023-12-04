@@ -558,25 +558,31 @@ async function ioConnection(io) {
 	}
 }
 
-function getUsers(roomName) {
-	let users = rooms[roomName].peers.length
-	return users
-}
+class Users {
 
-// roomName di nagamitttt
-function getTransports(roomName) {
-	let transportss = transports
-	return transportss
-}
+	constructor(roomName) {
+		this.roomName = roomName
+	}
 
-function getConsumers(roomName) {
-	return consumers
-}
+	getUsers() {
+		let users = rooms[this.roomName].peers.length
+		return users
+	}
 
-function getProducers(roomName) {
-	return producers
+	getTransports() {
+		console.log(transports)
+		return transports
+	}
+
+	getConsumers() {
+		return consumers
+	}
+
+	getProducers() {
+		return producers
+	}
 }
 
 export {
-	ioConnection, getUsers, getTransports, getConsumers, getProducers
+	ioConnection, Users
 };

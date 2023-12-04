@@ -1043,6 +1043,10 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
 
         <div className="button__control-panel">
           <div className="clock-content">
+            <div className="num-con">
+              <span className="icon-group material-icons">groups</span>
+              <p className="num-user">{userCount}</p>
+            </div>
             <Clock />
             <span className="roomName">{roomName}</span>
           </div>
