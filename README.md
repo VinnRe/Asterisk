@@ -1,5 +1,5 @@
-<div align="center" width="30" height="30">
-  <img alt="Alt text" src="src/asterisk/src/Components/Assets/asterisk-logo.png">
+<div align="center">
+  <img alt="Alt text" width="30" height="30" src="src/asterisk/src/Components/Assets/asterisk-logo.png">
 
   <h1>Asterisk</h1>
 
