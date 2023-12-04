@@ -1021,7 +1021,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
             </audio>
 
             <div className="vid-con-footer">
-              <span className='userName-meet'>USERNAME{userName}</span>
+              <span className='userName-meet'>{userName}</span>
               <div className="icon-status">
                 {micStatus ? (
                   <span className="material-icons control-buttons">mic_none</span>
