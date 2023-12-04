@@ -33,25 +33,33 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
 
     // console.log(micStatus); 
 
-    const generateRoomNumber = () => {
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
-        let randomRoomNumber = '';
-        
-        const roomNumberLength = 10;
-        for (let i = 0; i < roomNumberLength; i++) {
-            const randomIndex = Math.floor(Math.random() * characters.length);
-            randomRoomNumber += characters.charAt(randomIndex);
-        }
+    const generateRoomNumber = async () => {
+        try {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
+            let randomRoomNumber = '';
     
-        const updatedRoomNumber = randomRoomNumber;
+            const roomNumberLength = 10;
+            for (let i = 0; i < roomNumberLength; i++) {
+                const randomIndex = Math.floor(Math.random() * characters.length);
+                randomRoomNumber += characters.charAt(randomIndex);
+            }
+    
+            const updatedRoomNumber = randomRoomNumber;
+    
+            // Store link in the backend
+            await storeLink(userName, updatedRoomNumber);
+    
+            // Set the room number and join the meet
+            setRoomNumber(updatedRoomNumber);
+            joinMeet(updatedRoomNumber);
+        } catch (error) {
+            console.error('Error generating room number:', error);
+        }
+    };
 
-        setRoomNumber(() => {
-            navigate(`/room/${randomRoomNumber}`);
-            storeLink(userName, updatedRoomNumber);
-            localStorage.setItem('roomNumber', updatedRoomNumber)
-            return randomRoomNumber;
-        });
-
+    const joinMeet = (updatedRoomNumber) => {
+        console.log(`Joined room ${updatedRoomNumber}`);
+        checkLink(updatedRoomNumber);
     };
 
     const storeLink = async (userName, randomRoomNumber) => {
@@ -186,10 +194,10 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
                                 <p>Join Conference</p>
                             </a>
 
-                            <a href="" onClick={handleJoinClick}>
+                            <button className="form-buttons" onClick={handleJoinClick}>
                                 <span className="material-icons conference-buttons">add</span>
                                 <p>Create Conference</p>
-                            </a>
+                            </button>
                         </div>
                     </section>
                 </main>
