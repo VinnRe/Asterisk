@@ -1095,12 +1095,6 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
               </div>
           </button>
 
-          <button id="moreBtn" className="toggle-button">
-            <div className="button-content">
-              <span className="material-icons control-buttons">more_horiz</span>
-            </div>
-          </button>
-
           <div className={`chat-sidebar ${isChatOpen ? 'chat-sidebar-open' : ''}`}>
             <ChatApp userName={userName} roomNumber={roomNumber} />
           </div>
