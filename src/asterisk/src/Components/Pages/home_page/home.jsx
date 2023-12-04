@@ -45,12 +45,13 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
             }
     
             const updatedRoomNumber = randomRoomNumber;
-    
+            setRoomNumber(updatedRoomNumber);
             // Store link in the backend
             await storeLink(userName, updatedRoomNumber);
     
             // Set the room number and join the meet
             setRoomNumber(updatedRoomNumber);
+            localStorage.setItem('roomNumber', updatedRoomNumber);
             joinMeet(updatedRoomNumber);
         } catch (error) {
             console.error('Error generating room number:', error);
@@ -78,9 +79,9 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
         console.error('Error during signup:', error);
     }}
 
-    const checkLink = async (randomRoomNumber) => {
+    const checkLink = async (updatedRoomNumber) => {
         try {
-            const response = await fetch(`http://localhost:8080/api/auth/meeting_links/${randomRoomNumber}`, {
+            const response = await fetch(`http://localhost:8080/api/auth/meeting_links/${updatedRoomNumber}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -95,7 +96,7 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
             const data = await response.json();
 
             if (data.exists) {
-                navigate(`/room/${roomNumber}`)
+                navigate(`/room/${updatedRoomNumber}`)
             } else {
                 console.log('Meeting link does not exist:', data);
             }
