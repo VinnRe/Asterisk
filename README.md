@@ -1,12 +1,12 @@
 <div align="center">
   <img alt="Alt text" width="300" height="300" src="src/asterisk/src/Components/Assets/asterisk-logo.png">
 
-  <h1>Asterisk</h1>
+  <h1 align="center">Asterisk</h1>
 
-  <p>A Video Conference Web Application using JavaScript, NodeJS, and Java.</p>
+  <p align="center">A Video Conference Web Application using JavaScript, NodeJS, and Java.</p>
 
-  <h2>Authors</h2>
-  <p>Students from CS - 2102</p>
+  <h2 align="center">Authors</h2>
+  <p align="center">Students from CS - 2102</p>
   <ul>
     <a href="https://github.com/mothy-08">Alimagno, Timothy Dave</a><br>
     <a href="https://github.com/VinnRe">Capinpin, Kobe Andrew</a><br>
