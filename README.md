@@ -1,4 +1,4 @@
-
+![Alt text](src/asterisk/src/Components/Assets/asterisk-logo.png)
 # Asterisk
 
 A Video Conference Web Application using JavaScript, NodeJS, and Java.
