@@ -1,17 +1,19 @@
-<img alt="Alt text" src="src/asterisk/src/Components/Assets/asterisk-logo.png">
+<div align="center">
+  <img alt="Alt text" src="src/asterisk/src/Components/Assets/asterisk-logo.png">
 
-<h1>Asterisk</h1>
+  <h1>Asterisk</h1>
 
-<p>A Video Conference Web Application using JavaScript, NodeJS, and Java.</p>
+  <p>A Video Conference Web Application using JavaScript, NodeJS, and Java.</p>
 
-<h2>Authors</h2>
-<p>Students from CS - 2102</p>
-<ul>
-  <li><a href="https://github.com/mothy-08">Alimagno, Timothy Dave</a></li>
-  <li><a href="https://github.com/VinnRe">Capinpin, Kobe Andrew</a></li>
-  <li><a href="https://github.com/oocim">Cuarto, Mico Raphael</a></li>
-  <li><a href="https://github.com/herseyy">Odasco, Hersey</a></li>
-</ul>
+  <h2>Authors</h2>
+  <p>Students from CS - 2102</p>
+  <ul>
+    <li><a href="https://github.com/mothy-08">Alimagno, Timothy Dave</a></li>
+    <li><a href="https://github.com/VinnRe">Capinpin, Kobe Andrew</a></li>
+    <li><a href="https://github.com/oocim">Cuarto, Mico Raphael</a></li>
+    <li><a href="https://github.com/herseyy">Odasco, Hersey</a></li>
+  </ul>
+</div>
 
 <h2>Demo</h2>
 <p>Here is the demo and explanation of the web application. It is a brief explanation about how we used the 4 principles of OOP in this web application.</p>
