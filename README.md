@@ -1,4 +1,4 @@
-<div align="center" width="300" height="300">
+<div align="center" width="30" height="30">
   <img alt="Alt text" src="src/asterisk/src/Components/Assets/asterisk-logo.png">
 
   <h1>Asterisk</h1>
