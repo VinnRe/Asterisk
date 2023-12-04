@@ -3,9 +3,9 @@ login-system/target/classes/com/burgis/loginsystem/models/MeetingLink.class
 .vs/
 .vscode/
 
-app/node_modules
-asterisk/node_modules
-chatapp/node_modules
+# app/node_modules
+# asterisk/node_modules
+# chatapp/node_modules
 basic_home_ui/
 home_ui_new/
 login_ui_new/
