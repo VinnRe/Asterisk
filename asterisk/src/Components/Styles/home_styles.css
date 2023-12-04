@@ -442,3 +442,29 @@
 .logo-icon__footer {
     animation: rotateLogo 10s linear infinite;
 }
+
+.create-button {
+    text-decoration: none;
+    color: var(--dark-red);
+    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: none;
+    border: none;
+}
+
+.create-button:hover {
+    color: var(--light-red);
+    cursor: pointer;
+}
+
+.create-button span {
+    font-size: 8rem;
+}
+
+.create-button p {
+    margin-top: 13.6px;
+    font-size: 13.6px;
+    font-family: "Poppins";
+}

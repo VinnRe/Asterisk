@@ -194,7 +194,7 @@ export const HomePage = ({ userName, audioVolume, setAudioVolume, roomNumber, se
                                 <p>Join Conference</p>
                             </a>
 
-                            <button className="form-buttons" onClick={handleJoinClick}>
+                            <button className="create-button" onClick={handleJoinClick}>
                                 <span className="material-icons conference-buttons">add</span>
                                 <p>Create Conference</p>
                             </button>
