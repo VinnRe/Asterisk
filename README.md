@@ -8,10 +8,10 @@
   <h2>Authors</h2>
   <p>Students from CS - 2102</p>
   <ul>
-    <a href="https://github.com/mothy-08">Alimagno, Timothy Dave</a>
-    <a href="https://github.com/VinnRe">Capinpin, Kobe Andrew</a>
-    <a href="https://github.com/oocim">Cuarto, Mico Raphael</a>
-    <a href="https://github.com/herseyy">Odasco, Hersey</a>
+    <a href="https://github.com/mothy-08">Alimagno, Timothy Dave</a><br>
+    <a href="https://github.com/VinnRe">Capinpin, Kobe Andrew</a><br>
+    <a href="https://github.com/oocim">Cuarto, Mico Raphael</a><br>
+    <a href="https://github.com/herseyy">Odasco, Hersey</a><br>
   </ul>
 </div>
 
