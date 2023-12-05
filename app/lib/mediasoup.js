@@ -601,5 +601,5 @@ function setIo(io) {
 }
 
 export {
-	setIo
+	Mediasoup
 };

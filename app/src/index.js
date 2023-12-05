@@ -43,19 +43,20 @@ server.listen(port, () => {
 });
 
 
-let medisoupp = mediasoup.setIo(io);
+let mediasoupInstance = new mediasoup.Mediasoup(io)
+// let medisoupp = mediasoup.setIo(io);
 
 
 // to get the number of users in roomName 
 app.get("/get_users/:room", (request, response) => {
 	let roomName = request.params.room
-	let users = medisoupp.getUsers(roomName)
+	let users = mediasoupInstance.getUsers(roomName)
 	response.send({users})
 })
 
 app.get("/get_transports/:room", (request, response) => {
 	let roomName = request.params.room
-	let transports = medisoupp.getTransports(roomName)
+	let transports = mediasoupInstance.getTransports(roomName)
 	// response.send(transports)
 	response.send({transports})
 })
@@ -63,7 +64,7 @@ app.get("/get_transports/:room", (request, response) => {
 
 app.get("/get_consumers/:room", (request, response) => {
 	let roomName = request.params.room
-	let consumers = medisoupp.getConsumers(roomName)
+	let consumers = mediasoupInstance.getConsumers(roomName)
 	// let userInstance = new socket.Users(roomName)
 	// response.send(consumers)
 	response.send({consumers})
@@ -71,7 +72,7 @@ app.get("/get_consumers/:room", (request, response) => {
 
 app.get("/get_producers/:room", (request, response) => {
 	let roomName = request.params.room
-	let producers = medisoupp.getProducers(roomName)
+	let producers = mediasoupInstance.getProducers(roomName)
 	// let userInstance = new socket.Users(roomName)
 	// response.send(producers)
 	response.send({producers})
