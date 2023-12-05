@@ -37,19 +37,6 @@ class Mediasoup {
 		return users
 	}
 
-	#getItems(roomName, items) {
-		let itemsToGet = []
-		items.forEach(item => {
-			if (item.roomName === roomName) {
-				itemsToGet = [
-					...itemsToGet,
-					item
-				]
-			}
-		})
-		return itemsToGet
-	}
-
 	getTransports(roomName) {
 		let roomTransports = this.#getItems(roomName, this.#transports)
 		return roomTransports
@@ -65,8 +52,20 @@ class Mediasoup {
 		return roomProducers
 	}
 
-
 	// private methods
+	#getItems(roomName, items) {
+		let itemsToGet = []
+		items.forEach(item => {
+			if (item.roomName === roomName) {
+				itemsToGet = [
+					...itemsToGet,
+					item
+				]
+			}
+		})
+		return itemsToGet
+	}
+
 	async #createWorker() {
 		try {		
 			let worker = await mediasoup.createWorker({
