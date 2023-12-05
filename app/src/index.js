@@ -4,7 +4,7 @@ import express from 'express';
 import * as https from 'https';
 import cors from 'cors';
 import { Server } from 'socket.io';
-import * as socket from '../lib/socket.js';
+import * as mediasoup from '../lib/mediasoup.js';
 
 const privateKey = fs.readFileSync('./server/ssl/server.key', 'utf8');
 const certificate = fs.readFileSync('./server/ssl/server.crt', 'utf8');
@@ -43,7 +43,7 @@ server.listen(port, () => {
 });
 
 
-let medisoupp = socket.setIo(io);
+let medisoupp = mediasoup.setIo(io);
 
 
 // to get the number of users in roomName 
