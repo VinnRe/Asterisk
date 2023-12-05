@@ -30,53 +30,50 @@ const io = new Server(server, {
 	}
 });
 
+
+
 app.get("/", (request, response) => {
 	// console.log(request);
 	response.send("Go to to create room http://localhost:3000/room/{roomName}");
 })
 
 
-// var instance = new socket.Users()
+server.listen(port, () => {
+	console.log(`Server is running at https://localhost:${port}`);
+});
 
+
+let medisoupp = socket.setIo(io);
 
 
 // to get the number of users in roomName 
 app.get("/get_users/:room", (request, response) => {
 	let roomName = request.params.room
-	let userInstance = new socket.Users(roomName)
-	let users = userInstance.getUsers()
+	let users = medisoupp.getUsers(roomName)
 	response.send({users})
-	// let users = socket.getUsers(roomName)
-	// response.send({users})
 })
 
 app.get("/get_transports/:room", (request, response) => {
 	let roomName = request.params.room
-	let userInstance = new socket.Users(roomName)
-	let transports = userInstance.getTransports()
-	response.send(transports)
+	let transports = medisoupp.getTransports(roomName)
+	// response.send(transports)
+	response.send({transports})
 })
 
 
 app.get("/get_consumers/:room", (request, response) => {
 	let roomName = request.params.room
-	let userInstance = new socket.Users(roomName)
-	let consumers = userInstance.getConsumers()
-	response.send(consumers)
+	let consumers = medisoupp.getConsumers(roomName)
+	// let userInstance = new socket.Users(roomName)
+	// response.send(consumers)
+	response.send({consumers})
 })
 
 app.get("/get_producers/:room", (request, response) => {
 	let roomName = request.params.room
-	let userInstance = new socket.Users(roomName)
-	let producers = userInstance.getProducers()
-	response.send(producers)
+	let producers = medisoupp.getProducers(roomName)
+	// let userInstance = new socket.Users(roomName)
+	// response.send(producers)
+	response.send({producers})
 })
 
-
-
-
-server.listen(port, () => {
-	console.log(`Server is running at https://localhost:${port}`);
-});
-
-socket.ioConnection(io);
