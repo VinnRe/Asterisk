@@ -4,7 +4,7 @@ import express from 'express';
 import * as https from 'https';
 import cors from 'cors';
 import { Server } from 'socket.io';
-import * as socket from '../lib/socket.js';
+import * as mediasoup from '../lib/mediasoup.js';
 
 const privateKey = fs.readFileSync('./server/ssl/server.key', 'utf8');
 const certificate = fs.readFileSync('./server/ssl/server.crt', 'utf8');
@@ -30,53 +30,51 @@ const io = new Server(server, {
 	}
 });
 
+
+
 app.get("/", (request, response) => {
 	// console.log(request);
 	response.send("Go to to create room http://localhost:3000/room/{roomName}");
 })
 
 
-// var instance = new socket.Users()
+server.listen(port, () => {
+	console.log(`Server is running at https://localhost:${port}`);
+});
 
+
+let mediasoupInstance = new mediasoup.Mediasoup(io)
+// let medisoupp = mediasoup.setIo(io);
 
 
 // to get the number of users in roomName 
 app.get("/get_users/:room", (request, response) => {
 	let roomName = request.params.room
-	let userInstance = new socket.Users(roomName)
-	let users = userInstance.getUsers()
+	let users = mediasoupInstance.getUsers(roomName)
 	response.send({users})
-	// let users = socket.getUsers(roomName)
-	// response.send({users})
 })
 
 app.get("/get_transports/:room", (request, response) => {
 	let roomName = request.params.room
-	let userInstance = new socket.Users(roomName)
-	let transports = userInstance.getTransports()
-	response.send(transports)
+	let transports = mediasoupInstance.getTransports(roomName)
+	// response.send(transports)
+	response.send({transports})
 })
 
 
 app.get("/get_consumers/:room", (request, response) => {
 	let roomName = request.params.room
-	let userInstance = new socket.Users(roomName)
-	let consumers = userInstance.getConsumers()
-	response.send(consumers)
+	let consumers = mediasoupInstance.getConsumers(roomName)
+	// let userInstance = new socket.Users(roomName)
+	// response.send(consumers)
+	response.send({consumers})
 })
 
 app.get("/get_producers/:room", (request, response) => {
 	let roomName = request.params.room
-	let userInstance = new socket.Users(roomName)
-	let producers = userInstance.getProducers()
-	response.send(producers)
+	let producers = mediasoupInstance.getProducers(roomName)
+	// let userInstance = new socket.Users(roomName)
+	// response.send(producers)
+	response.send({producers})
 })
 
-
-
-
-server.listen(port, () => {
-	console.log(`Server is running at https://localhost:${port}`);
-});
-
-socket.ioConnection(io);

@@ -1,5 +1,9 @@
 <div align="center">
+<<<<<<< HEAD
   <img alt="Alt text" width="300" height="300" src="src/asterisk/src/Components/Assets/asterisk-logo.png">
+=======
+<h1 align="center">ASTERISK</h1>
+>>>>>>> main
 
   <h1 align="center">Asterisk</h1>
 
@@ -15,6 +19,7 @@
   </ul>
 </div>
 
+<<<<<<< HEAD
 <h2>Demo</h2>
 <p>Here is the demo and explanation of the web application. It is a brief explanation about how we used the 4 principles of OOP in this web application.</p>
 <p><a href="https://drive.google.com/file/d/1-QpnFrjirKnH8KyetyFLbxBOnZNIiixw/view?usp=sharing">Asterisk - Video Conference Web Application</a></p>
@@ -120,3 +125,7 @@ npm install
 </code></pre>
 
 <p>Now with all that, it should run a <code>localhost</code> in your browser and you can use it.</p>
+=======
+# vid-conf-wa
+video-conference-web-app using Python, React, aiortc, aiohttp
+>>>>>>> main

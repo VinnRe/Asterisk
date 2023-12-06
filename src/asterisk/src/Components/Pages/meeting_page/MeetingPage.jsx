@@ -558,23 +558,21 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
 
         } else {
           if (videoTag && videoTag.srcObject === null) {
-            videoTag.remove()
+            videoTag.setAttribute('id', remoteProducerId);
+            console.log("here")
+          } else {
+            console.log("hereeee")
+            videoElement = document.createElement('video');
+            videoElement.setAttribute('id', remoteProducerId);
+            videoElement.setAttribute('playsInline', true);
+            videoElement.setAttribute('autoPlay', true);
+            videoElement.className = "video-element screenShare";
+            vid_con1.prepend(videoElement);
           }
           if (spanTag) {
-            spanTag.remove()
+            console.log(spanTag)
+            spanTag.style.visibility = "hidden"
           }
-          videoElement = document.createElement('video');
-          videoElement.setAttribute('id', remoteProducerId);
-          videoElement.setAttribute('playsInline', true);
-          videoElement.setAttribute('autoPlay', true);
-          videoElement.className = "video-element";
-          vid_con1.prepend(videoElement);
-
-          let vidOff = document.createElement("span")
-          vidOff.className = "vid-off material-icons control-buttons"
-          vidOff.style.visibility = "hidden"
-          vidOff.innerHTML = "videocam_off"
-          vid_con1.prepend(vidOff)
         }
 
         console.log(videoTag)
@@ -687,17 +685,19 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
       let vid_con = document.getElementById("video-container");
       let vid_con1 = document.getElementById(remoteProducerSocketId);
       let elementToRemove = document.getElementById(remoteProducerId)
-
       console.log(elementToRemove)
+
       if (elementToRemove !== null) {
         if (elementToRemove.tagName === "AUDIO") {
         //   // vid_con1.removeChild(elementToRemove)
           fetchUserCount()
           vid_con.removeChild(vid_con1)
           return
+        } else if (elementToRemove.className.includes('screenShare')) {
+          elementToRemove.remove()
+          return
         } else {
           elementToRemove.srcObject = null
-
           vid_con1.querySelector("span").style.visibility = "visible"
         }
       }
@@ -890,6 +890,7 @@ export const MeetingPage = ({ userName, audioVolume, setAudioVolume, roomNumber,
 
       screenCreateSendTransport();
     } else {
+
       console.log("not sharing screen")
 
       if (ssocket !== null) {
